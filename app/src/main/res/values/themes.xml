@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.Light"/>
+
+    <style name="Base.Theme.ActivityLauncher" parent="Platform.Theme.ActivityLauncher">
+    </style>
+
+    <style name="Theme.ActivityLauncher" parent="Base.Theme.ActivityLauncher" />
+</resources>

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://hellotool.github.io/easygo-schema/easygo.1.0.schema.json",
+  "easyGoVersion": "1.0",
+  "client": "@applicationId@",
+  "logicEntities": [
+    {
+      "head": {
+        "function": "magicwindow",
+        "required": "true"
+      },
+      "body": {
+        "mode": "1",
+        "activityPairs": [
+          {
+            "from": "io.gitee.jesse205.activitylauncher.features.applist.MainActivity",
+            "to": "*"
+          }
+        ],
+        "transActivities": [
+        ],
+        "UX": {
+          "isDraggable": "false",
+          "supportLock": "true",
+          "draggingToFreeForm": "app",
+          "supportRotationUxCompat": "false"
+        }
+      }
+    }
+  ]
+}
