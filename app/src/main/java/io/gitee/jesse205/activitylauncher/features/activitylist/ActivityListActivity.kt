@@ -1,35 +1,45 @@
 package io.gitee.jesse205.activitylauncher.features.activitylist
 
-import android.app.ActionBar
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewStub
+import android.view.Window
 import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.core.BaseActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
+import io.gitee.jesse205.activitylauncher.utils.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
+import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
+import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isPermissionDenialException
+import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
+import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener {
     override val stateClass = ActivityListActivityState::class.java
-    private val runningLoadActivitiesTask: LoadActivitiesTask? = null
-
     private lateinit var adapter: ActivityListAdapter
     private val listView: android.widget.ListView by lazy { findViewById(android.R.id.list) }
     private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
     private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
     private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
+    private var freshMenuItem: MenuItem? = null
+    private var searchView: SearchView? = null
 
     override fun onCreateState(): ActivityListActivityState {
         return ActivityListActivityState().apply {
@@ -39,11 +49,15 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (isNavigationGestureSupported) {
+            requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
+        }
         setContentView(R.layout.activity_list)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setupActionBar()
+        } else {
+            setupSearchLayout()
         }
-
         adapter = ActivityListAdapter(this)
 
         if (state.packageName == null) {
@@ -66,45 +80,130 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity
         }
-
         findViewById<TextView>(R.id.loading_text).apply {
             text = getString(R.string.label_getting_activities)
         }
+        window.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // 安卓 10 才引入手势导航，之前的版本没必要启用
+                setDecorFitsSystemWindowsCompat(false)
+            }
+        }
+        refreshActivities()
+        refreshActivitiesLoading()
 
-        setActivities(state.activities)
-        setLoadingActivities(state.isLoadingActivities)
-
-        if (state.activities == null && !state.isLoadingActivitiesTaskRunning) {
+        if (state.activities == null && !state.isActivitiesLoadingOrLoaded) {
             loadActivities()
         }
     }
 
+    private fun setupSearchLayout() {
+        // HONEYCOMB 以上采用 ActionBar 中的 SearchView
+        val searchLayout = findViewById<ViewStub>(R.id.search_layout).inflate()
+        val searchInput = searchLayout.findViewById<EditText>(R.id.search_input)
+        searchInput.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {
+
+            }
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+                adapter.filter.filter(s)
+            }
+        })
+    }
+
     @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
-    private fun setupActionBar(): ActionBar? {
-        return getActionBar()?.apply {
-            setDisplayHomeAsUpEnabled(true)
+    private fun setupSearchBar() {
+        searchView?.apply {
+            queryHint = getString(R.string.hint_search_activities)
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    adapter.filter.filter(newText)
+                    return true
+                }
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+            })
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+    private fun setupActionBar() {
+        getActionBar()?.apply {
+            setDisplayHomeAsUpEnabled(true)
+            if (!isMenuSearchBarSupported) {
+                setDisplayShowTitleEnabled(resources.configuration.screenWidthDp >= 600)
+                setDisplayShowCustomEnabled(true)
+                searchView = SearchView(this@ActivityListActivity).apply {
+                    isIconifiedByDefault = false
+                }
+                customView = searchView
+                setupSearchBar()
+            }
+        }
+    }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_activity_list, menu)
+        freshMenuItem = menu.findItem(R.id.menu_refresh)
+        freshMenuItem!!.isEnabled = !state.isActivitiesLoading
+        if (isMenuSearchBarSupported) {
+            menu.findItem(R.id.menu_search).apply {
+                isVisible = true
+                // 修复启用返回按钮时候工具栏多出边距
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                    actionBar?.let {
+                        setOnActionExpandListener(CollapseActionViewMenuItemPatch(it))
+                    }
+                }
+            }.also {
+                searchView = it.actionView as SearchView
+                setupSearchBar()
+            }
+        }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.getItemId() == android.R.id.home) {
-            finish()
-            return true
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+
+            R.id.menu_refresh -> {
+                loadActivities()
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        val freshItem = menu.findItem(R.id.menu_refresh)
-        freshItem.isEnabled = !state.isLoadingActivitiesTaskRunning
-        return super.onPrepareOptionsMenu(menu)
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            // 当窗口获取焦点后，会自动弹出软键盘，临时清除焦点以避免弹出输入法
+            searchView?.temporarilyClearFocus()
+        }
     }
+
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val activityInfo: LoadedActivityInfo? = adapter.getItem(position)
@@ -153,15 +252,16 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
     }
 
-    fun setLoadingActivities(loading: Boolean) {
-        val visibleWhenLoading = if (loading) View.VISIBLE else View.GONE
-        val visibleWhenNotLoading = if (loading) View.GONE else View.VISIBLE
+    fun refreshActivitiesLoading() {
+        val visibleWhenLoading = if (state.isActivitiesLoading) View.VISIBLE else View.GONE
+        val visibleWhenNotLoading = if (state.isActivitiesLoading) View.GONE else View.VISIBLE
         loadingLayout.visibility = visibleWhenLoading
         emptyTipLayout.visibility = visibleWhenNotLoading
+        freshMenuItem?.isEnabled = !state.isActivitiesLoading
     }
 
-    fun setActivities(apps: List<LoadedActivityInfo>?) {
-        adapter.setActivities(apps ?: listOf())
+    fun refreshActivities() {
+        adapter.setActivities(state.activities ?: listOf())
     }
 
     companion object {

@@ -2,9 +2,11 @@ package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
+import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
 import java.util.Locale
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
@@ -31,16 +34,22 @@ class AppListAdapter(context: Context) :
     private var originalApps: List<LoadedAppInfo> = listOf()
     private var filteredApps: List<LoadedAppInfo> = originalApps
 
-    val appFilter by lazy { AppFilter() }
-    var lastFilterConstraint: CharSequence? = null
+    private val appFilter by lazy { AppFilter() }
+    private var lastFilterConstraint: CharSequence? = null
 
     // 创建一个单例的线程池执行器
     private val executor = ThreadPoolExecutor(
         8,
         16,
-        60L, TimeUnit.SECONDS,
+        30L, TimeUnit.SECONDS,
         LinkedBlockingQueue()
     )
+    private var iconCache: LruCache<String, Drawable>? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            LruCache(4 * 1024 * 1024)
+        } else {
+            null
+        }
 
     var View.holder
         get() = tag as AppListViewHolder?
@@ -64,7 +73,7 @@ class AppListAdapter(context: Context) :
 
     fun setApps(apps: List<LoadedAppInfo>) {
         originalApps = apps
-        filteredApps = apps
+        filteredApps = if (lastFilterConstraint.isNullOrBlank()) apps else listOf()
         notifyDataSetChanged()
         appFilter.filter(lastFilterConstraint)
     }
@@ -72,63 +81,72 @@ class AppListAdapter(context: Context) :
 
     override fun getFilter(): AppFilter = appFilter
 
-
     inner class AppListViewHolder(private val root: View) {
         private val icon: ImageView = root.findViewById(android.R.id.icon)
         private val title: TextView = root.findViewById(android.R.id.title)
         private val summary: TextView = root.findViewById(android.R.id.summary)
-        private var boundPackageName: String? = null
+        private var boundAppInfo: LoadedAppInfo? = null
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
 
         fun bind(app: LoadedAppInfo?) {
-            if (boundPackageName == app?.packageName) {
+            if (boundAppInfo == app) {
                 return
             }
-            boundPackageName = app?.packageName
+            boundAppInfo = app
             icon.setImageDrawable(null)
-            title.text = null
+            title.setTextOrGone(null)
             summary.text = null
+            labelFuture?.cancel(true)
+            iconFuture?.cancel(true)
             if (app != null) {
-                title.setTextOrGone(app.label)
                 summary.text = app.packageName
-                labelFuture?.cancel(true)
-                labelFuture = executor.submit {
-                    val label = app.loadLabel(packageManager)
+                loadLabel()
+                loadIcon()
+            }
+        }
 
-                    if (Thread.currentThread().isInterrupted) {
-                        return@submit
-                    }
-                    handler.post {
-                        if (boundPackageName != app.packageName) {
-                            return@post
-                        }
-                        title.setTextOrGone(label)
-                    }
-                }
+        fun loadLabel() {
+            val info = boundAppInfo ?: return
+            if (info.label != null) {
+                title.setTextOrGone(info.label)
+                return
+            }
+            labelFuture = executor.submitWithCheckAndCallback(
+                handler = handler,
+                check = { boundAppInfo == info },
+                task = { info.loadLabel(packageManager) },
+                callback = { title.setTextOrGone(it) },
+            )
+        }
 
-                iconFuture?.cancel(true)
-                iconFuture = executor.submit {
-                    val iconDrawable = app.loadIcon(packageManager)
+        fun loadIcon() {
+            val info = boundAppInfo ?: return
 
-                    if (Thread.currentThread().isInterrupted) {
-                        return@submit
-                    }
-                    handler.post {
-                        if (boundPackageName != app.packageName) {
-                            return@post
-                        }
-                        icon.setImageDrawable(iconDrawable)
-                    }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                iconCache?.get(info.packageName)?.let {
+                    icon.setImageDrawable(it)
+                    return
                 }
             }
+
+            iconFuture = executor.submitWithCheckAndCallback(
+                handler = handler,
+                check = { boundAppInfo == info },
+                task = { info.loadIcon(packageManager) },
+                callback = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                        iconCache?.put(info.packageName, it)
+                    }
+                    icon.setImageDrawable(it)
+                },
+            )
         }
     }
 
     fun destroy() {
         executor.shutdownNow()
     }
-
 
     inner class AppFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
@@ -140,8 +158,8 @@ class AppListAdapter(context: Context) :
                 mutableListOf<LoadedAppInfo>().apply {
                     val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim()
                     for (app in originalApps) {
-                        val appName = app.label.toString().lowercase(Locale.getDefault())
-                        val pkgName: String = app.packageName.lowercase(Locale.getDefault())
+                        val appName = app.loadLabel(packageManager).toString().lowercase(Locale.getDefault())
+                        val pkgName = app.packageName.lowercase(Locale.getDefault())
                         if (appName.contains(filterPattern) || pkgName.contains(filterPattern)) {
                             add(app)
                         }
@@ -161,7 +179,8 @@ class AppListAdapter(context: Context) :
             notifyDataSetChanged()
         }
     }
-    companion object{
+
+    companion object {
         private const val TAG = "AppListAdapter"
     }
 }

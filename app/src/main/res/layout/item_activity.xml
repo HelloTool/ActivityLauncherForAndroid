@@ -17,27 +17,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clipChildren="false"
     android:gravity="center_vertical"
-    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:minHeight="?listPreferredItemHeightTwoLines"
     android:orientation="horizontal"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp">
-    <!-- paddingLeft、paddingRight不支持引用 -->
+    android:paddingStart="?android:listPreferredItemPaddingStart"
+    android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingEnd="?android:listPreferredItemPaddingEnd"
+    android:paddingRight="?listPreferredItemPaddingRight">
 
     <ImageView
         android:id="@android:id/icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="?listIconLarge"
+        android:layout_height="?listIconLarge"
         tools:ignore="ContentDescription"
         tools:src="@android:mipmap/sym_def_app_icon" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:orientation="vertical"
-        tools:ignore="RtlHardcoded">
+        android:layout_marginStart="?android:attr/listPreferredItemPaddingStart"
+        android:layout_marginLeft="?listPreferredItemPaddingLeft"
+        android:orientation="vertical">
 
         <TextView
             android:id="@android:id/title"

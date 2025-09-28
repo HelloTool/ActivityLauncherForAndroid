@@ -11,7 +11,10 @@
         android:fullBackupContent="@xml/backup_rules"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ActivityLauncher">
+        android:theme="@style/Platform.Theme.ActivityLauncher"
+        android:enableOnBackInvokedCallback="true"
+        tools:ignore="UnusedAttribute">
+
 
         <meta-data
             android:name="android.supports_size_changes"
@@ -22,19 +25,20 @@
             android:name="EasyGoClient"
             android:value="true" />
 
-        <!-- BUG: EMUI 主题下搜索框不会显示返回按钮 -->
-        <meta-data
+        <!-- BUG: EMUI 主题下搜索框不会显示返回按钮，因此需要直接将ActionBar设置为SearchView布局。 -->
+        <!-- BUG: EMUI 5.1 下工具栏背景异常，EMUI 5.1 和 EMUI 6.0 下滚动点提示错误 -->
+        <!-- 由于这些原因，不启用 EMUI 主题 -->
+        <!-- <meta-data
             android:name="hwc-theme"
-            android:value="androidhwext:style/Theme.Emui" />
-        <!--
-        <meta-data
+            android:value="androidhwext:style/Theme.Emui" /> -->
+        <!--<meta-data
             android:name="hnc-theme"
             android:value="androidhnext:style/Theme.Magic"/> -->
 
         <activity
             android:name=".features.applist.MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize|stateHidden">
+            android:windowSoftInputMode="adjustResize|stateUnchanged">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -44,7 +48,7 @@
             android:name="io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity"
             android:exported="true"
             android:label="@string/title_app_list"
-            android:windowSoftInputMode="adjustResize|stateHidden" />
+            android:windowSoftInputMode="adjustResize|stateUnchanged" />
     </application>
 
 </manifest>

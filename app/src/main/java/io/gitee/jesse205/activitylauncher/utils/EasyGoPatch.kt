@@ -6,6 +6,9 @@ import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 
+/**
+ * 使在 EasyGo 下也能正常重载 Activity
+ */
 @RequiresApi(Build.VERSION_CODES.N)
 class EasyGoPatch(val activity: Activity) : ActivityListener {
 

@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,26 +22,29 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.core.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
+import io.gitee.jesse205.activitylauncher.utils.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
-import io.gitee.jesse205.activitylauncher.utils.isEmui
+import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
+import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickListener {
+
     override val stateClass = MainActivityState::class.java
     private lateinit var adapter: AppListAdapter
     private val listView: ListView by lazy { findViewById(android.R.id.list) }
     private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
     private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
     private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
-    private val searchLayout: ViewGroup by lazy { findViewById(R.id.search_layout) }
     private var searchView: SearchView? = null
     private var freshMenuItem: MenuItem? = null
-    private val isMenuSearchBarSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && !isEmui
-
+    private var sortInstallTimeMenuItem: MenuItem? = null
+    private var sortUpdateTimeMenuItem: MenuItem? = null
+    private var sortNameMenuItem: MenuItem? = null
 
     override fun onCreateState(): MainActivityState {
         return MainActivityState()
@@ -53,6 +55,11 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
         }
+
+        if (isNavigationGestureSupported) {
+            requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
+        }
+
         setContentView(R.layout.activity_list)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -75,9 +82,16 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             text = getString(R.string.label_getting_apps)
         }
 
-        setApps(state.apps)
-        setLoadingApps(state.isLoadingAppsTaskRunning)
-        if (state.apps == null && !state.isLoadingAppsTaskRunning) {
+        window.apply {
+            if (isNavigationGestureSupported) {
+                // 安卓 10 才引入手势导航，之前的版本没必要启用
+                setDecorFitsSystemWindowsCompat(false)
+            }
+        }
+
+        refreshApps()
+        refreshAppsLoading()
+        if (!state.isAppsLoadingOrLoaded) {
             loadApps()
         }
     }
@@ -86,24 +100,20 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_main, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
-        freshMenuItem!!.isEnabled = !state.isLoadingAppsTaskRunning
-        val searchItem = menu.findItem(R.id.menu_search)
+        freshMenuItem!!.isEnabled = !state.isAppsLoading
         if (isMenuSearchBarSupported) {
-            searchItem.isVisible = true
-            searchView = searchItem.actionView as SearchView
-            setupSearchBar()
+            menu.findItem(R.id.menu_search).apply {
+                isVisible = true
+            }.also {
+                searchView = it.actionView as SearchView
+                setupSearchBar()
+            }
         }
-
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        when (state.sortCategory) {
-            AppSortCategory.NAME -> menu.findItem(R.id.menu_sort_name).isChecked = true
-            AppSortCategory.INSTALL_TIME -> menu.findItem(R.id.menu_sort_install_time).isChecked = true
-            AppSortCategory.UPDATE_TIME -> menu.findItem(R.id.menu_sort_update_time).isChecked = true
-        }
-        return super.onPrepareOptionsMenu(menu)
+        sortNameMenuItem = menu.findItem(R.id.menu_sort_name)
+        sortInstallTimeMenuItem = menu.findItem(R.id.menu_sort_install_time)
+        sortUpdateTimeMenuItem = menu.findItem(R.id.menu_sort_update_time)
+        refreshAppSortCategory()
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,18 +131,21 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
             R.id.menu_sort_name -> {
                 state.sortCategory = AppSortCategory.NAME
+                refreshAppSortCategory()
                 loadApps()
                 true
             }
 
             R.id.menu_sort_install_time -> {
                 state.sortCategory = AppSortCategory.INSTALL_TIME
+                refreshAppSortCategory()
                 loadApps()
                 true
             }
 
             R.id.menu_sort_update_time -> {
                 state.sortCategory = AppSortCategory.UPDATE_TIME
+                refreshAppSortCategory()
                 loadApps()
                 true
             }
@@ -214,9 +227,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     private fun setupActionBar(): Boolean {
         val actionBar = getActionBar()?.apply {
             if (!isMenuSearchBarSupported) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                    setDisplayShowTitleEnabled(resources.configuration.screenWidthDp >= 600)
-                }
+                setDisplayShowTitleEnabled(resources.configuration.screenWidthDp >= 600)
                 setDisplayShowCustomEnabled(true)
                 searchView = SearchView(this@MainActivity).apply {
                     isIconifiedByDefault = false
@@ -224,7 +235,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 customView = searchView
                 setupSearchBar()
             }
-
         }
         return actionBar != null
     }
@@ -266,7 +276,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 textId = R.string.tab_user_apps,
                 tabIconId = when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB -> null
-                    else -> R.drawable.ic_tab_person_stateful
+                    else -> R.drawable.ic_tab_person
                 }
             )
             addTab(
@@ -274,7 +284,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 textId = R.string.tab_system_apps,
                 tabIconId = when {
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB -> null
-                    else -> R.drawable.ic_tab_system_stateful
+                    else -> R.drawable.ic_tab_system
                 }
             )
             setCurrentTab(state.provisionType.name)
@@ -287,16 +297,24 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         startActivity(intent)
     }
 
-    fun setLoadingApps(loading: Boolean) {
-        val visibleWhenLoading = if (loading) View.VISIBLE else View.GONE
-        val visibleWhenNotLoading = if (loading) View.GONE else View.VISIBLE
+    fun refreshAppsLoading() {
+        val visibleWhenLoading = if (state.isAppsLoading) View.VISIBLE else View.GONE
+        val visibleWhenNotLoading = if (state.isAppsLoading) View.GONE else View.VISIBLE
         loadingLayout.visibility = visibleWhenLoading
         emptyTipLayout.visibility = visibleWhenNotLoading
-        freshMenuItem?.isEnabled = !loading
+        freshMenuItem?.isEnabled = !state.isAppsLoading
     }
 
-    fun setApps(apps: List<LoadedAppInfo>?) {
-        adapter.setApps(apps ?: listOf())
+    fun refreshApps() {
+        adapter.setApps(state.apps ?: listOf())
+    }
+
+    fun refreshAppSortCategory() {
+        when (state.sortCategory) {
+            AppSortCategory.NAME -> sortNameMenuItem?.isChecked = true
+            AppSortCategory.INSTALL_TIME -> sortInstallTimeMenuItem?.isChecked = true
+            AppSortCategory.UPDATE_TIME -> sortUpdateTimeMenuItem?.isChecked = true
+        }
     }
 
     @Suppress("DEPRECATION")

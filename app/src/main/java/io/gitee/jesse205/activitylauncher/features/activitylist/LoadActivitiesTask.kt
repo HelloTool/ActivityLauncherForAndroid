@@ -22,43 +22,48 @@ class LoadActivitiesTask(
         }
         return packageInfoResult.getOrNull()?.activities?.map {
             LoadedActivityInfo(activityInfo = it)
+        }?.sortedWith { a, b ->
+            if (a.activityInfo.exported != b.activityInfo.exported) {
+                return@sortedWith if (a.activityInfo.exported) -1 else 1
+            }
+            a.name.compareTo(b.name, true)
         } ?: listOf()
     }
 
     override fun onPreExecute() {
         weakActivity?.apply {
-            setLoadingActivities(true)
-            setActivities(listOf())
-        }
-        state.apply {
-            isLoadingActivities = true
-            activities = listOf()
-            loadActivitiesTask = this@LoadActivitiesTask
+            state.apply {
+                isActivitiesLoading = true
+                activities = listOf()
+                loadActivitiesTask = this@LoadActivitiesTask
+            }
+            refreshActivitiesLoading()
+            refreshActivities()
         }
     }
 
     override fun onPostExecute(result: List<LoadedActivityInfo>) {
         if (!isCurrentTaskRunning) return
-        weakActivity?.apply {
-            setLoadingActivities(false)
-            setActivities(result)
-        }
         state.apply {
-            isLoadingActivities = false
+            isActivitiesLoading = false
             activities = result
             loadActivitiesTask = null
+        }
+        weakActivity?.apply {
+            refreshActivitiesLoading()
+            refreshActivities()
         }
     }
 
     override fun onCancelled() {
         if (!isCurrentTaskRunning) return
-        weakActivity?.takeIf { !it.isFinishing }?.apply {
-            setLoadingActivities(false)
-        }
-
         state.apply {
-            isLoadingActivities = false
+            isActivitiesLoading = false
             loadActivitiesTask = null
         }
+        weakActivity?.takeIf { !it.isFinishing }?.apply {
+            refreshActivitiesLoading()
+        }
+
     }
 }

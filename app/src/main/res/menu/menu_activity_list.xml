@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <item
+        android:id="@+id/menu_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:icon="?menuSearchIcon"
+        android:showAsAction="collapseActionView|always"
+        android:title="@string/menu_title_search"
+        android:visible="false"
+        tools:ignore="UnusedAttribute" />
     <item
         android:id="@+id/menu_refresh"
         android:title="@string/menu_title_refresh" />

@@ -8,15 +8,15 @@ import androidx.annotation.RequiresApi
 @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
 class ActionBarTabController(val actionBar: ActionBar, onSelect: (tabTag: String) -> Unit) : TabController(onSelect) {
     private val actionBarTabListener = object : ActionBar.TabListener {
-        override fun onTabReselected(tab: ActionBar.Tab, ft: FragmentTransaction?) {
+        override fun onTabReselected(tab: ActionBar.Tab, ft: FragmentTransaction) {
 
         }
 
-        override fun onTabSelected(tab: ActionBar.Tab, ft: FragmentTransaction?) {
+        override fun onTabSelected(tab: ActionBar.Tab, ft: FragmentTransaction) {
             notifyTabChanged(tab.tag.toString())
         }
 
-        override fun onTabUnselected(tab: ActionBar.Tab, ft: FragmentTransaction?) {
+        override fun onTabUnselected(tab: ActionBar.Tab, ft: FragmentTransaction) {
         }
     }
 
@@ -33,7 +33,6 @@ class ActionBarTabController(val actionBar: ActionBar, onSelect: (tabTag: String
                 }
             }
         }
-
     }
 
     override fun addTab(tabTag: String, textId: Int?, tabIconId: Int?) {

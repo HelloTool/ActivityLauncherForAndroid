@@ -2,34 +2,49 @@ package io.gitee.jesse205.activitylauncher.features.activitylist
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.LruCache
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
+import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
+import java.util.Locale
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-class ActivityListAdapter(context: Context) : BaseAdapter() {
+class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var originalActivities: List<LoadedActivityInfo> = listOf()
-    private var filteredApps: List<LoadedActivityInfo> = originalActivities
+    private var filteredActivities: List<LoadedActivityInfo> = originalActivities
+    private val activityFilter by lazy { ActivityFilter() }
+    private var lastFilterConstraint: CharSequence? = null
     private val executor = ThreadPoolExecutor(
         8,
         16,
         60L, TimeUnit.SECONDS,
         LinkedBlockingQueue()
     )
+    private var iconCache: LruCache<String, Drawable>? =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            LruCache(4 * 1024 * 1024)
+        } else {
+            null
+        }
 
     var View.holder
         get() = tag as ActivityListViewHolder?
@@ -37,9 +52,9 @@ class ActivityListAdapter(context: Context) : BaseAdapter() {
             tag = value
         }
 
-    override fun getCount() = filteredApps.count()
+    override fun getCount() = filteredActivities.count()
 
-    override fun getItem(position: Int) = filteredApps[position]
+    override fun getItem(position: Int) = filteredActivities[position]
 
     override fun getItemId(position: Int) = position.toLong()
 
@@ -53,9 +68,12 @@ class ActivityListAdapter(context: Context) : BaseAdapter() {
 
     fun setActivities(activities: List<LoadedActivityInfo>) {
         originalActivities = activities
-        filteredApps = activities
+        filteredActivities = if (lastFilterConstraint.isNullOrBlank()) activities else listOf()
         notifyDataSetChanged()
+        activityFilter.filter(lastFilterConstraint)
     }
+
+    override fun getFilter(): Filter = activityFilter
 
 
     inner class ActivityListViewHolder(root: View) {
@@ -64,54 +82,95 @@ class ActivityListAdapter(context: Context) : BaseAdapter() {
         private val summary: TextView = root.findViewById(android.R.id.summary)
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
-        private var boundActivityName: String? = null
+        private var boundActivityInfo: LoadedActivityInfo? = null
 
 
         fun bind(activityInfo: LoadedActivityInfo?) {
-            if (boundActivityName == activityInfo?.name) {
+            if (boundActivityInfo == activityInfo) {
                 return
             }
-            boundActivityName = activityInfo?.name
+            boundActivityInfo = activityInfo
             icon.setImageDrawable(null)
-            title.text = null
-            title.visibility = View.GONE
+            title.setTextOrGone(null)
             summary.text = null
             summary.paint.isStrikeThruText = false
+            labelFuture?.cancel(true)
+            iconFuture?.cancel(true)
             if (activityInfo != null) {
                 summary.text = activityInfo.name
                 summary.paint.isStrikeThruText = !activityInfo.activityInfo.exported
-                if (activityInfo.label != null) {
-                    title.setTextOrGone(activityInfo.label)
-                } else {
-                    labelFuture?.cancel(true)
-                    labelFuture = executor.submit {
-                        val label = activityInfo.loadLabel(packageManager)
-                        if (Thread.currentThread().isInterrupted) {
-                            return@submit
-                        }
-                        handler.post {
-                            if (boundActivityName != activityInfo.name) {
-                                return@post
-                            }
-                            title.setTextOrGone(label)
-                        }
-                    }
-                }
+                loadLabel()
+                loadIcon()
+            }
+        }
 
-                iconFuture?.cancel(true)
-                iconFuture = executor.submit {
-                    val iconDrawable = activityInfo.loadIcon(packageManager)
-                    if (Thread.currentThread().isInterrupted) {
-                        return@submit
+        fun loadLabel() {
+            val info = boundActivityInfo ?: return
+            if (info.label != null) {
+                title.setTextOrGone(info.label)
+                return
+            }
+            labelFuture = executor.submitWithCheckAndCallback(
+                handler = handler,
+                check = { boundActivityInfo == info },
+                task = { info.loadLabel(packageManager) },
+                callback = { title.setTextOrGone(it) },
+            )
+        }
+
+        fun loadIcon() {
+            val info = boundActivityInfo ?: return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                iconCache?.get(info.name)?.let {
+                    icon.setImageDrawable(it)
+                    return
+                }
+            }
+
+            iconFuture = executor.submitWithCheckAndCallback(
+                handler = handler,
+                check = { boundActivityInfo == info },
+                task = { info.loadIcon(packageManager) },
+                callback = {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                        iconCache?.put(info.name, it)
                     }
-                    handler.post {
-                        if (boundActivityName != activityInfo.name) {
-                            return@post
+                    icon.setImageDrawable(it)
+                },
+            )
+        }
+    }
+
+    inner class ActivityFilter : Filter() {
+        protected override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val results = FilterResults()
+
+            val filteredList: List<LoadedActivityInfo> = if (constraint.isNullOrEmpty()) {
+                originalActivities
+            } else {
+                mutableListOf<LoadedActivityInfo>().apply {
+                    val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim()
+                    for (activity in originalActivities) {
+                        val appName = activity.loadLabel(packageManager).toString().lowercase(Locale.getDefault())
+                        val pkgName = activity.name.lowercase(Locale.getDefault())
+                        if (appName.contains(filterPattern) || pkgName.contains(filterPattern)) {
+                            add(activity)
                         }
-                        icon.setImageDrawable(iconDrawable)
                     }
                 }
             }
+
+            results.values = filteredList
+            results.count = filteredList.size
+            return results
+        }
+
+        protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {
+            @Suppress("UNCHECKED_CAST")
+            filteredActivities = results.values as List<LoadedActivityInfo>
+            lastFilterConstraint = constraint
+            notifyDataSetChanged()
         }
     }
 }

@@ -17,9 +17,7 @@ class ActivityListActivityState(
     var loadActivitiesTask: LoadActivitiesTask? = null
 
     @IgnoredOnParcel
-    @Suppress("DEPRECATION")
-    val isLoadingActivitiesTaskRunning get() = loadActivitiesTask?.status == AsyncTask.Status.RUNNING
+    var isActivitiesLoading = false
 
-    @IgnoredOnParcel
-    var isLoadingActivities = false
+    val isActivitiesLoadingOrLoaded get() = isActivitiesLoading || activities != null
 }

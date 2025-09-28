@@ -3,6 +3,7 @@ package io.gitee.jesse205.activitylauncher.utils.tabs
 import android.app.Activity
 import android.os.Build
 import android.view.View
+import io.gitee.jesse205.activitylauncher.utils.isEmui
 
 object TabControllerFactory {
     fun create(activity: Activity, rootView: View, onSelect: (tabTag: String) -> Unit): TabController {

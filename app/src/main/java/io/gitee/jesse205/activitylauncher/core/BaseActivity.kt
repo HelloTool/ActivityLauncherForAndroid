@@ -5,9 +5,11 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.EasyGoPatch
 import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
+import io.gitee.jesse205.activitylauncher.utils.isEmui
 
 
 abstract class BaseActivity<S : Parcelable> : Activity() {
@@ -20,6 +22,10 @@ abstract class BaseActivity<S : Parcelable> : Activity() {
     private var activityListeners: MutableList<ActivityListener> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        theme.applyStyle(R.style.ThemeOverlay_ActivityLauncher, true)
+        /* if (isEmui) {
+            theme.applyStyle(R.style.ThemeOverlay_ActivityLauncher_Emui, true)
+        } */
         state =
             stateClass.cast(lastNonConfigurationInstance)
                 ?: savedInstanceState?.getParcelableCompat(KEY_ACTIVITY_STATE, stateClass)
@@ -28,6 +34,7 @@ abstract class BaseActivity<S : Parcelable> : Activity() {
             addActivityListener(EasyGoPatch(this))
         }
         activityListeners.forEach { it.onCreate(savedInstanceState) }
+
     }
 
     override fun onRetainNonConfigurationInstance() = state
@@ -57,6 +64,11 @@ abstract class BaseActivity<S : Parcelable> : Activity() {
     override fun onPause() {
         super.onPause()
         activityListeners.forEach { it.onPause() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activityListeners.forEach { it.onDestroy() }
     }
 
     fun addActivityListener(activityListener: ActivityListener) {

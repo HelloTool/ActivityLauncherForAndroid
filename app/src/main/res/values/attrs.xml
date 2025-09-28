@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="listPreferredItemHeightTwoLines" format="dimension"/>
+    <attr name="listIconLarge" format="dimension"/>
+    <attr name="listPreferredItemPaddingLeft" format="dimension"/>
+    <attr name="listPreferredItemPaddingRight" format="dimension"/>
+    <attr name="textAppearanceListItem" format="dimension"/>
+    <attr name="textAppearanceListItemSecondary" format="dimension"/>
+    <attr name="menuSearchIcon" format="reference"/>
+    <attr name="menuSortIcon" format="reference"/>
+</resources>

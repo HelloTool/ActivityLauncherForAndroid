@@ -2,7 +2,6 @@ package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.Application
 import android.content.pm.PackageManager
-import android.util.Log
 import io.gitee.jesse205.activitylauncher.core.BaseActivityAsyncTask
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
@@ -28,7 +27,9 @@ class LoadAppsTask(
             )
         }.sortedWith { a, b ->
             when (state.sortCategory) {
-                AppSortCategory.NAME -> a.loadLabel(packageManager).toString().compareTo(b.label.toString())
+                AppSortCategory.NAME -> a.loadLabel(packageManager).toString()
+                    .compareTo(b.loadLabel(packageManager).toString(), true)
+
                 AppSortCategory.INSTALL_TIME -> b.packageInfo.firstInstallTime.compareTo(a.packageInfo.firstInstallTime)
                 AppSortCategory.UPDATE_TIME -> b.packageInfo.lastUpdateTime.compareTo(a.packageInfo.lastUpdateTime)
             }
@@ -36,39 +37,43 @@ class LoadAppsTask(
     }
 
     override fun onPreExecute() {
-        weakActivity?.apply {
-            setLoadingApps(true)
-            setApps(listOf())
-        }
         state.apply {
-            isLoadingApps = true
+            isAppsLoading = true
             apps = listOf()
             loadAppsTask = this@LoadAppsTask
+        }
+        weakActivity?.apply {
+            refreshAppsLoading()
+            refreshApps()
         }
     }
 
     override fun onPostExecute(result: List<LoadedAppInfo>) {
         if (!isCurrentTaskRunning) return
-        weakActivity?.apply {
-            setLoadingApps(false)
-            setApps(result)
-        }
+
         state.apply {
-            isLoadingApps = false
+            isAppsLoading = false
             apps = result
             loadAppsTask = null
+        }
+        weakActivity?.apply {
+            refreshAppsLoading()
+            refreshApps()
         }
     }
 
     override fun onCancelled() {
         if (!isCurrentTaskRunning) return
-        weakActivity?.takeIf { !it.isFinishing }?.apply {
-            setLoadingApps(false)
-        }
-
         state.apply {
-            isLoadingApps = false
+            isAppsLoading = false
             loadAppsTask = null
         }
+        weakActivity?.takeIf { !it.isFinishing }?.apply {
+            refreshAppsLoading()
+        }
+    }
+
+    companion object {
+        const val TAG = "LoadAppsTask"
     }
 }
