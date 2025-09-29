@@ -28,10 +28,10 @@ import io.gitee.jesse205.activitylauncher.utils.IntentCompat
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isPermissionDenialException
-import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
-class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener {
+class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
+    ActivityListActivityState.ActivityListActivityStateListener {
     override val stateClass = ActivityListActivityState::class.java
     private lateinit var adapter: ActivityListAdapter
     private val listView: android.widget.ListView by lazy { findViewById(android.R.id.list) }
@@ -41,10 +41,15 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
 
+    override val enableEdgeToEdge: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
     override fun onCreateState(): ActivityListActivityState {
-        return ActivityListActivityState().apply {
-            packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME)
-        }
+        return ActivityListActivityState(
+            _packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME) ?: run {
+                Log.e(TAG, "packageName is null")
+                ""
+            }
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +57,9 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         if (isNavigationGestureSupported) {
             requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
         }
+
         setContentView(R.layout.activity_list)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setupActionBar()
         } else {
@@ -60,39 +67,33 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
         adapter = ActivityListAdapter(this)
 
-        if (state.packageName == null) {
+        if (state.packageName.isBlank()) {
             showAppNotInstalledToast()
             finish()
             return
         }
         runCatching {
-            packageManager.getApplicationInfo(state.packageName!!, 0);
+            packageManager.getApplicationInfo(state.packageName, 0);
         }.onFailure {
             showAppNotInstalledToast()
             finish()
             return
         }
 
-        state.loadActivitiesTask?.attachActivity(this)
-
         listView.apply {
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity
         }
+
         findViewById<TextView>(R.id.loading_text).apply {
             text = getString(R.string.label_getting_activities)
         }
-        window.apply {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // 安卓 10 才引入手势导航，之前的版本没必要启用
-                setDecorFitsSystemWindowsCompat(false)
-            }
-        }
-        refreshActivities()
-        refreshActivitiesLoading()
 
-        if (state.activities == null && !state.isActivitiesLoadingOrLoaded) {
+        state.bind(this, this)
+        onActivitiesUpdate(state.activities)
+        onActivitiesLoadingUpdate(state.isActivitiesLoading)
+        if (!state.isActivitiesLoadingOrLoaded) {
             loadActivities()
         }
     }
@@ -204,6 +205,10 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.destroy()
+    }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val activityInfo: LoadedActivityInfo? = adapter.getItem(position)
@@ -214,11 +219,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     }
 
     private fun loadActivities() {
-        LoadActivitiesTask(
-            application = application,
-            activity = this,
-            state = state
-        ).execute()
+        state.loadActivities(application)
     }
 
     private fun showAppNotInstalledToast() {
@@ -240,7 +241,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         runCatching {
             startActivity(intent)
         }.onFailure {
-            Log.w(TAG, "launchActivity: ", it)
+            Log.w(TAG, "launchActivity failed: ", it)
             when (it) {
                 is ActivityNotFoundException -> showActivityNotFoundToast()
                 is SecurityException -> {
@@ -252,17 +253,19 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
     }
 
-    fun refreshActivitiesLoading() {
-        val visibleWhenLoading = if (state.isActivitiesLoading) View.VISIBLE else View.GONE
-        val visibleWhenNotLoading = if (state.isActivitiesLoading) View.GONE else View.VISIBLE
-        loadingLayout.visibility = visibleWhenLoading
-        emptyTipLayout.visibility = visibleWhenNotLoading
-        freshMenuItem?.isEnabled = !state.isActivitiesLoading
+    override fun onActivitiesUpdate(activities: List<LoadedActivityInfo>?) {
+        adapter.setActivities(activities ?: listOf())
     }
 
-    fun refreshActivities() {
-        adapter.setActivities(state.activities ?: listOf())
+    override fun onActivitiesLoadingUpdate(isActivitiesLoading: Boolean) {
+        val visibleWhenLoading = if (isActivitiesLoading) View.VISIBLE else View.GONE
+        val visibleWhenNotLoading = if (isActivitiesLoading) View.GONE else View.VISIBLE
+        loadingLayout.visibility = visibleWhenLoading
+        emptyTipLayout.visibility = visibleWhenNotLoading
+        freshMenuItem?.isEnabled = !isActivitiesLoading
     }
+
+    override fun onPackageNameUpdate(packageName: String) {}
 
     companion object {
         private const val TAG = "ActivityListActivity"

@@ -2,7 +2,7 @@
 
     <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.Light" />
 
-    <style name="ThemeOverlay.V9.ActivityLauncher" parent="">
+    <style name="Base.Theme.V9.ActivityLauncher" parent="Platform.Theme.ActivityLauncher">
         <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeight</item>
         <item name="listIconLarge">48dp</item>
         <item name="listPreferredItemPaddingLeft">8dp</item>
@@ -10,10 +10,14 @@
         <item name="textAppearanceListItem">?android:textAppearanceMedium</item>
         <item name="textAppearanceListItemSecondary">?android:textAppearanceSmall</item>
         <item name="menuSearchIcon">@drawable/ic_menu_search_holo</item>
+        <item name="menuRefreshIcon">@drawable/ic_menu_refresh_holo</item>
         <item name="menuSortIcon">@drawable/ic_menu_sort_holo</item>
+        <item name="menuAboutIcon">@drawable/ic_menu_about_holo</item>
     </style>
 
-    <style name="ThemeOverlay.ActivityLauncher" parent="ThemeOverlay.V9.ActivityLauncher" />
+    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V9.ActivityLauncher" />
+
+    <style name="Theme.ActivityLauncher" parent="Base.Theme.ActivityLauncher" />
 
     <!-- <style name="ThemeOverlay.V9.ActivityLauncher.Emui" parent="" >
         <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeight</item>

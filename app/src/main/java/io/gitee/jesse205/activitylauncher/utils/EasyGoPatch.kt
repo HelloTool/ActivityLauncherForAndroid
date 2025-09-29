@@ -5,41 +5,50 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import java.util.WeakHashMap
 
 /**
  * 使在 EasyGo 下也能正常重载 Activity
  */
 @RequiresApi(Build.VERSION_CODES.N)
-class EasyGoPatch(val activity: Activity) : ActivityListener {
+class EasyGoPatch : ActivityListener {
+    private val stateMap: MutableMap<Activity, EasyGoPatchState> = WeakHashMap()
 
-    private var isInMultiWindowModeWhenCreated: Boolean = false
-    private var screenLayoutSizeWhenCreated: Int = 0
-    private var isResumed = false
-    override fun onCreate(savedInstanceState: Bundle?) {
-        isInMultiWindowModeWhenCreated = activity.isInMultiWindowMode
-        screenLayoutSizeWhenCreated =
-            activity.resources.configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+    override fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {
+        stateMap[activity] = EasyGoPatchState(
+            isInMultiWindowModeWhenCreated = activity.isInMultiWindowMode,
+            screenLayoutSizeWhenCreated = activity.resources.configuration.screenLayoutSize,
+            isResumed = false
+        )
     }
 
-    override fun onResume() {
-        isResumed = true
-        if (getScreenLayoutSize() != screenLayoutSizeWhenCreated) {
+    override fun onActivityResume(activity: Activity) {
+        val state = stateMap[activity] ?: return
+        state.isResumed = true
+        if (activity.resources.configuration.screenLayoutSize != state.screenLayoutSizeWhenCreated) {
             activity.recreate()
         }
     }
 
-    override fun onPause() {
-        isResumed = false
+    override fun onActivityPause(activity: Activity) {
+        val state = stateMap[activity] ?: return
+        state.isResumed = false
     }
 
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        if (isResumed && getScreenLayoutSize(newConfig) != screenLayoutSizeWhenCreated) {
+    override fun onActivityConfigurationChanged(activity: Activity, newConfig: Configuration) {
+        val state = stateMap[activity] ?: return
+        if (state.isResumed && newConfig.screenLayoutSize != state.screenLayoutSizeWhenCreated) {
             activity.recreate()
         }
     }
 
-    private fun getScreenLayoutSize(configuration: Configuration = activity.resources.configuration): Int {
-        return configuration.screenLayout and Configuration.SCREENLAYOUT_SIZE_MASK
+    override fun onActivityDestroy(activity: Activity) {
+        stateMap.remove(activity)
     }
+
+    data class EasyGoPatchState(
+        var isInMultiWindowModeWhenCreated: Boolean,
+        var screenLayoutSizeWhenCreated: Int,
+        var isResumed: Boolean
+    )
 }

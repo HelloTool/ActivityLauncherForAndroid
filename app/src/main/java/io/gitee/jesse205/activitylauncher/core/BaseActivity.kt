@@ -2,39 +2,51 @@ package io.gitee.jesse205.activitylauncher.core
 
 import android.app.Activity
 import android.content.res.Configuration
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.os.Parcelable
-import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.EasyGoPatch
+import io.gitee.jesse205.activitylauncher.utils.Listenable
 import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
-import io.gitee.jesse205.activitylauncher.utils.isEmui
+import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 
 
-abstract class BaseActivity<S : Parcelable> : Activity() {
+abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<ActivityListener> {
     protected abstract val stateClass: Class<S>
-    protected lateinit var state: S
-    protected var isPaused = true
-    protected var isPendingRecreate = false
+    private var _state: S? = null
+    protected val state: S get() = _state!!
+    private var listeners: MutableList<ActivityListener> = mutableListOf()
+    protected open val enableEdgeToEdge = false
 
-    protected var easyGoPatch: EasyGoPatch? = null
-    private var activityListeners: MutableList<ActivityListener> = mutableListOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        theme.applyStyle(R.style.ThemeOverlay_ActivityLauncher, true)
         /* if (isEmui) {
             theme.applyStyle(R.style.ThemeOverlay_ActivityLauncher_Emui, true)
         } */
-        state =
+
+        _state =
             stateClass.cast(lastNonConfigurationInstance)
                 ?: savedInstanceState?.getParcelableCompat(KEY_ACTIVITY_STATE, stateClass)
                         ?: onCreateState()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            addActivityListener(EasyGoPatch(this))
+            addListener(EasyGoPatch())
         }
-        activityListeners.forEach { it.onCreate(savedInstanceState) }
 
+        if (enableEdgeToEdge) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                // 安卓 10 才引入手势导航，之前的版本没必要启用
+                window.apply {
+                    setDecorFitsSystemWindowsCompat(false)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        isNavigationBarContrastEnforced = true
+                        navigationBarColor = Color.TRANSPARENT
+                    }
+                }
+            }
+        }
+
+        listeners.forEach { it.onActivityCreate(this, savedInstanceState) }
     }
 
     override fun onRetainNonConfigurationInstance() = state
@@ -44,39 +56,42 @@ abstract class BaseActivity<S : Parcelable> : Activity() {
         outState.putParcelable(KEY_ACTIVITY_STATE, state);
     }
 
-    abstract fun onCreateState(): S
+    abstract fun onCreateState(): S?
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
-        activityListeners.forEach { it.onMultiWindowModeChanged(isInMultiWindowMode, newConfig) }
+        listeners.forEach { it.onActivityMultiWindowModeChanged(this, isInMultiWindowMode, newConfig) }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        activityListeners.forEach { it.onConfigurationChanged(newConfig) }
+        listeners.forEach { it.onActivityConfigurationChanged(this, newConfig) }
     }
 
     override fun onResume() {
         super.onResume()
-        activityListeners.forEach { it.onResume() }
+        listeners.forEach { it.onActivityResume(this) }
     }
 
     override fun onPause() {
         super.onPause()
-        activityListeners.forEach { it.onPause() }
+        listeners.forEach { it.onActivityPause(this) }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        activityListeners.forEach { it.onDestroy() }
+        listeners.forEach { it.onActivityDestroy(this) }
     }
 
-    fun addActivityListener(activityListener: ActivityListener) {
-        activityListeners.add(activityListener)
+    override fun addListener(listener: ActivityListener) {
+        listeners.add(listener)
+    }
+
+    override fun removeListener(listener: ActivityListener) {
+        listeners.remove(listener)
     }
 
     companion object {
         private const val KEY_ACTIVITY_STATE = "activity_state"
-
     }
 }

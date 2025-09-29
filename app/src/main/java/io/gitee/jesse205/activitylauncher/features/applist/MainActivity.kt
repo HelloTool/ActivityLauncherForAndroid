@@ -3,6 +3,7 @@ package io.gitee.jesse205.activitylauncher.features.applist
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -22,17 +23,18 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.core.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
+import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
-import io.gitee.jesse205.activitylauncher.utils.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
+import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
-import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
-class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickListener {
+class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickListener,
+    MainActivityState.MainActivityStateListener {
 
     override val stateClass = MainActivityState::class.java
     private lateinit var adapter: AppListAdapter
@@ -46,13 +48,45 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     private var sortUpdateTimeMenuItem: MenuItem? = null
     private var sortNameMenuItem: MenuItem? = null
 
+    override val enableEdgeToEdge: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+    private val preferences: SharedPreferences by lazy { getPreferences(MODE_PRIVATE) }
+    private var SharedPreferences.provisionType: AppProvisionType?
+        get() = getString(PREFERENCE_KEY_PROVISION_TYPE, null)
+            ?.let {
+                runCatching {
+                    AppProvisionType.valueOf(it)
+                }.getOrNull()
+            }
+        set(value) {
+            edit()
+                .putString(PREFERENCE_KEY_PROVISION_TYPE, value?.name)
+                .apply()
+        }
+
+    private var SharedPreferences.sortCategory: AppSortCategory?
+        get() = getString(PREFERENCE_KEY_SORT_CATEGORY, null)
+            ?.let {
+                runCatching {
+                    AppSortCategory.valueOf(it)
+                }.getOrNull()
+            }
+        set(value) {
+            edit()
+                .putString(PREFERENCE_KEY_SORT_CATEGORY, value?.name)
+                .apply()
+        }
+
     override fun onCreateState(): MainActivityState {
-        return MainActivityState()
+        return MainActivityState(
+            _provisionType = preferences.provisionType ?: AppProvisionType.USER,
+            _sortCategory = preferences.sortCategory ?: AppSortCategory.INSTALL_TIME
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+        if (!isActionBarSupported) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
         }
 
@@ -62,15 +96,14 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
         setContentView(R.layout.activity_list)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (isActionBarSupported) {
             setupActionBar()
         }
         setupTabs()
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+        if (!isActionBarSupported) {
             setupSearchLayout()
         }
-        state.loadAppsTask?.attachActivity(this)
+
         adapter = AppListAdapter(this@MainActivity)
 
         listView.apply {
@@ -78,19 +111,14 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             adapter = this@MainActivity.adapter
             onItemClickListener = this@MainActivity
         }
+
         findViewById<TextView>(R.id.loading_text).apply {
             text = getString(R.string.label_getting_apps)
         }
 
-        window.apply {
-            if (isNavigationGestureSupported) {
-                // 安卓 10 才引入手势导航，之前的版本没必要启用
-                setDecorFitsSystemWindowsCompat(false)
-            }
-        }
-
-        refreshApps()
-        refreshAppsLoading()
+        state.bind(this, this)
+        onAppsUpdate(state.apps)
+        onAppsLoadingUpdate(state.isAppsLoading)
         if (!state.isAppsLoadingOrLoaded) {
             loadApps()
         }
@@ -112,14 +140,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         sortNameMenuItem = menu.findItem(R.id.menu_sort_name)
         sortInstallTimeMenuItem = menu.findItem(R.id.menu_sort_install_time)
         sortUpdateTimeMenuItem = menu.findItem(R.id.menu_sort_update_time)
-        refreshAppSortCategory()
+        onAppSortCategoryUpdate(state.sortCategory)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh -> {
-                loadApps()
                 true
             }
 
@@ -131,21 +158,18 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
             R.id.menu_sort_name -> {
                 state.sortCategory = AppSortCategory.NAME
-                refreshAppSortCategory()
                 loadApps()
                 true
             }
 
             R.id.menu_sort_install_time -> {
                 state.sortCategory = AppSortCategory.INSTALL_TIME
-                refreshAppSortCategory()
                 loadApps()
                 true
             }
 
             R.id.menu_sort_update_time -> {
                 state.sortCategory = AppSortCategory.UPDATE_TIME
-                refreshAppSortCategory()
                 loadApps()
                 true
             }
@@ -158,8 +182,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     override fun onDestroy() {
         super.onDestroy()
         adapter.destroy()
-        @Suppress("DEPRECATION")
-        state.loadAppsTask?.cancel(true)
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -197,25 +219,9 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         val searchLayout = findViewById<ViewStub>(R.id.search_layout).inflate()
         val searchInput = searchLayout.findViewById<EditText>(R.id.search_input)
         searchInput.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-
-            }
-
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-
-            }
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 adapter.filter.filter(s)
             }
         })
@@ -259,14 +265,10 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private fun setupTabs() {
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
-            when (it) {
-                TAG_USER_APPS -> {
-                    state.provisionType = AppProvisionType.USER
-                }
-
-                TAG_SYSTEM_APPS -> {
-                    state.provisionType = AppProvisionType.SYSTEM
-                }
+            state.provisionType = when (it) {
+                TAG_USER_APPS -> AppProvisionType.USER
+                TAG_SYSTEM_APPS -> AppProvisionType.SYSTEM
+                else -> throw IllegalArgumentException("Invalid tab tag")
             }
             loadApps()
         }.apply {
@@ -275,7 +277,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 tabTag = TAG_USER_APPS,
                 textId = R.string.tab_user_apps,
                 tabIconId = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB -> null
+                    isActionBarSupported -> null
                     else -> R.drawable.ic_tab_person
                 }
             )
@@ -283,11 +285,16 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 tabTag = TAG_SYSTEM_APPS,
                 textId = R.string.tab_system_apps,
                 tabIconId = when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB -> null
+                    isActionBarSupported -> null
                     else -> R.drawable.ic_tab_system
                 }
             )
-            setCurrentTab(state.provisionType.name)
+            setCurrentTab(
+                when (state.provisionType) {
+                    AppProvisionType.USER -> TAG_USER_APPS
+                    AppProvisionType.SYSTEM -> TAG_SYSTEM_APPS
+                }
+            )
         }
     }
 
@@ -297,36 +304,41 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         startActivity(intent)
     }
 
-    fun refreshAppsLoading() {
-        val visibleWhenLoading = if (state.isAppsLoading) View.VISIBLE else View.GONE
-        val visibleWhenNotLoading = if (state.isAppsLoading) View.GONE else View.VISIBLE
-        loadingLayout.visibility = visibleWhenLoading
-        emptyTipLayout.visibility = visibleWhenNotLoading
-        freshMenuItem?.isEnabled = !state.isAppsLoading
-    }
-
-    fun refreshApps() {
-        adapter.setApps(state.apps ?: listOf())
-    }
-
-    fun refreshAppSortCategory() {
-        when (state.sortCategory) {
+    override fun onAppSortCategoryUpdate(sortCategory: AppSortCategory) {
+        preferences.sortCategory = sortCategory
+        when (sortCategory) {
             AppSortCategory.NAME -> sortNameMenuItem?.isChecked = true
             AppSortCategory.INSTALL_TIME -> sortInstallTimeMenuItem?.isChecked = true
             AppSortCategory.UPDATE_TIME -> sortUpdateTimeMenuItem?.isChecked = true
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun loadApps() {
-        state.loadAppsTask?.cancel(true)
-        LoadAppsTask(application = application, activity = this, state = state).execute()
+    override fun onAppProvisionTypeUpdate(provisionType: AppProvisionType) {
+        preferences.provisionType = provisionType
+    }
+
+    override fun onAppsLoadingUpdate(isAppsLoading: Boolean) {
+        val visibleWhenLoading = if (isAppsLoading) View.VISIBLE else View.GONE
+        val visibleWhenNotLoading = if (isAppsLoading) View.GONE else View.VISIBLE
+        loadingLayout.visibility = visibleWhenLoading
+        emptyTipLayout.visibility = visibleWhenNotLoading
+        freshMenuItem?.isEnabled = !isAppsLoading
+    }
+
+    override fun onAppsUpdate(apps: List<LoadedAppInfo>?) {
+        adapter.setApps(apps ?: listOf())
+    }
+
+    fun loadApps() {
+        state.loadApps(application)
     }
 
     companion object {
+        private const val TAG = "MainActivity"
         private const val DIALOG_ID_ABOUT = 1
         private const val TAG_USER_APPS = "user_apps"
         private const val TAG_SYSTEM_APPS = "system_apps"
-        private const val TAG = "MainActivity"
+        private const val PREFERENCE_KEY_PROVISION_TYPE = "provision_type"
+        private const val PREFERENCE_KEY_SORT_CATEGORY = "sort_category"
     }
 }

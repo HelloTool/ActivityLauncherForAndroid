@@ -7,5 +7,7 @@
     <attr name="textAppearanceListItem" format="dimension"/>
     <attr name="textAppearanceListItemSecondary" format="dimension"/>
     <attr name="menuSearchIcon" format="reference"/>
+    <attr name="menuRefreshIcon" format="reference" />
     <attr name="menuSortIcon" format="reference"/>
+    <attr name="menuAboutIcon" format="reference" />
 </resources>

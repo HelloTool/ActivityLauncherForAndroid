@@ -19,7 +19,6 @@ import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
 import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
-import java.util.Locale
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -75,6 +74,13 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
 
     override fun getFilter(): Filter = activityFilter
 
+    fun destroy() {
+        executor.shutdownNow()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            iconCache?.evictAll()
+            iconCache = null
+        }
+    }
 
     inner class ActivityListViewHolder(root: View) {
         private val icon: ImageView = root.findViewById(android.R.id.icon)
@@ -149,15 +155,9 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
             val filteredList: List<LoadedActivityInfo> = if (constraint.isNullOrEmpty()) {
                 originalActivities
             } else {
-                mutableListOf<LoadedActivityInfo>().apply {
-                    val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim()
-                    for (activity in originalActivities) {
-                        val appName = activity.loadLabel(packageManager).toString().lowercase(Locale.getDefault())
-                        val pkgName = activity.name.lowercase(Locale.getDefault())
-                        if (appName.contains(filterPattern) || pkgName.contains(filterPattern)) {
-                            add(activity)
-                        }
-                    }
+                originalActivities.filter {
+                    it.loadLabel(packageManager).contains(constraint, true) ||
+                            it.name.contains(constraint, true)
                 }
             }
 

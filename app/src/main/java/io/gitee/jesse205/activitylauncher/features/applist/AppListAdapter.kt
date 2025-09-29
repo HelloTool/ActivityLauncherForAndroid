@@ -19,7 +19,6 @@ import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
 import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
-import java.util.Locale
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -46,7 +45,7 @@ class AppListAdapter(context: Context) :
     )
     private var iconCache: LruCache<String, Drawable>? =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-            LruCache(4 * 1024 * 1024)
+            LruCache<String, Drawable>(20)
         } else {
             null
         }
@@ -108,7 +107,7 @@ class AppListAdapter(context: Context) :
 
         fun loadLabel() {
             val info = boundAppInfo ?: return
-            if (info.label != null) {
+            if (info.isLabelLoaded) {
                 title.setTextOrGone(info.label)
                 return
             }
@@ -146,30 +145,28 @@ class AppListAdapter(context: Context) :
 
     fun destroy() {
         executor.shutdownNow()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+            iconCache?.evictAll()
+            iconCache = null
+        }
     }
 
     inner class AppFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val results = FilterResults()
+
 
             val filteredList: List<LoadedAppInfo?> = if (constraint.isNullOrEmpty()) {
                 originalApps
             } else {
-                mutableListOf<LoadedAppInfo>().apply {
-                    val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim()
-                    for (app in originalApps) {
-                        val appName = app.loadLabel(packageManager).toString().lowercase(Locale.getDefault())
-                        val pkgName = app.packageName.lowercase(Locale.getDefault())
-                        if (appName.contains(filterPattern) || pkgName.contains(filterPattern)) {
-                            add(app)
-                        }
-                    }
+                originalApps.filter {
+                    it.loadLabel(packageManager).contains(constraint, true) ||
+                            it.packageName.contains(constraint, true)
                 }
             }
-
-            results.values = filteredList
-            results.count = filteredList.size
-            return results
+            return FilterResults().apply {
+                values = filteredList
+                count = filteredList.size
+            }
         }
 
         protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {

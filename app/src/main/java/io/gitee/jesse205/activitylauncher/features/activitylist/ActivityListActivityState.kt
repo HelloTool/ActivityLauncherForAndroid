@@ -1,23 +1,80 @@
 package io.gitee.jesse205.activitylauncher.features.activitylist
 
-import android.os.AsyncTask
+import android.app.Application
 import android.os.Parcelable
+import io.gitee.jesse205.activitylauncher.core.BaseActivityState
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class ActivityListActivityState(
-    var packageName: String? = null
-) : Parcelable {
-    @IgnoredOnParcel
-    var activities: List<LoadedActivityInfo>? = null
+    private var _packageName: String
+) : BaseActivityState<ActivityListActivityState.ActivityListActivityStateListener>(), Parcelable {
 
     @IgnoredOnParcel
     var loadActivitiesTask: LoadActivitiesTask? = null
 
+    var packageName: String
+        get() = _packageName
+        set(value) {
+            _packageName = value
+            listeners.forEach { it.onPackageNameUpdate(value) }
+        }
+
+    @IgnoredOnParcel
+    var activities: List<LoadedActivityInfo>? = null
+        set(value) {
+            field = value
+            listeners.forEach { it.onActivitiesUpdate(value) }
+        }
+
     @IgnoredOnParcel
     var isActivitiesLoading = false
+        set(value) {
+            field = value
+            listeners.forEach { it.onActivitiesLoadingUpdate(value) }
+        }
 
     val isActivitiesLoadingOrLoaded get() = isActivitiesLoading || activities != null
+
+    fun loadActivities(application: Application) {
+        loadActivitiesTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+        loadActivitiesTask = LoadActivitiesTask(
+            application = application,
+            packageName = packageName,
+            onBeforeLoad = {
+                isActivitiesLoading = true
+                activities = null
+
+            },
+            onLoad = {
+                isActivitiesLoading = false
+                activities = it
+            },
+            onCancel = {
+                isActivitiesLoading = false
+            }
+        )
+        loadActivitiesTask?.execute()
+    }
+
+    override fun destroy() {
+        super.destroy()
+        loadActivitiesTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+    }
+
+    interface ActivityListActivityStateListener {
+        fun onActivitiesUpdate(activities: List<LoadedActivityInfo>?)
+        fun onActivitiesLoadingUpdate(isActivitiesLoading: Boolean)
+        fun onPackageNameUpdate(packageName: String)
+    }
 }

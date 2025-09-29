@@ -4,11 +4,18 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-data class LoadedActivityInfo(
-    var label: CharSequence? = null,
+class LoadedActivityInfo(
     val activityInfo: ActivityInfo,
-    val name: String = activityInfo.name
 ) {
+    val name: String get() = activityInfo.name
+    val exported get() = activityInfo.exported
+
+    var label: CharSequence? = null
+        private set
+
+    val isLabelLoaded get() = label != null
+
+
     fun loadLabel(packageManager: PackageManager): CharSequence {
         return label ?: activityInfo.loadLabel(packageManager).also {
             label = it

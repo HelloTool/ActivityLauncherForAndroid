@@ -11,6 +11,7 @@
         tools:ignore="UnusedAttribute" />
     <item
         android:id="@+id/menu_refresh"
+        android:icon="?menuRefreshIcon"
         android:title="@string/menu_title_refresh" />
     <item
         android:id="@+id/menu_sort"
@@ -34,5 +35,6 @@
     </item>
     <item
         android:id="@+id/menu_about"
+        android:icon="?menuAboutIcon"
         android:title="@string/menu_title_about" />
 </menu>

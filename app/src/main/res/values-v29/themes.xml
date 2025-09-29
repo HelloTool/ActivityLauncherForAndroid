@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="ThemeOverlay.V29.ActivityLauncher" parent="ThemeOverlay.V21.ActivityLauncher">
-        <!-- 启用透明导航栏 -->
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-    </style>
-
-    <style name="ThemeOverlay.ActivityLauncher" parent="ThemeOverlay.V29.ActivityLauncher" />
-</resources>

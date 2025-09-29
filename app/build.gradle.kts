@@ -18,7 +18,7 @@ android {
         minSdk = 9
         targetSdk = 35
         versionCode = 1
-        versionName = "0.1.0"
+        versionName = "0.1.0(内部体验版)"
     }
     val localSigningConfig = if (rootProject.file("keystore.properties").exists()) {
         val keystoreProperties = Properties().apply { load(rootProject.file("keystore.properties").inputStream()) }

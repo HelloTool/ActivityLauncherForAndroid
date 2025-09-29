@@ -14,3 +14,6 @@ val isMenuSearchBarSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONE
 
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
 val isNavigationGestureSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.HONEYCOMB)
+val isActionBarSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB

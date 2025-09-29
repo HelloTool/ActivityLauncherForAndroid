@@ -1,16 +1,16 @@
 package io.gitee.jesse205.activitylauncher.model
 
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-data class LoadedAppInfo(
-    val applicationInfo: ApplicationInfo,
-    val packageInfo: PackageInfo,
-    var label: CharSequence? = null,
-    val packageName: String = applicationInfo.packageName
-) {
+class LoadedAppInfo(val applicationInfo: ApplicationInfo) {
+    val packageName: String get() = applicationInfo.packageName
+
+    var label: CharSequence? = null
+        private set
+    val isLabelLoaded get() = label != null
+
     fun loadLabel(packageManager: PackageManager): CharSequence {
         return label ?: applicationInfo.loadLabel(packageManager).also {
             label = it

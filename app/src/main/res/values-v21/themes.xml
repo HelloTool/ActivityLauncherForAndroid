@@ -3,15 +3,17 @@
 
     <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.DeviceDefault.Settings" />
 
-    <style name="ThemeOverlay.V21.ActivityLauncher" parent="ThemeOverlay.V14.ActivityLauncher">
+    <style name="Base.Theme.V21.ActivityLauncher" parent="Base.Theme.V14.ActivityLauncher">
         <item name="listIconLarge">40dp</item>
         <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeightLarge</item>
         <item name="textAppearanceListItem">?android:textAppearanceListItem</item>
         <item name="textAppearanceListItemSecondary">?android:textAppearanceListItemSecondary</item>
         <item name="menuSearchIcon">@drawable/ic_menu_search_material</item>
+        <item name="menuRefreshIcon">@drawable/ic_menu_refresh_material</item>
         <item name="menuSortIcon">@drawable/ic_menu_sort_material</item>
+        <item name="menuAboutIcon">@drawable/ic_menu_about_material</item>
     </style>
 
-    <style name="ThemeOverlay.ActivityLauncher" parent="ThemeOverlay.V21.ActivityLauncher" />
+    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V21.ActivityLauncher" />
 
 </resources>

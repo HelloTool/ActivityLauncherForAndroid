@@ -1,14 +1,14 @@
 package io.gitee.jesse205.activitylauncher.utils
 
+import android.app.Activity
 import android.content.res.Configuration
 import android.os.Bundle
 
 interface ActivityListener {
-    fun onCreate(savedInstanceState: Bundle?) {}
-    fun onResume() {}
-    fun onPause() {}
-    fun onDestroy() {}
-    fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {}
-
-    fun onConfigurationChanged(newConfig: Configuration) {}
+    fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
+    fun onActivityResume(activity: Activity) {}
+    fun onActivityPause(activity: Activity) {}
+    fun onActivityDestroy(activity: Activity) {}
+    fun onActivityMultiWindowModeChanged(activity: Activity, isInMultiWindowMode: Boolean, newConfig: Configuration) {}
+    fun onActivityConfigurationChanged(activity: Activity, newConfig: Configuration) {}
 }

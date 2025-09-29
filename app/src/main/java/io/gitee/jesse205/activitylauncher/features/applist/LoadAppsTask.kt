@@ -2,75 +2,59 @@ package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.Application
 import android.content.pm.PackageManager
-import io.gitee.jesse205.activitylauncher.core.BaseActivityAsyncTask
+import android.os.AsyncTask
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
+import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.appProvisionType
 
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class LoadAppsTask(
-    val application: Application,
-    activity: MainActivity,
-    state: MainActivityState
-) :
-    BaseActivityAsyncTask<MainActivity, MainActivityState, Void, Void, List<LoadedAppInfo>>(activity, state) {
-    val packageManager: PackageManager = application.packageManager
-    val isCurrentTaskRunning get() = state.loadAppsTask == this
-
+    application: Application,
+    private val sortCategory: AppSortCategory,
+    private val provisionType: AppProvisionType,
+    private val onBeforeLoad: () -> Unit,
+    private val onLoad: (List<LoadedAppInfo>) -> Unit,
+    private val onCancel: () -> Unit,
+) : AsyncTask<Void, Void, List<LoadedAppInfo>>() {
+    private val packageManager: PackageManager = application.packageManager
+    private var isTaskIgnored = false
     override fun doInBackground(vararg params: Void): List<LoadedAppInfo>? {
-        return packageManager.getInstalledPackages(0).filter {
-            it.applicationInfo != null && it.appProvisionType == state.provisionType
-        }.map {
-            LoadedAppInfo(
-                applicationInfo = it.applicationInfo!!,
-                packageInfo = it
-            )
-        }.sortedWith { a, b ->
-            when (state.sortCategory) {
-                AppSortCategory.NAME -> a.loadLabel(packageManager).toString()
-                    .compareTo(b.loadLabel(packageManager).toString(), true)
+        return packageManager.getInstalledPackages(0)
+            .filter { it.applicationInfo != null && it.appProvisionType == provisionType }
+            .map { Pair(it, LoadedAppInfo(applicationInfo = it.applicationInfo!!)) }
+            .sortedWith { a, b ->
+                when (sortCategory) {
+                    AppSortCategory.NAME -> a.second.loadLabel(packageManager).toString()
+                        .compareTo(b.second.loadLabel(packageManager).toString(), true)
 
-                AppSortCategory.INSTALL_TIME -> b.packageInfo.firstInstallTime.compareTo(a.packageInfo.firstInstallTime)
-                AppSortCategory.UPDATE_TIME -> b.packageInfo.lastUpdateTime.compareTo(a.packageInfo.lastUpdateTime)
+                    AppSortCategory.INSTALL_TIME -> b.first.firstInstallTime.compareTo(a.first.firstInstallTime)
+                    AppSortCategory.UPDATE_TIME -> b.first.lastUpdateTime.compareTo(a.first.lastUpdateTime)
+                }
             }
-        }
+            .map { it.second }
     }
 
     override fun onPreExecute() {
-        state.apply {
-            isAppsLoading = true
-            apps = listOf()
-            loadAppsTask = this@LoadAppsTask
-        }
-        weakActivity?.apply {
-            refreshAppsLoading()
-            refreshApps()
+        if (!isTaskIgnored) {
+            onBeforeLoad()
         }
     }
 
     override fun onPostExecute(result: List<LoadedAppInfo>) {
-        if (!isCurrentTaskRunning) return
-
-        state.apply {
-            isAppsLoading = false
-            apps = result
-            loadAppsTask = null
-        }
-        weakActivity?.apply {
-            refreshAppsLoading()
-            refreshApps()
+        if (!isTaskIgnored) {
+            onLoad(result)
         }
     }
 
     override fun onCancelled() {
-        if (!isCurrentTaskRunning) return
-        state.apply {
-            isAppsLoading = false
-            loadAppsTask = null
+        if (!isTaskIgnored) {
+            onCancel()
         }
-        weakActivity?.takeIf { !it.isFinishing }?.apply {
-            refreshAppsLoading()
-        }
+    }
+
+    fun ignore() {
+        isTaskIgnored = true
     }
 
     companion object {

@@ -1,6 +1,8 @@
 package io.gitee.jesse205.activitylauncher.features.applist
 
+import android.app.Application
 import android.os.Parcelable
+import io.gitee.jesse205.activitylauncher.core.BaseActivityState
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
@@ -10,17 +12,82 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class MainActivityState(
-    var sortCategory: AppSortCategory = AppSortCategory.INSTALL_TIME,
-    var provisionType: AppProvisionType = AppProvisionType.USER
-) : Parcelable {
-    @IgnoredOnParcel
-    var apps: List<LoadedAppInfo>? = null
+    private var _sortCategory: AppSortCategory,
+    private var _provisionType: AppProvisionType
+) : BaseActivityState<MainActivityState.MainActivityStateListener>(), Parcelable {
 
     @IgnoredOnParcel
-    var loadAppsTask: LoadAppsTask? = null
+    private var loadAppsTask: LoadAppsTask? = null
+
+    var sortCategory: AppSortCategory
+        get() = _sortCategory
+        set(value) {
+            _sortCategory = value
+            listeners.forEach { it.onAppSortCategoryUpdate(value) }
+        }
+
+    var provisionType: AppProvisionType
+        get() = _provisionType
+        set(value) {
+            _provisionType = value
+            listeners.forEach { it.onAppProvisionTypeUpdate(value) }
+        }
+
+    @IgnoredOnParcel
+    var apps: List<LoadedAppInfo>? = null
+        set(value) {
+            field = value
+            listeners.forEach { it.onAppsUpdate(value) }
+        }
 
     @IgnoredOnParcel
     var isAppsLoading = false
+        set(value) {
+            field = value
+            listeners.forEach { it.onAppsLoadingUpdate(value) }
+        }
 
     val isAppsLoadingOrLoaded get() = isAppsLoading || apps != null
+
+    fun loadApps(application: Application) {
+        loadAppsTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+        loadAppsTask = LoadAppsTask(
+            application = application,
+            sortCategory = sortCategory,
+            provisionType = provisionType,
+            onBeforeLoad = {
+                isAppsLoading = true
+                apps = listOf()
+            },
+            onLoad = {
+                isAppsLoading = false
+                apps = it
+            },
+            onCancel = {
+                isAppsLoading = false
+            }
+        ).apply {
+            execute()
+        }
+    }
+
+    override fun destroy() {
+        super.destroy()
+        loadAppsTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+    }
+
+    interface MainActivityStateListener {
+        fun onAppSortCategoryUpdate(sortCategory: AppSortCategory)
+        fun onAppProvisionTypeUpdate(provisionType: AppProvisionType)
+        fun onAppsLoadingUpdate(isAppsLoading: Boolean)
+        fun onAppsUpdate(apps: List<LoadedAppInfo>?)
+    }
 }
