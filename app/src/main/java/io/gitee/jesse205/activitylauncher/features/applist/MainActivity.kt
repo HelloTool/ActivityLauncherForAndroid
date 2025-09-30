@@ -20,7 +20,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.EditText
-import android.widget.ListView
+import android.widget.GridView
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     override val stateClass = MainActivityState::class.java
     private lateinit var adapter: AppListAdapter
-    private val listView: ListView by lazy { findViewById(android.R.id.list) }
+    private val gridView: GridView by lazy { findViewById(R.id.grid) }
     private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
     private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
     private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
@@ -99,7 +99,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
         }
 
-        setContentView(R.layout.activity_list)
+        setContentView(R.layout.activity_grid)
 
         if (isActionBarSupported) {
             setupActionBar()
@@ -111,7 +111,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
         adapter = AppListAdapter(this@MainActivity)
 
-        listView.apply {
+        gridView.apply {
             emptyView = emptyLayout
             adapter = this@MainActivity.adapter
             onItemClickListener = this@MainActivity

@@ -16,6 +16,7 @@ import android.view.ViewStub
 import android.view.Window
 import android.widget.AdapterView
 import android.widget.EditText
+import android.widget.GridView
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
@@ -34,7 +35,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     ActivityListActivityState.ActivityListActivityStateListener {
     override val stateClass = ActivityListActivityState::class.java
     private lateinit var adapter: ActivityListAdapter
-    private val listView: android.widget.ListView by lazy { findViewById(android.R.id.list) }
+    private val gridView: GridView by lazy { findViewById(R.id.grid) }
     private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
     private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
     private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
@@ -58,7 +59,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
         }
 
-        setContentView(R.layout.activity_list)
+        setContentView(R.layout.activity_grid)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             setupActionBar()
@@ -80,7 +81,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             return
         }
 
-        listView.apply {
+        gridView.apply {
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity

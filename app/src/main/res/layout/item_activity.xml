@@ -22,8 +22,10 @@
     android:orientation="horizontal"
     android:paddingStart="?android:listPreferredItemPaddingStart"
     android:paddingLeft="?listPreferredItemPaddingLeft"
+    android:paddingTop="8dp"
     android:paddingEnd="?android:listPreferredItemPaddingEnd"
-    android:paddingRight="?listPreferredItemPaddingRight">
+    android:paddingRight="?listPreferredItemPaddingRight"
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@android:id/icon"
