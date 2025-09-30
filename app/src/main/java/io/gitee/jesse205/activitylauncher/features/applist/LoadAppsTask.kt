@@ -32,8 +32,7 @@ class LoadAppsTask(
                     AppSortCategory.INSTALL_TIME -> b.first.firstInstallTime.compareTo(a.first.firstInstallTime)
                     AppSortCategory.UPDATE_TIME -> b.first.lastUpdateTime.compareTo(a.first.lastUpdateTime)
                 }
-            }
-            .map { it.second }
+            }.map { it.second }
     }
 
     override fun onPreExecute() {

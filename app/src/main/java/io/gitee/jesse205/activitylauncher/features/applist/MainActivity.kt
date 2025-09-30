@@ -2,23 +2,28 @@ package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.os.FileUriExposedException
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.core.BaseActivity
@@ -174,6 +179,12 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 true
             }
 
+            R.id.menu_launch_uri -> {
+                @Suppress("DEPRECATION")
+                showDialog(DIALOG_ID_LAUNCH_URI)
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -198,7 +209,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
 
-    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "InflateParams")
     override fun onCreateDialog(id: Int, args: Bundle?): Dialog? {
         return when (id) {
             DIALOG_ID_ABOUT -> {
@@ -210,7 +221,33 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                     .create()
             }
 
+            DIALOG_ID_LAUNCH_URI -> {
+                val dialogContent = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
+                AlertDialog.Builder(this)
+                    .setTitle(R.string.menu_title_launch_uri)
+                    .setView(dialogContent)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        dialogContent.findViewById<EditText>(android.R.id.input).let {
+                            launchUri(it.text.toString())
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .create().apply {
+                        setOnShowListener {
+                            val input = dialogContent.findViewById<EditText>(android.R.id.input)
+                            input.requestFocus()
+                            with(getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager) {
+                                showSoftInput(input, 0)
+                            }
+                        }
+                    }
+            }
+
             else -> super.onCreateDialog(id, args)
+        }?.apply {
+            setOnDismissListener {
+                removeDialog(id)
+            }
         }
     }
 
@@ -304,6 +341,27 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         startActivity(intent)
     }
 
+    private fun launchUri(uri: String) {
+        runCatching {
+            startActivity(Intent.parseUri(uri, Intent.URI_INTENT_SCHEME))
+        }.onFailure {
+            Log.w(TAG, "launchUri: launch URI failed", it)
+            if (it is ActivityNotFoundException) {
+                showNoActivityFoundToast()
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && it is FileUriExposedException) {
+                showFileUriNotAllowedToast()
+            }
+        }
+    }
+
+    private fun showNoActivityFoundToast() {
+        Toast.makeText(this, R.string.toast_no_activity_found, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showFileUriNotAllowedToast() {
+        Toast.makeText(this, R.string.toast_file_uri_not_allowed, Toast.LENGTH_SHORT).show()
+    }
+
     override fun onAppSortCategoryUpdate(sortCategory: AppSortCategory) {
         preferences.sortCategory = sortCategory
         when (sortCategory) {
@@ -336,6 +394,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     companion object {
         private const val TAG = "MainActivity"
         private const val DIALOG_ID_ABOUT = 1
+        private const val DIALOG_ID_LAUNCH_URI = 2
         private const val TAG_USER_APPS = "user_apps"
         private const val TAG_SYSTEM_APPS = "system_apps"
         private const val PREFERENCE_KEY_PROVISION_TYPE = "provision_type"

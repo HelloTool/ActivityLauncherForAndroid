@@ -12,6 +12,8 @@
         <item name="menuRefreshIcon">@drawable/ic_menu_refresh_material</item>
         <item name="menuSortIcon">@drawable/ic_menu_sort_material</item>
         <item name="menuAboutIcon">@drawable/ic_menu_about_material</item>
+        <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_material</item>
+        <item name="dialogPreferredPadding">16dp</item>
     </style>
 
     <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V21.ActivityLauncher" />

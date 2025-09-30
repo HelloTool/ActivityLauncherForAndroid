@@ -17,18 +17,18 @@ class LoadActivitiesTask(
     private var isTaskIgnored = false
 
     override fun doInBackground(vararg voids: Void?): List<LoadedActivityInfo> {
-        return runCatching {
+        val activities = runCatching {
             application.packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES).activities
-        }.getOrNull()
-            ?.map {
-                LoadedActivityInfo(activityInfo = it)
+        }.getOrNull() ?: return emptyList()
+
+        return activities.map {
+            LoadedActivityInfo(activityInfo = it)
+        }.sortedWith { a, b ->
+            if (a.activityInfo.exported != b.activityInfo.exported) {
+                return@sortedWith if (a.activityInfo.exported) -1 else 1
             }
-            ?.sortedWith { a, b ->
-                if (a.activityInfo.exported != b.activityInfo.exported) {
-                    return@sortedWith if (a.activityInfo.exported) -1 else 1
-                }
-                a.name.compareTo(b.name, true)
-            } ?: listOf()
+            a.name.compareTo(b.name, true)
+        }
     }
 
     override fun onPreExecute() {

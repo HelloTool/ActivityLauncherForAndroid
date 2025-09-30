@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autofillHints=""
-        android:drawableLeft="?menuSearchIcon"
         android:drawableStart="?menuSearchIcon"
+        android:drawableLeft="?menuSearchIcon"
         android:hint="@string/hint_search_apps"
-        android:inputType="text" />
+        android:inputType="textFilter" />
 </LinearLayout>

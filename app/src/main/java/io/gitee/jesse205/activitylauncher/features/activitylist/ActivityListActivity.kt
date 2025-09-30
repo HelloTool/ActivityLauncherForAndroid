@@ -226,8 +226,8 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         Toast.makeText(this, R.string.toast_app_not_installed, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showActivityNotFoundToast() {
-        Toast.makeText(this, R.string.toast_activity_not_found, Toast.LENGTH_SHORT).show()
+    private fun showNoActivityFoundToast() {
+        Toast.makeText(this, R.string.toast_no_activity_found, Toast.LENGTH_SHORT).show()
     }
 
     private fun showPermissionDeniedToast() {
@@ -243,7 +243,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }.onFailure {
             Log.w(TAG, "launchActivity failed: ", it)
             when (it) {
-                is ActivityNotFoundException -> showActivityNotFoundToast()
+                is ActivityNotFoundException -> showNoActivityFoundToast()
                 is SecurityException -> {
                     if (isPermissionDenialException(it)) {
                         showPermissionDeniedToast()

@@ -10,4 +10,6 @@
     <attr name="menuRefreshIcon" format="reference" />
     <attr name="menuSortIcon" format="reference"/>
     <attr name="menuAboutIcon" format="reference" />
+    <attr name="menuLaunchUriIcon" format="reference" />
+    <attr name="dialogPreferredPadding" format="dimension" />
 </resources>
