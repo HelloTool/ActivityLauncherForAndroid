@@ -1,3 +1,5 @@
+@file:Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+
 package io.gitee.jesse205.activitylauncher.features.activitylist
 
 import android.app.Application
@@ -5,7 +7,6 @@ import android.content.pm.PackageManager
 import android.os.AsyncTask
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 
-@Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
 class LoadActivitiesTask(
     private val application: Application,
     private val packageName: String,

@@ -40,6 +40,7 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
                     setDecorFitsSystemWindowsCompat(false)
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         isNavigationBarContrastEnforced = true
+                        @Suppress("DEPRECATION")
                         navigationBarColor = Color.TRANSPARENT
                     }
                 }
@@ -53,7 +54,7 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putParcelable(KEY_ACTIVITY_STATE, state);
+        outState.putParcelable(KEY_ACTIVITY_STATE, state)
     }
 
     abstract fun onCreateState(): S?

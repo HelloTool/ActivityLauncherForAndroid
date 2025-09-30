@@ -73,7 +73,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             return
         }
         runCatching {
-            packageManager.getApplicationInfo(state.packageName, 0);
+            packageManager.getApplicationInfo(state.packageName, 0)
         }.onFailure {
             showAppNotInstalledToast()
             finish()

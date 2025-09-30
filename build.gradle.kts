@@ -3,3 +3,10 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
 }
+
+tasks {
+    wrapper {
+        distributionType = Wrapper.DistributionType.ALL
+        distributionUrl = "https://mirrors.cloud.tencent.com/gradle/gradle-${gradleVersion}-all.zip"
+    }
+}

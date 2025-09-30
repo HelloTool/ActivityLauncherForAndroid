@@ -14,7 +14,6 @@
         android:icon="?menuRefreshIcon"
         android:title="@string/menu_title_refresh" />
     <item
-        android:id="@+id/menu_sort"
         android:icon="?menuSortIcon"
         android:showAsAction="ifRoom"
         android:title="@string/menu_title_sort"

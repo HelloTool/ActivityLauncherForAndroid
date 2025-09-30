@@ -71,6 +71,7 @@ class MainActivityState(
                 isAppsLoading = false
             }
         ).apply {
+            @Suppress("DEPRECATION")
             execute()
         }
     }

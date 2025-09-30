@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.Application
@@ -8,7 +10,6 @@ import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.appProvisionType
 
-@Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
 class LoadAppsTask(
     application: Application,
     private val sortCategory: AppSortCategory,

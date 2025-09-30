@@ -59,8 +59,10 @@ class ActivityListActivityState(
             onCancel = {
                 isActivitiesLoading = false
             }
-        )
-        loadActivitiesTask?.execute()
+        ).apply {
+            @Suppress("DEPRECATION")
+            execute()
+        }
     }
 
     override fun destroy() {

@@ -6,9 +6,6 @@
     <string name="menu_title_sort_install_time">Install time</string>
     <string name="menu_title_sort_update_time">Update time</string>
     <string name="menu_title_refresh">Refresh</string>
-    <string name="menu_title_show">Show…</string>
-    <string name="menu_title_system_apps">System apps</string>
-    <string name="menu_title_user_apps">User apps</string>
     <string name="menu_title_search">Search</string>
     <string name="title_app_list">Activity List</string>
     <string name="label_getting_apps">Getting applications</string>

@@ -80,7 +80,7 @@ class AppListAdapter(context: Context) :
 
     override fun getFilter(): AppFilter = appFilter
 
-    inner class AppListViewHolder(private val root: View) {
+    inner class AppListViewHolder(root: View) {
         private val icon: ImageView = root.findViewById(android.R.id.icon)
         private val title: TextView = root.findViewById(android.R.id.title)
         private val summary: TextView = root.findViewById(android.R.id.summary)

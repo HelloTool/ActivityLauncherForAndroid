@@ -104,7 +104,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
             iconFuture?.cancel(true)
             if (activityInfo != null) {
                 summary.text = activityInfo.name
-                summary.paint.isStrikeThruText = !activityInfo.activityInfo.exported
+                summary.paint.isStrikeThruText = !activityInfo.exported
                 loadLabel()
                 loadIcon()
             }

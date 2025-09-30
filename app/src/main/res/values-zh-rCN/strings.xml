@@ -6,9 +6,6 @@
     <string name="menu_title_sort_name">名称</string>
     <string name="menu_title_sort_update_time">更新时间</string>
     <string name="menu_title_refresh">刷新</string>
-    <string name="menu_title_show">显示…</string>
-    <string name="menu_title_system_apps">系统应用</string>
-    <string name="menu_title_user_apps">用户应用</string>
     <string name="menu_title_search">搜索</string>
     <string name="title_app_list">Activity 列表</string>
     <string name="label_getting_apps">正在获取应用</string>

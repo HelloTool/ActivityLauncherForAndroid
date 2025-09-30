@@ -16,7 +16,7 @@ android {
     defaultConfig {
         applicationId = "io.gitee.jesse205.activitylauncher"
         minSdk = 9
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0(内部体验版)"
     }
