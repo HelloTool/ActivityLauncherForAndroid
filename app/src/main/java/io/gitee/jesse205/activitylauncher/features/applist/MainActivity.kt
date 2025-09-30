@@ -218,7 +218,11 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                     .setIcon(android.R.drawable.sym_def_app_icon)
                     .setMessage(R.string.message_about)
                     .setPositiveButton(android.R.string.ok, null)
-                    .create()
+                    .create().apply {
+                        setOnDismissListener {
+                            removeDialog(id)
+                        }
+                    }
             }
 
             DIALOG_ID_LAUNCH_URI -> {
@@ -233,21 +237,21 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                     }
                     .setNegativeButton(android.R.string.cancel, null)
                     .create().apply {
+                        val input = dialogContent.findViewById<EditText>(android.R.id.input)
+                        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         setOnShowListener {
-                            val input = dialogContent.findViewById<EditText>(android.R.id.input)
                             input.requestFocus()
-                            with(getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager) {
-                                showSoftInput(input, 0)
-                            }
+                            inputMethodManager.showSoftInput(input, 0)
+
+                        }
+                        setOnDismissListener {
+                            removeDialog(id)
+                            inputMethodManager.hideSoftInputFromWindow(input.windowToken, 0)
                         }
                     }
             }
 
             else -> super.onCreateDialog(id, args)
-        }?.apply {
-            setOnDismissListener {
-                removeDialog(id)
-            }
         }
     }
 
