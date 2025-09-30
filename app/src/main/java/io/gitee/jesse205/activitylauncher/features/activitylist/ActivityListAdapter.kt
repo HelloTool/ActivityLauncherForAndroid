@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
+import io.gitee.jesse205.activitylauncher.utils.scale
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
 import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
 import java.util.concurrent.Future
@@ -139,10 +140,19 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
                 check = { boundActivityInfo == info },
                 task = { info.loadIcon(packageManager) },
                 callback = {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        iconCache?.put(info.name, it)
+                    if (icon.measuredWidth == 0 || icon.measuredHeight == 0 || it == null) {
+                        return@submitWithCheckAndCallback
                     }
-                    icon.setImageDrawable(it)
+                    val finalDrawable: Drawable =
+                        if (it.minimumWidth > icon.measuredWidth || it.minimumHeight > icon.measuredHeight) {
+                            it.scale(icon.context.resources, icon.measuredWidth, icon.measuredHeight)
+                        } else {
+                            it
+                        }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
+                        iconCache?.put(info.name, finalDrawable)
+                    }
+                    icon.setImageDrawable(finalDrawable)
                 },
             )
         }

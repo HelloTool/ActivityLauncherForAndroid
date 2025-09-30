@@ -79,6 +79,8 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             showAppNotInstalledToast()
             finish()
             return
+        }.onSuccess {
+            setTitle(it.loadLabel(packageManager))
         }
 
         gridView.apply {
