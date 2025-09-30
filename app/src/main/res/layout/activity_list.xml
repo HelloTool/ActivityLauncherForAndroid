@@ -4,9 +4,9 @@
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    android:fitsSystemWindows="true"
+    android:clipChildren="@bool/isNotQAndUp"
+    android:clipToPadding="@bool/isNotQAndUp"
+    android:fitsSystemWindows="@bool/isQAndUp"
     android:orientation="vertical">
 
     <ViewStub
@@ -18,13 +18,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipChildren="false">
+        android:clipChildren="@bool/isNotQAndUp">
 
         <ListView
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
             android:fastScrollEnabled="true"
             tools:listitem="@layout/item_app" />
 
