@@ -17,7 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
 import android.view.Window
-import android.view.inputmethod.InputMethodManager
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ListView
@@ -237,16 +237,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                     }
                     .setNegativeButton(android.R.string.cancel, null)
                     .create().apply {
+                        window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
                         val input = dialogContent.findViewById<EditText>(android.R.id.input)
-                        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                         setOnShowListener {
                             input.requestFocus()
-                            inputMethodManager.showSoftInput(input, 0)
-
                         }
                         setOnDismissListener {
                             removeDialog(id)
-                            inputMethodManager.hideSoftInputFromWindow(input.windowToken, 0)
                         }
                     }
             }
