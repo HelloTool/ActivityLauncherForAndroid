@@ -22,11 +22,12 @@
 
         <GridView
             android:id="@+id/grid"
+            style="?gridViewStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:columnWidth="320dp"
             android:fastScrollEnabled="true"
-            android:numColumns="@integer/column_app_item"
-
+            android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
             tools:listitem="@layout/item_app" />
 
@@ -40,8 +41,5 @@
 
             <include layout="@layout/loading_layout" />
         </FrameLayout>
-
     </FrameLayout>
-
-
 </LinearLayout>

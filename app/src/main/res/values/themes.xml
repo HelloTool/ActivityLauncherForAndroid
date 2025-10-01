@@ -15,6 +15,7 @@
         <item name="menuAboutIcon">@drawable/ic_menu_about_holo</item>
         <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_holo</item>
         <item name="dialogPreferredPadding">8dp</item>
+        <item name="gridViewStyle">?android:listViewStyle</item>
     </style>
 
     <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V9.ActivityLauncher" />

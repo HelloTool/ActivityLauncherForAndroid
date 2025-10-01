@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.Holo" />
+
+    <style name="Base.Theme.V11.ActivityLauncher" parent="Base.Theme.V9.ActivityLauncher">
+        <item name="gridViewStyle">?android:gridViewStyle</item>
+    </style>
+
+    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V11.ActivityLauncher" />
+</resources>

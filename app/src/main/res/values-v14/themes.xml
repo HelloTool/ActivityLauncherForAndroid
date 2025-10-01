@@ -3,7 +3,7 @@
 
     <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.DeviceDefault.Light" />
 
-    <style name="Base.Theme.V14.ActivityLauncher" parent="Base.Theme.V9.ActivityLauncher">
+    <style name="Base.Theme.V14.ActivityLauncher" parent="Base.Theme.V11.ActivityLauncher">
         <item name="listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
         <item name="listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
         <!-- Holo 的列表间距很小，所以不重写 listPreferredItemHeightTwoLines 为 listPreferredItemHeightLarge -->

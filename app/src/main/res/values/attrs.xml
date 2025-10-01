@@ -12,4 +12,5 @@
     <attr name="menuAboutIcon" format="reference" />
     <attr name="menuLaunchUriIcon" format="reference" />
     <attr name="dialogPreferredPadding" format="dimension" />
+    <attr name="gridViewStyle" format="dimension" />
 </resources>
