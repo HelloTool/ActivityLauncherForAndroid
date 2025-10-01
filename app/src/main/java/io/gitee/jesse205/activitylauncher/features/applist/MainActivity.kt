@@ -5,12 +5,15 @@ import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.FileUriExposedException
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -115,6 +118,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             emptyView = emptyLayout
             adapter = this@MainActivity.adapter
             onItemClickListener = this@MainActivity
+            registerForContextMenu(this)
         }
 
         findViewById<TextView>(R.id.loading_text).apply {
@@ -129,6 +133,30 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
     }
 
+    override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        if (v != gridView || menuInfo !is AdapterView.AdapterContextMenuInfo) {
+            return
+        }
+        val appInfo = adapter.getItem(menuInfo.position)
+        menu.setHeaderTitle(appInfo.loadLabel(packageManager))
+        menuInflater.inflate(R.menu.menu_main_list_item, menu)
+    }
+
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val menuInfo = item.menuInfo
+        if (menuInfo !is AdapterView.AdapterContextMenuInfo) {
+            return super.onContextItemSelected(item)
+        }
+        val appInfo = adapter.getItem(menuInfo.position)
+        when (item.itemId) {
+            R.id.menu_details -> {
+                openAppDetails(appInfo.packageName)
+            }
+        }
+        return true
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_main, menu)
@@ -353,6 +381,17 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 showFileUriNotAllowedToast()
             }
         }
+    }
+
+    private fun openAppDetails(packageName: String) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.Builder()
+                .scheme("package")
+                .opaquePart(packageName)
+                .build()
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
     }
 
     private fun showNoActivityFoundToast() {

@@ -240,7 +240,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     private fun launchActivity(activityInfo: ActivityInfo) {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.setClassName(activityInfo.packageName, activityInfo.name)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         runCatching {
             startActivity(intent)
         }.onFailure {

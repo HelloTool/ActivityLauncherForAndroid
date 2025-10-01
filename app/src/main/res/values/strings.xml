@@ -23,4 +23,5 @@
     <string name="toast_no_activity_found">No Activity found</string>
     <string name="toast_file_uri_not_allowed">File URI not allowed</string>
     <string name="hint_launch_uri">Enter a URL or other URI</string>
+    <string name="menu_details">Details</string>
 </resources>

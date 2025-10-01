@@ -23,4 +23,5 @@
     <string name="toast_no_activity_found">未找到 Activity</string>
     <string name="toast_file_uri_not_allowed">文件 URI 不被允许</string>
     <string name="hint_launch_uri">输入网址或其他 URI</string>
+    <string name="menu_details">详情</string>
 </resources>

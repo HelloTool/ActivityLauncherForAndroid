@@ -21,7 +21,9 @@ class ActivityLauncherApp : Application() {
         }
         StrictMode.setVmPolicy(policy)
 
-        disableDeathOnFileUriExposure()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            disableDeathOnFileUriExposure()
+        }
     }
 
     companion object {
