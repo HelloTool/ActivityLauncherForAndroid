@@ -151,7 +151,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
         val appInfo = adapter.getItem(menuInfo.position)
         when (item.itemId) {
-            R.id.menu_details -> {
+            R.id.menu_app_details -> {
                 openAppDetails(appInfo.packageName)
             }
         }
@@ -180,6 +180,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_refresh -> {
+                loadApps()
                 true
             }
 

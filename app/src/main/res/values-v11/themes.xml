@@ -5,6 +5,7 @@
 
     <style name="Base.Theme.V11.ActivityLauncher" parent="Base.Theme.V9.ActivityLauncher">
         <item name="gridViewStyle">?android:gridViewStyle</item>
+        <item name="dialogPreferredPadding">12dp</item>
     </style>
 
     <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V11.ActivityLauncher" />

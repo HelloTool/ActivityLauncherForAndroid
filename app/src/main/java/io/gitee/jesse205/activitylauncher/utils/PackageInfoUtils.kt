@@ -4,8 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 
 val PackageInfo.isSystemApp
-    get() =
-        applicationInfo?.flags?.and(ApplicationInfo.FLAG_SYSTEM) != 0
+    get() = applicationInfo?.let { it.flags.and(ApplicationInfo.FLAG_SYSTEM) != 0 } ?: false
 
 
 val PackageInfo.appProvisionType

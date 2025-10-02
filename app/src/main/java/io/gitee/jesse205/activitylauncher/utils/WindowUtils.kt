@@ -5,6 +5,7 @@ import android.view.View
 import android.view.Window
 import androidx.annotation.RequiresApi
 
+@Suppress("DEPRECATION")
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
 fun Window.setDecorFitsSystemWindowsCompat(fitsSystemWindows: Boolean) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
