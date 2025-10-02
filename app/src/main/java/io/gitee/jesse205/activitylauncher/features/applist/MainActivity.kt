@@ -1,5 +1,6 @@
 package io.gitee.jesse205.activitylauncher.features.applist
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
@@ -21,6 +22,7 @@ import android.view.ViewStub
 import android.view.Window
 import android.view.WindowManager
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.EditText
 import android.widget.GridView
 import android.widget.SearchView
@@ -215,44 +217,60 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "InflateParams")
     override fun onCreateDialog(id: Int, args: Bundle?): Dialog? {
         return when (id) {
-            DIALOG_ID_ABOUT -> {
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.app_name)
-                    .setIcon(android.R.drawable.sym_def_app_icon)
-                    .setMessage(R.string.message_about)
-                    .setPositiveButton(android.R.string.ok, null)
-                    .create().apply {
-                        setOnDismissListener {
-                            removeDialog(id)
-                        }
-                    }
-            }
-
-            DIALOG_ID_LAUNCH_URI -> {
-                val dialogContent = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
-                AlertDialog.Builder(this)
-                    .setTitle(R.string.menu_title_launch_uri)
-                    .setView(dialogContent)
-                    .setPositiveButton(android.R.string.ok) { _, _ ->
-                        dialogContent.findViewById<EditText>(android.R.id.input).let {
-                            launchUri(it.text.toString())
-                        }
-                    }
-                    .setNegativeButton(android.R.string.cancel, null)
-                    .create().apply {
-                        window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-                        val input = dialogContent.findViewById<EditText>(android.R.id.input)
-                        setOnShowListener {
-                            input.requestFocus()
-                        }
-                        setOnDismissListener {
-                            removeDialog(id)
-                        }
-                    }
-            }
-
+            DIALOG_ID_ABOUT -> onCreateAboutDialog()
+            DIALOG_ID_LAUNCH_URI -> onCreateLaunchUriDialog()
             else -> super.onCreateDialog(id, args)
         }
+    }
+
+    @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+    override fun onPrepareDialog(id: Int, dialog: Dialog, args: Bundle?) {
+        super.onPrepareDialog(id, dialog, args)
+        dialog.setOnDismissListener {
+            @Suppress("DEPRECATION")
+            removeDialog(id)
+        }
+    }
+
+    private fun onCreateAboutDialog(): AlertDialog {
+        return AlertDialog.Builder(this)
+            .setTitle(R.string.app_name)
+            .setIcon(android.R.drawable.sym_def_app_icon)
+            .setMessage(R.string.message_about)
+            .setPositiveButton(android.R.string.ok, null)
+            .create()
+    }
+
+    @SuppressLint("InflateParams")
+    private fun onCreateLaunchUriDialog(): AlertDialog {
+        val content = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
+        val input = content.findViewById<EditText>(android.R.id.input)
+        return AlertDialog.Builder(this)
+            .setTitle(R.string.menu_title_launch_uri)
+            .setView(content)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                launchUri(input.text.toString())
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .create().apply {
+                window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+                var positiveButton: Button? = getButton(AlertDialog.BUTTON_POSITIVE)
+                input.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(s: Editable?) {}
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                        positiveButton?.isEnabled = !s.isNullOrBlank()
+                    }
+                })
+                setOnShowListener {
+                    input.requestFocus()
+                    positiveButton = getButton(AlertDialog.BUTTON_POSITIVE).apply {
+                        isEnabled = false
+                    }
+                }
+            }
     }
 
     private fun setupSearchLayout() {
@@ -306,16 +324,12 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private fun setupTabs() {
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
-            state.provisionType = when (it) {
-                TAG_USER_APPS -> AppProvisionType.USER
-                TAG_SYSTEM_APPS -> AppProvisionType.SYSTEM
-                else -> throw IllegalArgumentException("Invalid tab tag")
-            }
+            state.provisionType = AppProvisionType.valueOf(it)
             loadApps()
         }.apply {
             setup()
             addTab(
-                tabTag = TAG_USER_APPS,
+                tabTag = AppProvisionType.USER.name,
                 textId = R.string.tab_user_apps,
                 tabIconId = when {
                     isActionBarSupported -> null
@@ -323,19 +337,14 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 }
             )
             addTab(
-                tabTag = TAG_SYSTEM_APPS,
+                tabTag = AppProvisionType.SYSTEM.name,
                 textId = R.string.tab_system_apps,
                 tabIconId = when {
                     isActionBarSupported -> null
                     else -> R.drawable.ic_tab_system
                 }
             )
-            setCurrentTab(
-                when (state.provisionType) {
-                    AppProvisionType.USER -> TAG_USER_APPS
-                    AppProvisionType.SYSTEM -> TAG_SYSTEM_APPS
-                }
-            )
+            setCurrentTab(state.provisionType.name)
         }
     }
 
@@ -410,7 +419,5 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         private const val TAG = "MainActivity"
         private const val DIALOG_ID_ABOUT = 1
         private const val DIALOG_ID_LAUNCH_URI = 2
-        private const val TAG_USER_APPS = "user_apps"
-        private const val TAG_SYSTEM_APPS = "system_apps"
     }
 }
