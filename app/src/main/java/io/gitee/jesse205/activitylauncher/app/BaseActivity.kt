@@ -6,9 +6,9 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
-import io.gitee.jesse205.activitylauncher.utils.EasyGoPatch
 import io.gitee.jesse205.activitylauncher.utils.Listenable
 import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
+import io.gitee.jesse205.activitylauncher.utils.patches.EasyGoPatch
 import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 
 

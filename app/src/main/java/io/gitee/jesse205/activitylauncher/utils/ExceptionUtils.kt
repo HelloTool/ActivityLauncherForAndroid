@@ -2,9 +2,9 @@ package io.gitee.jesse205.activitylauncher.utils
 
 import java.util.Locale
 
-fun isPermissionDenialException(e: Throwable?): Boolean {
-    return if (e is SecurityException) {
-        e.message != null && e.message!!.lowercase(Locale.getDefault()).contains("permission denial")
+fun Throwable?.isPermissionDenial(): Boolean {
+    return if (this is SecurityException) {
+        message != null && message!!.lowercase(Locale.getDefault()).contains("permission denial")
     } else {
         false
     }

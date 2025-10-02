@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package io.gitee.jesse205.activitylauncher.utils.tabs
 
 import android.view.View
@@ -9,7 +11,6 @@ import android.widget.TabHost
 import android.widget.TabWidget
 import io.gitee.jesse205.activitylauncher.R
 
-@Suppress("DEPRECATION")
 class TabHostController(val rootView: View, onSelect: (tabTag: String) -> Unit) : TabController(onSelect) {
     lateinit var tabHost: TabHost
 

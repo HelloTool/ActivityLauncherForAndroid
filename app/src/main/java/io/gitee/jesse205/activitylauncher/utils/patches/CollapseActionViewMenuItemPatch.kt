@@ -1,4 +1,4 @@
-package io.gitee.jesse205.activitylauncher.utils
+package io.gitee.jesse205.activitylauncher.utils.patches
 
 import android.app.ActionBar
 import android.os.Build

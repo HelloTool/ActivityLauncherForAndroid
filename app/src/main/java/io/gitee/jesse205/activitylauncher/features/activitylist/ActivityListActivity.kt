@@ -24,11 +24,11 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
-import io.gitee.jesse205.activitylauncher.utils.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
-import io.gitee.jesse205.activitylauncher.utils.isPermissionDenialException
+import io.gitee.jesse205.activitylauncher.utils.isPermissionDenial
+import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
@@ -248,7 +248,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             when (it) {
                 is ActivityNotFoundException -> showNoActivityFoundToast()
                 is SecurityException -> {
-                    if (isPermissionDenialException(it)) {
+                    if (it.isPermissionDenial()) {
                         showPermissionDeniedToast()
                     }
                 }

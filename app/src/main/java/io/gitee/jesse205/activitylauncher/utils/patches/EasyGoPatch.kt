@@ -1,10 +1,12 @@
-package io.gitee.jesse205.activitylauncher.utils
+package io.gitee.jesse205.activitylauncher.utils.patches
 
 import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
+import io.gitee.jesse205.activitylauncher.utils.ActivityListener
+import io.gitee.jesse205.activitylauncher.utils.screenLayoutSize
 import java.util.WeakHashMap
 
 /**

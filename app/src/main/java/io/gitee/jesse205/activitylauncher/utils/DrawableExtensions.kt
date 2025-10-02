@@ -10,11 +10,10 @@ fun Drawable.scale(resources: Resources, destWidth: Int, destHeight: Int): Drawa
     return if (this is BitmapDrawable) {
         Bitmap.createScaledBitmap(this.bitmap, destWidth, destHeight, true)
     } else {
-        Bitmap.createBitmap(destWidth, destHeight, Bitmap.Config.ARGB_8888)
-            .apply {
-                val canvas = Canvas(this)
-                this@scale.setBounds(0, 0, canvas.width, canvas.height)
-                this@scale.draw(canvas)
-            }
+        Bitmap.createBitmap(destWidth, destHeight, Bitmap.Config.ARGB_8888).also {
+            val canvas = Canvas(it)
+            setBounds(0, 0, canvas.width, canvas.height)
+            draw(canvas)
+        }
     }.let { BitmapDrawable(resources, it) }
 }
