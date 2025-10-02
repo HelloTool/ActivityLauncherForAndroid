@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -58,32 +57,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     override val enableEdgeToEdge: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
-    private val preferences: SharedPreferences by lazy { getPreferences(MODE_PRIVATE) }
-    private var SharedPreferences.provisionType: AppProvisionType?
-        get() = getString(PREFERENCE_KEY_PROVISION_TYPE, null)
-            ?.let {
-                runCatching {
-                    AppProvisionType.valueOf(it)
-                }.getOrNull()
-            }
-        set(value) {
-            edit()
-                .putString(PREFERENCE_KEY_PROVISION_TYPE, value?.name)
-                .apply()
-        }
-
-    private var SharedPreferences.sortCategory: AppSortCategory?
-        get() = getString(PREFERENCE_KEY_SORT_CATEGORY, null)
-            ?.let {
-                runCatching {
-                    AppSortCategory.valueOf(it)
-                }.getOrNull()
-            }
-        set(value) {
-            edit()
-                .putString(PREFERENCE_KEY_SORT_CATEGORY, value?.name)
-                .apply()
-        }
+    private val preferences: MainActivityPreferences by lazy { MainActivityPreferences(this) }
 
     override fun onCreateState(): MainActivityState {
         return MainActivityState(
@@ -438,7 +412,5 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         private const val DIALOG_ID_LAUNCH_URI = 2
         private const val TAG_USER_APPS = "user_apps"
         private const val TAG_SYSTEM_APPS = "system_apps"
-        private const val PREFERENCE_KEY_PROVISION_TYPE = "provision_type"
-        private const val PREFERENCE_KEY_SORT_CATEGORY = "sort_category"
     }
 }
