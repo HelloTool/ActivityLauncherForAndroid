@@ -6,7 +6,7 @@
         android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="PackageVisibilityPolicy,QueryAllPackagesPermission" />
     <application
-        android:name=".core.ActivityLauncherApp"
+        android:name=".app.ActivityLauncherApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"

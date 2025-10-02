@@ -2,7 +2,7 @@ package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.Application
 import android.os.Parcelable
-import io.gitee.jesse205.activitylauncher.core.BaseActivityState
+import io.gitee.jesse205.activitylauncher.app.BaseActivityState
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory

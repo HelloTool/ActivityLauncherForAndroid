@@ -29,7 +29,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
-import io.gitee.jesse205.activitylauncher.core.BaseActivity
+import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType

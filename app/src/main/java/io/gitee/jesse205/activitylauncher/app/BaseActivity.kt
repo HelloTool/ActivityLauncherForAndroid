@@ -1,4 +1,4 @@
-package io.gitee.jesse205.activitylauncher.core
+package io.gitee.jesse205.activitylauncher.app
 
 import android.app.Activity
 import android.content.res.Configuration
