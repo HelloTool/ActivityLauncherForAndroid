@@ -21,28 +21,28 @@ class MainActivityState(
 
     var sortCategory: AppSortCategory
         get() = _sortCategory
-        set(value) {
+        private set(value) {
             _sortCategory = value
             listeners.forEach { it.onAppSortCategoryUpdate(value) }
         }
 
     var provisionType: AppProvisionType
         get() = _provisionType
-        set(value) {
+        private set(value) {
             _provisionType = value
             listeners.forEach { it.onAppProvisionTypeUpdate(value) }
         }
 
     @IgnoredOnParcel
     var apps: List<LoadedAppInfo>? = null
-        set(value) {
+        private set(value) {
             field = value
             listeners.forEach { it.onAppsUpdate(value) }
         }
 
     @IgnoredOnParcel
     var isAppsLoading = false
-        set(value) {
+        private set(value) {
             field = value
             listeners.forEach { it.onAppsLoadingUpdate(value) }
         }
@@ -78,6 +78,11 @@ class MainActivityState(
 
     fun changeAppSortCategory(application: Application, sortCategory: AppSortCategory) {
         this.sortCategory = sortCategory
+        loadApps(application)
+    }
+
+    fun changeAppProvisionType(application: Application, provisionType: AppProvisionType) {
+        this.provisionType = provisionType
         loadApps(application)
     }
 

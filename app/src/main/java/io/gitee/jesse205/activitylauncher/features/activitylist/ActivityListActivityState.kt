@@ -17,21 +17,21 @@ class ActivityListActivityState(
 
     var packageName: String
         get() = _packageName
-        set(value) {
+        private set(value) {
             _packageName = value
             listeners.forEach { it.onPackageNameUpdate(value) }
         }
 
     @IgnoredOnParcel
     var activities: List<LoadedActivityInfo>? = null
-        set(value) {
+        private set(value) {
             field = value
             listeners.forEach { it.onActivitiesUpdate(value) }
         }
 
     @IgnoredOnParcel
     var isActivitiesLoading = false
-        set(value) {
+        private set(value) {
             field = value
             listeners.forEach { it.onActivitiesLoadingUpdate(value) }
         }

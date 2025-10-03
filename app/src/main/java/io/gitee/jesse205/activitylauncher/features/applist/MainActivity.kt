@@ -310,8 +310,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private fun setupTabs() {
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
-            state.provisionType = AppProvisionType.valueOf(it)
-            loadApps()
+            state.changeAppProvisionType(application, AppProvisionType.valueOf(it))
         }.apply {
             setup()
             addTab(
