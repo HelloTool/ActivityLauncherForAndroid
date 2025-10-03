@@ -36,6 +36,7 @@ import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
+import io.gitee.jesse205.activitylauncher.utils.copyText
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
@@ -117,6 +118,9 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         val appInfo = adapter.getItem(menuInfo.position)
         menu.setHeaderTitle(appInfo.loadLabel(packageManager))
         menuInflater.inflate(R.menu.menu_main_list_item, menu)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            menu.setGroupDividerEnabled(true)
+        }
     }
 
 
@@ -129,6 +133,16 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         when (item.itemId) {
             R.id.menu_app_details -> {
                 openAppDetails(appInfo.packageName)
+            }
+
+            R.id.menu_copy_app_name -> {
+                copyAppName(appInfo)
+                true
+            }
+
+            R.id.menu_copy_package_name -> {
+                copyPackageName(appInfo)
+                true
             }
         }
         return true
@@ -192,6 +206,14 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun copyPackageName(item: LoadedAppInfo) {
+        copyText(getString(R.string.label_package_name), item.packageName)
+    }
+
+    private fun copyAppName(item: LoadedAppInfo) {
+        copyText(getString(R.string.label_app_name), item.loadLabel(packageManager))
     }
 
 

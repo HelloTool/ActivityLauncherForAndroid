@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_app_details"
-        android:title="@string/menu_app_details" />
+    <group android:id="@+id/menu_group_copy">
+        <item
+            android:id="@+id/menu_copy_app_name"
+            android:title="@string/menu_copy_app_name" />
+        <item
+            android:id="@+id/menu_copy_package_name"
+            android:title="@string/menu_copy_package_name" />
+    </group>
+    <group android:id="@+id/menu_group_details">
+        <item
+            android:id="@+id/menu_app_details"
+            android:title="@string/menu_app_details" />
+    </group>
 </menu>

@@ -24,4 +24,12 @@
     <string name="toast_file_uri_not_allowed">File URI not allowed</string>
     <string name="hint_launch_uri">Enter a URL or other URI</string>
     <string name="menu_app_details">App details</string>
+    <string name="label_class_name">Class name</string>
+    <string name="label_display_name">Display name</string>
+    <string name="menu_copy_class_name">Copy class name</string>
+    <string name="menu_copy_label">Copy label</string>
+    <string name="menu_copy_package_name">Copy package name</string>
+    <string name="menu_copy_app_name">Copy app name</string>
+    <string name="label_app_name">App name</string>
+    <string name="label_package_name">Package name</string>
 </resources>

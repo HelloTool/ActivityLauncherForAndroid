@@ -24,4 +24,12 @@
     <string name="toast_file_uri_not_allowed">文件 URI 不被允许</string>
     <string name="hint_launch_uri">输入网址或其他 URI</string>
     <string name="menu_app_details">应用详情</string>
+    <string name="label_class_name">类名</string>
+    <string name="label_display_name">显示名</string>
+    <string name="menu_copy_class_name">复制类名</string>
+    <string name="menu_copy_label">复制标签</string>
+    <string name="menu_copy_package_name">复制包名</string>
+    <string name="menu_copy_app_name">复制应用名</string>
+    <string name="label_app_name">应用名</string>
+    <string name="label_package_name">包名</string>
 </resources>
