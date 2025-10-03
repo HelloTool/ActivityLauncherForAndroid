@@ -27,7 +27,6 @@ import android.widget.EditText
 import android.widget.GridView
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
@@ -40,6 +39,7 @@ import io.gitee.jesse205.activitylauncher.utils.copyText
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
@@ -346,9 +346,9 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }.onFailure {
             Log.w(TAG, "launchUri: launch URI failed", it)
             if (it is ActivityNotFoundException) {
-                showNoActivityFoundToast()
+                showToast(R.string.toast_no_activity_found)
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && it is FileUriExposedException) {
-                showFileUriNotAllowedToast()
+                showToast(R.string.toast_file_uri_not_allowed)
             }
         }
     }
@@ -362,14 +362,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
-    }
-
-    private fun showNoActivityFoundToast() {
-        Toast.makeText(this, R.string.toast_no_activity_found, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showFileUriNotAllowedToast() {
-        Toast.makeText(this, R.string.toast_file_uri_not_allowed, Toast.LENGTH_SHORT).show()
     }
 
     override fun onAppSortCategoryUpdate(sortCategory: AppSortCategory) {
