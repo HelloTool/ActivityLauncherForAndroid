@@ -11,8 +11,8 @@
     <string name="label_getting_apps">Getting applications</string>
     <string name="label_getting_activities">Getting activities</string>
     <string name="message_about" translatable="false">Copyright (c) 2025 Jesse205</string>
-    <string name="hint_search_apps">Search app name or package name…</string>
-    <string name="hint_search_activities">Search activity label or name…</string>
+    <string name="hint_search_apps">Search for app names or package names…</string>
+    <string name="hint_search_activities">Search for Activity labels or names…</string>
     <string name="toast_app_not_installed">Application not installed.</string>
     <string name="tab_user_apps">User apps</string>
     <string name="tab_system_apps">System apps</string>

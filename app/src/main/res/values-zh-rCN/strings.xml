@@ -10,7 +10,7 @@
     <string name="title_app_list">Activity 列表</string>
     <string name="label_getting_apps">正在获取应用</string>
     <string name="hint_search_apps">搜索应用名或包名…</string>
-    <string name="hint_search_activities">搜索 Activity 标签或者名称</string>
+    <string name="hint_search_activities">搜索 Activity 标签或类名…</string>
     <string name="toast_app_not_installed">未安装该应用。</string>
     <string name="tab_user_apps">用户应用</string>
     <string name="tab_system_apps">系统应用</string>
