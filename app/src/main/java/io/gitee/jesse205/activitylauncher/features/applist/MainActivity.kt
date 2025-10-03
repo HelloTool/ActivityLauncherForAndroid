@@ -131,19 +131,10 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
         val appInfo = adapter.getItem(menuInfo.position)
         when (item.itemId) {
-            R.id.menu_app_details -> {
-                openAppDetails(appInfo.packageName)
-            }
-
-            R.id.menu_copy_app_name -> {
-                copyAppName(appInfo)
-                true
-            }
-
-            R.id.menu_copy_package_name -> {
-                copyPackageName(appInfo)
-                true
-            }
+            R.id.menu_app_details -> openAppDetails(appInfo.packageName)
+            R.id.menu_copy_app_name -> copyAppName(appInfo)
+            R.id.menu_copy_package_name -> copyPackageName(appInfo)
+            else -> return super.onContextItemSelected(item)
         }
         return true
     }
@@ -168,44 +159,17 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_refresh -> {
-                loadApps()
-                true
-            }
-
-            R.id.menu_about -> {
-                @Suppress("DEPRECATION")
-                showDialog(DIALOG_ID_ABOUT)
-                true
-            }
-
-            R.id.menu_sort_name -> {
-                state.sortCategory = AppSortCategory.NAME
-                loadApps()
-                true
-            }
-
-            R.id.menu_sort_install_time -> {
-                state.sortCategory = AppSortCategory.INSTALL_TIME
-                loadApps()
-                true
-            }
-
-            R.id.menu_sort_update_time -> {
-                state.sortCategory = AppSortCategory.UPDATE_TIME
-                loadApps()
-                true
-            }
-
-            R.id.menu_launch_uri -> {
-                @Suppress("DEPRECATION")
-                showDialog(DIALOG_ID_LAUNCH_URI)
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
+        @Suppress("DEPRECATION")
+        when (item.itemId) {
+            R.id.menu_refresh -> loadApps()
+            R.id.menu_about -> showDialog(DIALOG_ID_ABOUT)
+            R.id.menu_sort_name -> changeAppSortCategory(AppSortCategory.NAME)
+            R.id.menu_sort_install_time -> changeAppSortCategory(AppSortCategory.INSTALL_TIME)
+            R.id.menu_sort_update_time -> changeAppSortCategory(AppSortCategory.UPDATE_TIME)
+            R.id.menu_launch_uri -> showDialog(DIALOG_ID_LAUNCH_URI)
+            else -> return super.onOptionsItemSelected(item)
         }
+        return true
     }
 
     private fun copyPackageName(item: LoadedAppInfo) {
@@ -433,8 +397,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         adapter.setApps(apps ?: listOf())
     }
 
-    fun loadApps() {
+    private fun loadApps() {
         state.loadApps(application)
+    }
+
+    private fun changeAppSortCategory(sortCategory: AppSortCategory) {
+        state.sortCategory = sortCategory
+        loadApps()
     }
 
     companion object {
