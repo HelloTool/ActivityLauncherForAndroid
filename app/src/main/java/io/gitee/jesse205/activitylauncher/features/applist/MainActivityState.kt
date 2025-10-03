@@ -76,6 +76,11 @@ class MainActivityState(
         }
     }
 
+    fun changeAppSortCategory(application: Application, sortCategory: AppSortCategory) {
+        this.sortCategory = sortCategory
+        loadApps(application)
+    }
+
     override fun destroy() {
         super.destroy()
         loadAppsTask?.apply {

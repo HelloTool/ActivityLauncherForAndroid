@@ -402,8 +402,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     private fun changeAppSortCategory(sortCategory: AppSortCategory) {
-        state.sortCategory = sortCategory
-        loadApps()
+        state.changeAppSortCategory(application, sortCategory)
     }
 
     companion object {
