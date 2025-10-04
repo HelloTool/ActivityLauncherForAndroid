@@ -17,7 +17,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
-import io.gitee.jesse205.activitylauncher.utils.scale
+import io.gitee.jesse205.activitylauncher.utils.getDimensionPixelSize
+import io.gitee.jesse205.activitylauncher.utils.scaleToFit
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
 import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
 import java.util.concurrent.Future
@@ -31,8 +32,11 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var originalActivities: List<LoadedActivityInfo> = listOf()
     private var filteredActivities: List<LoadedActivityInfo> = originalActivities
+
+    private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val activityFilter by lazy { ActivityFilter() }
     private var lastFilterConstraint: CharSequence? = null
+
     private val executor = ThreadPoolExecutor(
         8,
         16,
@@ -138,21 +142,12 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
             iconFuture = executor.submitWithCheckAndCallback(
                 handler = handler,
                 check = { boundActivityInfo == info },
-                task = { info.loadIcon(packageManager) },
+                task = { info.loadIcon(packageManager)?.scaleToFit(iconSize, iconSize) },
                 callback = {
-                    if (icon.measuredWidth == 0 || icon.measuredHeight == 0 || it == null) {
-                        return@submitWithCheckAndCallback
-                    }
-                    val finalDrawable: Drawable =
-                        if (it.minimumWidth > icon.measuredWidth || it.minimumHeight > icon.measuredHeight) {
-                            it.scale(icon.context.resources, icon.measuredWidth, icon.measuredHeight)
-                        } else {
-                            it
-                        }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        iconCache?.put(info.name, finalDrawable)
+                        iconCache?.put(info.name, it)
                     }
-                    icon.setImageDrawable(finalDrawable)
+                    icon.setImageDrawable(it)
                 },
             )
         }

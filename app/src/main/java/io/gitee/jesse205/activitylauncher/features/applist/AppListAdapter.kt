@@ -17,7 +17,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
-import io.gitee.jesse205.activitylauncher.utils.scale
+import io.gitee.jesse205.activitylauncher.utils.getDimensionPixelSize
+import io.gitee.jesse205.activitylauncher.utils.scaleToFit
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
 import io.gitee.jesse205.activitylauncher.utils.submitWithCheckAndCallback
 import java.util.concurrent.Future
@@ -34,6 +35,7 @@ class AppListAdapter(context: Context) :
     private var originalApps: List<LoadedAppInfo> = listOf()
     private var filteredApps: List<LoadedAppInfo> = originalApps
 
+    private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val appFilter by lazy { AppFilter() }
     private var lastFilterConstraint: CharSequence? = null
 
@@ -130,25 +132,17 @@ class AppListAdapter(context: Context) :
                 }
             }
 
+
+
             iconFuture = executor.submitWithCheckAndCallback(
                 handler = handler,
                 check = { boundAppInfo == info },
-                task = { info.loadIcon(packageManager) },
+                task = { info.loadIcon(packageManager)?.scaleToFit(iconSize, iconSize) },
                 callback = {
-                    if (icon.measuredWidth == 0 || icon.measuredHeight == 0 || it == null) {
-                        return@submitWithCheckAndCallback
-                    }
-                    val finalDrawable: Drawable =
-                        if (it.minimumWidth > icon.measuredWidth || it.minimumHeight > icon.measuredHeight) {
-                            it.scale(icon.context.resources, icon.measuredWidth, icon.measuredHeight)
-                        } else {
-                            it
-                        }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1) {
-                        iconCache?.put(info.packageName, finalDrawable)
+                        iconCache?.put(info.packageName, it)
                     }
-                    icon.setImageDrawable(finalDrawable)
-
+                    icon.setImageDrawable(it)
                 },
             )
         }
