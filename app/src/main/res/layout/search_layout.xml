@@ -16,5 +16,6 @@
         android:drawableStart="?menuSearchIcon"
         android:drawableLeft="?menuSearchIcon"
         android:hint="@string/hint_search_apps"
+        android:imeOptions="actionSearch"
         android:inputType="textFilter" />
 </LinearLayout>
