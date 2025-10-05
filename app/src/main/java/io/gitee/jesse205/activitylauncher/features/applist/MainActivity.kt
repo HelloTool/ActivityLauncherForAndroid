@@ -206,8 +206,8 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "InflateParams")
     override fun onCreateDialog(id: Int, args: Bundle?): Dialog? {
         return when (id) {
-            DIALOG_ID_ABOUT -> onCreateAboutDialog()
-            DIALOG_ID_LAUNCH_URI -> onCreateLaunchUriDialog()
+            DIALOG_ID_ABOUT -> createAboutDialog()
+            DIALOG_ID_LAUNCH_URI -> createLaunchUriDialog()
             else -> super.onCreateDialog(id, args)
         }
     }
@@ -221,7 +221,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
     }
 
-    private fun onCreateAboutDialog(): AlertDialog {
+    private fun createAboutDialog(): AlertDialog {
         return AlertDialog.Builder(this)
             .setTitle(R.string.app_name)
             .setIcon(android.R.drawable.sym_def_app_icon)
@@ -231,7 +231,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     @SuppressLint("InflateParams")
-    private fun onCreateLaunchUriDialog(): AlertDialog {
+    private fun createLaunchUriDialog(): AlertDialog {
         val content = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
         val input = content.findViewById<EditText>(android.R.id.input)
         return AlertDialog.Builder(this)
