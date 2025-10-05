@@ -10,6 +10,10 @@ import io.gitee.jesse205.activitylauncher.utils.disableDeathOnFileUriExposure
 class ActivityLauncherApp : Application() {
     override fun onCreate() {
         super.onCreate()
+        setupStrictMode()
+    }
+
+    private fun setupStrictMode() {
         val policy = VmPolicy.Builder().let {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 it.permitUnsafeIntentLaunch()
