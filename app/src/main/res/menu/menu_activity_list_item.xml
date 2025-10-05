@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/menu_group_copy_content">
+        <item
+            android:id="@+id/menu_copy_display_name"
+            android:title="Copy display name" />
+        <item
+            android:id="@+id/menu_copy_class_name"
+            android:title="Copy class name" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/menu_copy_intent_uri"
+            android:title="Copy intent uri" />
+    </group>
+</menu>

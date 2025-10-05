@@ -17,3 +17,15 @@ val isNavigationGestureSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.
 
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.HONEYCOMB)
 val isActionBarSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.HONEYCOMB)
+val isHoloThemeSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB
+
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+val isDeviceThemeSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH
+
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.LOLLIPOP)
+val isDeviceSettingsThemeSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+
+
+val isGingerbreadThemeNoBugs = !isNavigationGestureSupported && Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP

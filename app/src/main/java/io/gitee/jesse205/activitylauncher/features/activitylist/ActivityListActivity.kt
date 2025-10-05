@@ -25,6 +25,7 @@ import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
+import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isPermissionDenial
@@ -61,11 +62,15 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
 
         setContentView(R.layout.activity_grid)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        val isActionBarInitialized = if (isActionBarSupported) {
             setupActionBar()
         } else {
+            false
+        }
+        if (!isActionBarInitialized) {
             setupSearchLayout()
         }
+
         adapter = ActivityListAdapter(this)
 
         if (state.packageName.isBlank()) {
@@ -148,8 +153,8 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     }
 
     @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
-    private fun setupActionBar() {
-        getActionBar()?.apply {
+    private fun setupActionBar(): Boolean {
+        val actionBar = getActionBar()?.apply {
             setDisplayHomeAsUpEnabled(true)
             if (!isMenuSearchBarSupported) {
                 setDisplayShowTitleEnabled(resources.configuration.screenWidthDp >= 600)
@@ -161,6 +166,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
                 setupSearchBar()
             }
         }
+        return actionBar != null
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

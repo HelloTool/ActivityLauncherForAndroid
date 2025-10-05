@@ -3,7 +3,7 @@
 
     <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.DeviceDefault.Settings" />
 
-    <style name="Base.Theme.V21.ActivityLauncher" parent="Base.Theme.V14.ActivityLauncher">
+    <style name="Base.ThemeOverlay.V21.ActivityLauncher.Material" parent="Base.ThemeOverlay.ActivityLauncher.Holo">
         <item name="listIconLarge">40dp</item>
         <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeightLarge</item>
         <item name="textAppearanceListItem">?android:textAppearanceListItem</item>
@@ -14,8 +14,22 @@
         <item name="menuAboutIcon">@drawable/ic_menu_about_material</item>
         <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_material</item>
         <item name="dialogPreferredPadding">16dp</item>
+        <item name="gridViewStyle">?android:gridViewStyle</item>
     </style>
 
-    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V21.ActivityLauncher" />
+    <style name="Base.ThemeOverlay.ActivityLauncher.Material" parent="Base.ThemeOverlay.V21.ActivityLauncher.Material" />
 
+    <style name="ThemeOverlay.ActivityLauncher.Material.Light" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Material.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Material.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Settings" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
 </resources>

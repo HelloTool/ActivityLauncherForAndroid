@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Base.Theme.V22.ActivityLauncher" parent="Base.Theme.V21.ActivityLauncher">
+    <style name="Base.ThemeOverlay.V22.ActivityLauncher.Material" parent="Base.ThemeOverlay.V21.ActivityLauncher.Material">
         <item name="dialogPreferredPadding">?android:dialogPreferredPadding</item>
     </style>
 
-    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V22.ActivityLauncher" />
+    <style name="Base.ThemeOverlay.ActivityLauncher.Material" parent="Base.ThemeOverlay.V22.ActivityLauncher.Material" />
 </resources>

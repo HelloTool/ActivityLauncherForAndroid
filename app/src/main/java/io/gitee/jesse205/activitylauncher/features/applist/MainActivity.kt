@@ -36,6 +36,7 @@ import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
 import io.gitee.jesse205.activitylauncher.utils.copyText
+import io.gitee.jesse205.activitylauncher.utils.getBoolean
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
@@ -81,11 +82,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
         setContentView(R.layout.activity_grid)
 
-        if (isActionBarSupported) {
+        val isActionBarInitialized = if (isActionBarSupported) {
             setupActionBar()
+        } else {
+            false
         }
         setupTabs()
-        if (!isActionBarSupported) {
+        if (!isActionBarSupported || !isActionBarInitialized) {
             setupSearchLayout()
         }
 
@@ -312,22 +315,17 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
             state.changeAppProvisionType(application, AppProvisionType.valueOf(it))
         }.apply {
+            val isShowTabIcons = theme.getBoolean(R.attr.showTabIcons, false)
             setup()
             addTab(
                 tabTag = AppProvisionType.USER.name,
                 textId = R.string.tab_user_apps,
-                tabIconId = when {
-                    isActionBarSupported -> null
-                    else -> R.drawable.ic_tab_person
-                }
+                tabIconId = if (isShowTabIcons) R.drawable.ic_tab_person else null
             )
             addTab(
                 tabTag = AppProvisionType.SYSTEM.name,
                 textId = R.string.tab_system_apps,
-                tabIconId = when {
-                    isActionBarSupported -> null
-                    else -> R.drawable.ic_tab_system
-                }
+                tabIconId = if (isShowTabIcons) R.drawable.ic_tab_system else null
             )
             setCurrentTab(state.provisionType.name)
         }

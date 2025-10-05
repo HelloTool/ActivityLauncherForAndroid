@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.DeviceDefault.Light" />
+    <style name="Platform.Theme.ActivityLauncher" parent="android:Theme.DeviceDefault" />
 
-    <style name="Base.Theme.V14.ActivityLauncher" parent="Base.Theme.V11.ActivityLauncher">
+    <style name="Base.ThemeOverlay.V14.ActivityLauncher.Holo" parent="Base.ThemeOverlay.V11.ActivityLauncher.Holo">
         <item name="listPreferredItemPaddingLeft">?android:listPreferredItemPaddingLeft</item>
         <item name="listPreferredItemPaddingRight">?android:listPreferredItemPaddingRight</item>
         <!-- Holo 的列表间距很小，所以不重写 listPreferredItemHeightTwoLines 为 listPreferredItemHeightLarge -->
         <!-- Holo 的textAppearanceListItem和textAppearanceListItemSecondary不代表列表项标题和说明，所以不重写这两项 -->
     </style>
 
-    <style name="Base.Theme.ActivityLauncher" parent="Base.Theme.V14.ActivityLauncher" />
+    <style name="Base.ThemeOverlay.ActivityLauncher.Holo" parent="Base.ThemeOverlay.V14.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
 </resources>
