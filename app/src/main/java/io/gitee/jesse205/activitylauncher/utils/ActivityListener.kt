@@ -5,8 +5,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 
 interface ActivityListener {
-    fun onPostActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
+    fun onActivityPreCreate(activity: Activity, savedInstanceState: Bundle?) {}
     fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
+    fun onActivityPostCreate(activity: Activity, savedInstanceState: Bundle?) {}
     fun onActivityResume(activity: Activity) {}
     fun onActivityPause(activity: Activity) {}
     fun onActivityDestroy(activity: Activity) {}

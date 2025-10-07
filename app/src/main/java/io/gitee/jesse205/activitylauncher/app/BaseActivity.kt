@@ -4,13 +4,14 @@ import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import io.gitee.jesse205.activitylauncher.theme.AppTheme
 import io.gitee.jesse205.activitylauncher.theme.AppThemeSupport
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
 import io.gitee.jesse205.activitylauncher.utils.enableEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
+import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.patches.EasyGoPatch
+import io.gitee.jesse205.activitylauncher.utils.patches.SystemBarAppearancePatch
 
 
 abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<ActivityListener> {
@@ -18,26 +19,34 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
     private var _state: S? = null
     protected val state: S get() = _state!!
     private var listeners: MutableList<ActivityListener> = mutableListOf()
-    protected open val enableEdgeToEdge = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    protected lateinit var appTheme: AppTheme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         addListener(AppThemeSupport)
-        listeners.forEach { it.onPostActivityCreate(this, savedInstanceState) }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            addListener(EasyGoPatch)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            addListener(SystemBarAppearancePatch)
+        }
+
+        listeners.forEach { it.onActivityPreCreate(this, savedInstanceState) }
         super.onCreate(savedInstanceState)
         _state =
             stateClass.cast(lastNonConfigurationInstance)
                 ?: savedInstanceState?.getParcelableCompat(KEY_ACTIVITY_STATE, stateClass)
                         ?: onCreateState()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            addListener(EasyGoPatch())
-        }
 
-        if (enableEdgeToEdge) {
+
+        if (isNavigationGestureSupported) {
             enableEdgeToEdge()
         }
 
         listeners.forEach { it.onActivityCreate(this, savedInstanceState) }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        listeners.forEach { it.onActivityPostCreate(this, savedInstanceState) }
     }
 
     override fun onRetainNonConfigurationInstance() = state

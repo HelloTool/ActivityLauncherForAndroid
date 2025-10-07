@@ -7,6 +7,7 @@ import android.preference.Preference
 import android.preference.PreferenceActivity
 import android.view.View
 import android.view.WindowInsetsController
+import androidx.annotation.RequiresApi
 
 fun Activity.enableEdgeToEdge() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -27,6 +28,7 @@ inline fun <reified T : Preference> PreferenceActivity.findPreferenceCompat(key:
     return findPreference(key) as? T?
 }
 
+@RequiresApi(Build.VERSION_CODES.M)
 fun Activity.setSystemBarsAppearance(isLightSystemBars: Boolean? = null, isLightNavigationBar: Boolean? = null) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         window.decorView.windowInsetsController?.apply {

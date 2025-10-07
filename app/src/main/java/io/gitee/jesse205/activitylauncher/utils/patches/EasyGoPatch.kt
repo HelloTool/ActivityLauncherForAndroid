@@ -13,7 +13,7 @@ import java.util.WeakHashMap
  * 使在 EasyGo 下也能正常重载 Activity
  */
 @RequiresApi(Build.VERSION_CODES.N)
-class EasyGoPatch : ActivityListener {
+object EasyGoPatch : ActivityListener {
     private val stateMap: MutableMap<Activity, EasyGoPatchState> = WeakHashMap()
 
     override fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {
