@@ -224,7 +224,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     private fun createAboutDialog(): AlertDialog {
         return AlertDialog.Builder(this)
             .setTitle(R.string.app_name)
-            .setIcon(android.R.drawable.sym_def_app_icon)
             .setMessage(R.string.message_about)
             .setPositiveButton(android.R.string.ok, null)
             .create()
