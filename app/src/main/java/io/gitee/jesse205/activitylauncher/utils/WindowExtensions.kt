@@ -28,3 +28,7 @@ fun Window.setDecorFitsSystemWindowsCompat(fitsSystemWindows: Boolean) {
         }
     }
 }
+
+object WindowCompat {
+    const val VIEWS_TAG: String = "android:views"
+}

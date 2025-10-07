@@ -8,6 +8,7 @@
     <string name="menu_title_refresh">刷新</string>
     <string name="menu_title_search">搜索</string>
     <string name="title_app_list">Activity 列表</string>
+    <string name="title_settings">设置</string>
     <string name="label_getting_apps">正在获取应用</string>
     <string name="hint_search_apps">搜索应用名或包名…</string>
     <string name="hint_search_activities">搜索 Activity 标签或类名…</string>
@@ -32,4 +33,15 @@
     <string name="menu_copy_app_name">复制应用名</string>
     <string name="label_app_name">应用名</string>
     <string name="label_package_name">包名</string>
+    <string name="menu_settings">设置</string>
+    <string name="settings_theme_title">主题</string>
+    <string name="settings_theme_restart_tip">* 重启后生效</string>
+    <string name="settings_theme_gingerbread">姜饼</string>
+    <string name="settings_theme_holo">Holo</string>
+    <string name="settings_theme_material">Material</string>
+    <string name="settings_theme_device_default">设备默认</string>
+    <string name="settings_theme_device_settings">设备设置</string>
+    <string name="settings_theme_light">亮色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_dark_action_bar">深色操作栏</string>
 </resources>

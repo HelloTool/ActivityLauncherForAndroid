@@ -5,10 +5,13 @@ import android.content.res.Configuration
 import android.os.Bundle
 
 interface ActivityListener {
+    fun onPostActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
     fun onActivityCreate(activity: Activity, savedInstanceState: Bundle?) {}
     fun onActivityResume(activity: Activity) {}
     fun onActivityPause(activity: Activity) {}
     fun onActivityDestroy(activity: Activity) {}
     fun onActivityMultiWindowModeChanged(activity: Activity, isInMultiWindowMode: Boolean, newConfig: Configuration) {}
     fun onActivityConfigurationChanged(activity: Activity, newConfig: Configuration) {}
+
+    fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
 }

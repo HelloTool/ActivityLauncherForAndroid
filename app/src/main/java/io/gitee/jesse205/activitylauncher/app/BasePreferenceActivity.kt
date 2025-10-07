@@ -1,54 +1,34 @@
+@file:Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+
 package io.gitee.jesse205.activitylauncher.app
 
-import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
-import io.gitee.jesse205.activitylauncher.theme.AppTheme
+import android.preference.PreferenceActivity
 import io.gitee.jesse205.activitylauncher.theme.AppThemeSupport
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
-import io.gitee.jesse205.activitylauncher.utils.enableEdgeToEdge
-import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
 import io.gitee.jesse205.activitylauncher.utils.patches.EasyGoPatch
 
-
-abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<ActivityListener> {
-    protected abstract val stateClass: Class<S>
-    private var _state: S? = null
-    protected val state: S get() = _state!!
+open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityListener> {
     private var listeners: MutableList<ActivityListener> = mutableListOf()
     protected open val enableEdgeToEdge = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    protected lateinit var appTheme: AppTheme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         addListener(AppThemeSupport)
         listeners.forEach { it.onPostActivityCreate(this, savedInstanceState) }
         super.onCreate(savedInstanceState)
-        _state =
-            stateClass.cast(lastNonConfigurationInstance)
-                ?: savedInstanceState?.getParcelableCompat(KEY_ACTIVITY_STATE, stateClass)
-                        ?: onCreateState()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             addListener(EasyGoPatch())
         }
-
-        if (enableEdgeToEdge) {
-            enableEdgeToEdge()
-        }
-
         listeners.forEach { it.onActivityCreate(this, savedInstanceState) }
     }
-
-    override fun onRetainNonConfigurationInstance() = state
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         listeners.forEach { it.onActivitySaveInstanceState(this, outState) }
-        outState.putParcelable(KEY_ACTIVITY_STATE, state)
     }
-
-    abstract fun onCreateState(): S?
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
@@ -81,9 +61,5 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
 
     override fun removeListener(listener: ActivityListener) {
         listeners.remove(listener)
-    }
-
-    companion object {
-        private const val KEY_ACTIVITY_STATE = "activity_state"
     }
 }

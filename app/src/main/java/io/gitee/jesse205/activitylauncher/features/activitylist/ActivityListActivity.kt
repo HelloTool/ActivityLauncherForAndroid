@@ -43,8 +43,6 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
 
-    override val enableEdgeToEdge: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-
     override fun onCreateState(): ActivityListActivityState {
         return ActivityListActivityState(
             _packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME) ?: run {

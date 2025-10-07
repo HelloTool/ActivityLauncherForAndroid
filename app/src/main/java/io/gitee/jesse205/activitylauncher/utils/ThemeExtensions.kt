@@ -2,6 +2,7 @@ package io.gitee.jesse205.activitylauncher.utils
 
 import android.content.res.Resources
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 
 fun Resources.Theme.getDimensionPixelSize(@AttrRes resId: Int): Int {
     return obtainStyledAttributes(intArrayOf(resId)).useCompat {
@@ -12,5 +13,11 @@ fun Resources.Theme.getDimensionPixelSize(@AttrRes resId: Int): Int {
 fun Resources.Theme.getBoolean(@AttrRes resId: Int, defValue: Boolean): Boolean {
     return obtainStyledAttributes(intArrayOf(resId)).useCompat {
         it.getBoolean(0, defValue)
+    }
+}
+
+fun Resources.Theme.getColor(@AttrRes resId: Int, @ColorInt defValue: Int): Int {
+    return obtainStyledAttributes(intArrayOf(resId)).useCompat {
+        it.getColor(0, defValue)
     }
 }

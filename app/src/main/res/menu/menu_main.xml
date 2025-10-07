@@ -38,6 +38,12 @@
         android:showAsAction="ifRoom"
         android:title="@string/menu_title_launch_uri"
         tools:ignore="UnusedAttribute" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_settings"
+        tools:ignore="UnusedAttribute" />
     <item
         android:id="@+id/menu_about"
         android:icon="?menuAboutIcon"

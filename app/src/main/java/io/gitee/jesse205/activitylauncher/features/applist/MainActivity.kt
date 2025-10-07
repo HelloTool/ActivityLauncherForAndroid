@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
+import io.gitee.jesse205.activitylauncher.features.settings.SettingsActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
@@ -58,8 +59,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     private var sortInstallTimeMenuItem: MenuItem? = null
     private var sortUpdateTimeMenuItem: MenuItem? = null
     private var sortNameMenuItem: MenuItem? = null
-
-    override val enableEdgeToEdge: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
     private val preferences: MainActivityPreferences by lazy { MainActivityPreferences(this) }
 
@@ -170,6 +169,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             R.id.menu_sort_install_time -> changeAppSortCategory(AppSortCategory.INSTALL_TIME)
             R.id.menu_sort_update_time -> changeAppSortCategory(AppSortCategory.UPDATE_TIME)
             R.id.menu_launch_uri -> showDialog(DIALOG_ID_LAUNCH_URI)
+            R.id.menu_settings -> SettingsActivity.launch(this)
             else -> return super.onOptionsItemSelected(item)
         }
         return true
