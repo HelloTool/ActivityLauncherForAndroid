@@ -17,10 +17,8 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
      */
     fun discardNonViewState(savedInstanceState: Bundle) {
         savedInstanceState.getBundle(WINDOW_HIERARCHY_TAG)?.let {
-            it.keySet().forEach { key ->
-                if (key != WindowCompat.VIEWS_TAG) {
-                    it.remove(key)
-                }
+            it.keySet().filter { key -> key != WindowCompat.VIEWS_TAG }.forEach { key ->
+                it.remove(key)
             }
         }
     }
