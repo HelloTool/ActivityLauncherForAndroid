@@ -4,9 +4,7 @@
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="@bool/isNotQAndUp"
-    android:clipToPadding="@bool/isNotQAndUp"
-    android:fitsSystemWindows="@bool/isQAndUp"
+    android:fitsSystemWindows="true"
     android:orientation="vertical">
 
     <ViewStub
@@ -16,9 +14,9 @@
         android:layout="@layout/search_layout" />
 
     <FrameLayout
+        android:id="@+id/grid_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipChildren="@bool/isNotQAndUp">
+        android:layout_height="match_parent">
 
         <GridView
             android:id="@+id/grid"

@@ -18,6 +18,7 @@
         <!-- 修复GridView的项目的背景存在重叠导致意外的间距 -->
         <item name="gridViewStyle">?android:listViewStyle</item>
         <item name="showTabIcons">true</item>
+        <item name="enableEdgeToEdge">false</item>
     </style>
 
     <style name="Base.ThemeOverlay.ActivityLauncher.Gingerbread" parent="Base.ThemeOverlay.V9.ActivityLauncher.Gingerbread" />

@@ -31,6 +31,7 @@
     <string name="menu_copy_label">Copy label</string>
     <string name="menu_copy_package_name">Copy package name</string>
     <string name="menu_copy_app_name">Copy app name</string>
+    <string name="menu_copy_intent_uri">Copy intent uri</string>
     <string name="label_app_name">App name</string>
     <string name="label_package_name">Package name</string>
     <string name="menu_settings">Settings</string>

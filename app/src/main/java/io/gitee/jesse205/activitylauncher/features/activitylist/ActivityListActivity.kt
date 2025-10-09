@@ -29,7 +29,9 @@ import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isPermissionDenial
+import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
 import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuItemPatch
+import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
@@ -86,10 +88,14 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             setTitle(it.loadLabel(packageManager))
         }
 
+        val rootLayout = findViewById<ViewGroup>(R.id.root_layout)
         gridView.apply {
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity
+            if (shouldApplyEdgeToEdge) {
+                parentsDoNotClipChildrenAndPadding(rootLayout)
+            }
         }
 
         findViewById<TextView>(R.id.loading_text).apply {

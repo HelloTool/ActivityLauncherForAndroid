@@ -1,41 +1,16 @@
 package io.gitee.jesse205.activitylauncher.theme
 
 import android.app.Activity
-import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import io.gitee.jesse205.activitylauncher.utils.ActivityCompat.WINDOW_HIERARCHY_TAG
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
+import io.gitee.jesse205.activitylauncher.utils.ScopedActivityListenerManager
 import io.gitee.jesse205.activitylauncher.utils.WindowCompat
-import java.util.WeakHashMap
 
-object AppThemeSupport : ActivityListener {
-
-    private val stateMap: MutableMap<Activity, ThemeState> = WeakHashMap()
-    override fun onActivityPreCreate(activity: Activity, savedInstanceState: Bundle?) {
-        val state = ThemeState(appTheme = ThemeManager.getCurrentTheme()).also {
-            stateMap[activity] = it
-        }
-
-        activity.apply {
-            ThemeManager.applyTheme(this, state.appTheme)
-        }
-    }
-
-    override fun onActivityResume(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            val state = stateMap[activity] ?: return
-            if (state.appTheme.id != ThemeManager.getCurrentTheme().id) {
-                activity.recreate()
-            }
-        }
-    }
-
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        val state = stateMap[activity] ?: return
-        if (state.appTheme.id != ThemeManager.getCurrentTheme().id) {
-            discardNonViewState(outState)
-        }
-    }
+object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeSupportActivityListener>() {
+    private const val TAG = "AppThemeSupport"
+    override fun createActivityScopeListener(activity: Activity) = AppThemeSupportActivityListener()
 
     /**
      * 丢弃非自定义View的状态，用于解决不同主题之间的 SavedState 可能不兼容从而引发的 ClassCastException
@@ -50,6 +25,26 @@ object AppThemeSupport : ActivityListener {
         }
     }
 
-    data class ThemeState(var appTheme: AppTheme)
+    class AppThemeSupportActivityListener : ActivityListener {
+        val appTheme: AppTheme = ThemeManager.getCurrentTheme()
 
+        override fun onActivityPreCreate(activity: Activity, savedInstanceState: Bundle?) {
+            activity.apply {
+                ThemeManager.applyTheme(this, appTheme)
+            }
+        }
+
+        override fun onActivityResume(activity: Activity) {
+            if (appTheme.id != ThemeManager.getCurrentTheme().id) {
+                activity.recreate()
+            }
+        }
+
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+            if (appTheme.id != ThemeManager.getCurrentTheme().id) {
+                Log.i(TAG, "onActivitySaveInstanceState: Discarded state of non-custom Views")
+                discardNonViewState(outState)
+            }
+        }
+    }
 }

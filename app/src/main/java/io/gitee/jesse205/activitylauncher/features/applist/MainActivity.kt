@@ -41,6 +41,8 @@ import io.gitee.jesse205.activitylauncher.utils.getBoolean
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
+import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
@@ -92,12 +94,15 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
 
         adapter = AppListAdapter(this@MainActivity)
-
+        val rootLayout = findViewById<ViewGroup>(R.id.root_layout)
         gridView.apply {
             emptyView = emptyLayout
             adapter = this@MainActivity.adapter
             onItemClickListener = this@MainActivity
             registerForContextMenu(this)
+            if (shouldApplyEdgeToEdge) {
+                parentsDoNotClipChildrenAndPadding(rootLayout)
+            }
         }
 
         findViewById<TextView>(R.id.loading_text).apply {

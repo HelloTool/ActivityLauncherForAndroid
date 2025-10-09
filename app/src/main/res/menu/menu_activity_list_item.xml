@@ -4,14 +4,14 @@
     <group android:id="@+id/menu_group_copy_content">
         <item
             android:id="@+id/menu_copy_display_name"
-            android:title="Copy display name" />
+            android:title="@string/menu_copy_label" />
         <item
             android:id="@+id/menu_copy_class_name"
-            android:title="Copy class name" />
+            android:title="@string/menu_copy_class_name" />
     </group>
     <group>
         <item
             android:id="@+id/menu_copy_intent_uri"
-            android:title="Copy intent uri" />
+            android:title="@string/menu_copy_intent_uri" />
     </group>
 </menu>
