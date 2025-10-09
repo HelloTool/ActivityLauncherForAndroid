@@ -9,8 +9,9 @@ import android.preference.PreferenceActivity
 import android.view.ViewGroup
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
+import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
-import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 
 open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityListener> {
     private var listeners: MutableList<ActivityListener> = mutableListOf()
@@ -50,7 +51,7 @@ open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityLis
             rootLayout.apply {
                 fitsSystemWindows = true
             }
-            if (shouldApplyEdgeToEdge) {
+            if (isNavigationGestureSupported && theme.isSupportEdgeToEdge) {
                 listView.parentsDoNotClipChildrenAndPadding(rootLayout)
             }
         }

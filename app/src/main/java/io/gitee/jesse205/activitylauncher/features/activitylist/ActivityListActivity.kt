@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewStub
-import android.view.Window
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.GridView
@@ -29,9 +28,9 @@ import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isPermissionDenial
+import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
 import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuItemPatch
-import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
@@ -56,9 +55,6 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (isNavigationGestureSupported) {
-            requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
-        }
 
         setContentView(R.layout.activity_grid)
 
@@ -93,7 +89,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity
-            if (shouldApplyEdgeToEdge) {
+            if (isNavigationGestureSupported && theme.isSupportEdgeToEdge) {
                 parentsDoNotClipChildrenAndPadding(rootLayout)
             }
         }

@@ -26,7 +26,7 @@ fun Window.setDecorFitsSystemWindowsCompat(fitsSystemWindows: Boolean) {
         return
     }
     // TODO: 修复PreferenceActivity在通过该方法后顶部inset处理异常
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && false) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         setDecorFitsSystemWindows(fitsSystemWindows)
     } else {
         decorView.apply {

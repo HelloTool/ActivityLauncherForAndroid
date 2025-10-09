@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Base.ThemeOverlay.V29.ActivityLauncher.Material" parent="Base.ThemeOverlay.V22.ActivityLauncher.Material">
-        <item name="enableEdgeToEdge">true</item>
+        <item name="supportEdgeToEdge">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:enforceNavigationBarContrast">true</item>
     </style>

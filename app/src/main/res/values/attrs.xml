@@ -14,5 +14,5 @@
     <attr name="dialogPreferredPadding" format="dimension" />
     <attr name="gridViewStyle" format="dimension" />
     <attr name="showTabIcons" format="boolean" />
-    <attr name="enableEdgeToEdge" format="boolean" />
+    <attr name="supportEdgeToEdge" format="boolean" />
 </resources>

@@ -4,13 +4,15 @@ import android.app.Activity
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.view.Window
 import io.gitee.jesse205.activitylauncher.theme.AppThemeSupport
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
+import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.patches.ScreenSizeChangePatch
 import io.gitee.jesse205.activitylauncher.utils.patches.SystemBarAppearancePatch
 import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
-import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 
 class BaseActivityHelper(val activity: Activity) : Listenable<ActivityListener> {
     private val listeners: MutableList<ActivityListener> = mutableListOf<ActivityListener>().apply {
@@ -25,16 +27,20 @@ class BaseActivityHelper(val activity: Activity) : Listenable<ActivityListener> 
 
     fun onActivityPreCreate(savedInstanceState: Bundle?) {
         listeners.forEach { it.onActivityPreCreate(activity, savedInstanceState) }
+        if (isNavigationGestureSupported) {
+            activity.requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
+        }
     }
 
     fun onActivityCreate(savedInstanceState: Bundle?) {
         listeners.forEach { it.onActivityCreate(activity, savedInstanceState) }
+
     }
 
     fun onActivityPostCreate(savedInstanceState: Bundle?) {
         listeners.forEach { it.onActivityPostCreate(activity, savedInstanceState) }
-        if (activity.shouldApplyEdgeToEdge) {
-            activity.window.setDecorFitsSystemWindowsCompat(false)
+        if (isNavigationGestureSupported) {
+            activity.window.setDecorFitsSystemWindowsCompat(!activity.theme.isSupportEdgeToEdge)
         }
     }
 

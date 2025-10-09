@@ -41,8 +41,8 @@ import io.gitee.jesse205.activitylauncher.utils.getBoolean
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
-import io.gitee.jesse205.activitylauncher.utils.shouldApplyEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
@@ -72,15 +72,10 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         if (!isActionBarSupported) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
         }
-
-        if (isNavigationGestureSupported) {
-            requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY)
-        }
-
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_grid)
 
         val isActionBarInitialized = if (isActionBarSupported) {
@@ -100,7 +95,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             adapter = this@MainActivity.adapter
             onItemClickListener = this@MainActivity
             registerForContextMenu(this)
-            if (shouldApplyEdgeToEdge) {
+            if (isNavigationGestureSupported && theme.isSupportEdgeToEdge) {
                 parentsDoNotClipChildrenAndPadding(rootLayout)
             }
         }
