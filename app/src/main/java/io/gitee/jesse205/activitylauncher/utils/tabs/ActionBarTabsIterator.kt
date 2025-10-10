@@ -17,3 +17,8 @@ class ActionBarTabsIterator(val actionBar: ActionBar) : Iterator<ActionBar.Tab> 
         return currentIndex < actionBar.tabCount
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+fun ActionBar.tabsIterator(): ActionBarTabsIterator {
+    return ActionBarTabsIterator(this)
+}

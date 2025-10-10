@@ -8,7 +8,7 @@ fun <T> ExecutorService.submitWithCheckAndCallback(
     handler: Handler,
     check: () -> Boolean,
     task: () -> T,
-    callback: (result:T) -> Unit
+    callback: (result: T) -> Unit
 ): Future<*>? {
     return submit {
         if (!check()) {
@@ -18,7 +18,7 @@ fun <T> ExecutorService.submitWithCheckAndCallback(
         if (!check()) {
             return@submit
         }
-        handler.post{
+        handler.post {
             if (!check()) {
                 return@post
             }
