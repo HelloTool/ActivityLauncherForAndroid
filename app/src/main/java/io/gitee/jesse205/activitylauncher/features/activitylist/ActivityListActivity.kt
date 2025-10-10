@@ -190,20 +190,14 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         return true
     }
 
+    @Suppress("DEPRECATION")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
-            }
-
-            R.id.menu_refresh -> {
-                loadActivities()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+            R.id.menu_refresh -> loadActivities()
+            else -> return super.onOptionsItemSelected(item)
         }
+        return true
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
