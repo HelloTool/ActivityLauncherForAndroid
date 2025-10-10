@@ -39,7 +39,7 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
         }
 
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-            if (appTheme.id != ThemeManager.getCurrentTheme().id) {
+            if (appTheme.group != ThemeManager.getCurrentTheme().group) {
                 Log.i(TAG, "onActivitySaveInstanceState: Discarded state of non-custom Views")
                 discardNonViewState(outState)
             }
