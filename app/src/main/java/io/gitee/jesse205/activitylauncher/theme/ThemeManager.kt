@@ -21,7 +21,8 @@ object ThemeManager {
                     style = android.R.style.Theme_DeviceDefault_Settings,
                     overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Settings,
                     displayNames = intArrayOf(
-                        R.string.settings_theme_device_settings,
+                        R.string.settings_theme_device_default,
+                        R.string.settings_theme_settings,
                     )
                 )
             )

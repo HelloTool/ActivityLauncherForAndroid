@@ -42,7 +42,7 @@
     <string name="settings_theme_holo">Holo</string>
     <string name="settings_theme_material">Material</string>
     <string name="settings_theme_device_default">Device Default</string>
-    <string name="settings_theme_device_settings">Device Settings</string>
+    <string name="settings_theme_settings">System Settings</string>
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_dark_action_bar">Dark action bar</string>
