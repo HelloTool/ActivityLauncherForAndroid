@@ -17,9 +17,19 @@
 
     <style name="Base.ThemeOverlay.ActivityLauncher.Material" parent="Base.ThemeOverlay.V21.ActivityLauncher.Material" />
 
-    <style name="ThemeOverlay.ActivityLauncher.Material.Light" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+    <style name="ThemeOverlay.ActivityLauncher.Material.Light" parent="Base.ThemeOverlay.ActivityLauncher.Material">
+        <item name="android:colorAccent">@color/color_accent_material</item>
+    </style>
 
-    <style name="ThemeOverlay.ActivityLauncher.Material.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+    <style name="ThemeOverlay.ActivityLauncher.Material.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Material">
+        <item name="android:colorPrimary">@color/color_primary_material</item>
+        <item name="android:colorPrimaryDark">@color/color_primary_dark_material</item>
+        <item name="android:colorAccent">@color/color_accent_material</item>
+    </style>
 
-    <style name="ThemeOverlay.ActivityLauncher.Material.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+    <style name="ThemeOverlay.ActivityLauncher.Material.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Material">
+        <item name="android:colorPrimary">@color/color_primary_material</item>
+        <item name="android:colorPrimaryDark">@color/color_primary_dark_material</item>
+        <item name="android:colorAccent">@color/color_accent_material</item>
+    </style>
 </resources>
