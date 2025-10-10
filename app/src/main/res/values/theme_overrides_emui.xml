@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- <style name="ThemeOverlay.V9.ActivityLauncher.Emui" parent="" >
+        <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeight</item>
+        <item name="menuSearchIcon">@drawable/ic_menu_search_holo</item>
+        <item name="menuSortIcon">@drawable/ic_menu_sort_holo</item>
+    </style>
+
+    <style name="ThemeOverlay.ActivityLauncher.Emui" parent="ThemeOverlay.V9.ActivityLauncher.Emui"/> -->
+</resources>

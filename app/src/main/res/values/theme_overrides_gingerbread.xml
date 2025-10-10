@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.ThemeOverlay.V9.ActivityLauncher.Gingerbread" parent="">
+        <item name="listPreferredItemHeightTwoLines">?android:listPreferredItemHeight</item>
+        <item name="listIconLarge">48dp</item>
+        <item name="listPreferredItemPaddingLeft">8dp</item>
+        <item name="listPreferredItemPaddingRight">8dp</item>
+        <item name="textAppearanceListItem">?android:textAppearanceMedium</item>
+        <item name="textAppearanceListItemSecondary">?android:textAppearanceSmall</item>
+        <item name="menuSearchIcon">@drawable/ic_menu_search_holo</item>
+        <item name="menuRefreshIcon">@drawable/ic_menu_refresh_holo</item>
+        <item name="menuSortIcon">@drawable/ic_menu_sort_holo</item>
+        <item name="menuAboutIcon">@drawable/ic_menu_about_holo</item>
+        <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_holo</item>
+        <item name="dialogPreferredPadding">8dp</item>
+        <!-- 修复GridView的项目的背景存在重叠导致意外的间距 -->
+        <item name="gridViewStyle">?android:listViewStyle</item>
+        <item name="showTabIcons">true</item>
+        <item name="supportEdgeToEdge">false</item>
+    </style>
+
+    <style name="Base.ThemeOverlay.ActivityLauncher.Gingerbread" parent="Base.ThemeOverlay.V9.ActivityLauncher.Gingerbread" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Gingerbread.Light" parent="Base.ThemeOverlay.ActivityLauncher.Gingerbread" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Gingerbread.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Gingerbread" />
+</resources>

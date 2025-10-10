@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Base.ThemeOverlay.V11.ActivityLauncher.Holo" parent="Base.ThemeOverlay.ActivityLauncher.Gingerbread">
+        <item name="gridViewStyle">?android:gridViewStyle</item>
+        <item name="dialogPreferredPadding">12dp</item>
+        <item name="showTabIcons">false</item>
+    </style>
+
+    <style name="Base.ThemeOverlay.ActivityLauncher.Holo" parent="Base.ThemeOverlay.V11.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Holo.Light" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.Holo.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+</resources>

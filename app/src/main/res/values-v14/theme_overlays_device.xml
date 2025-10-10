@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+</resources>

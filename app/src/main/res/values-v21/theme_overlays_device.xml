@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Dark" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+
+    <style name="ThemeOverlay.ActivityLauncher.DeviceDefault.Settings" parent="Base.ThemeOverlay.ActivityLauncher.Material" />
+</resources>
