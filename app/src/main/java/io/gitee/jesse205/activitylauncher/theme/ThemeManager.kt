@@ -38,7 +38,19 @@ object ThemeManager {
                             R.string.settings_theme_device_default,
                             R.string.settings_theme_light
                         )
-                    ), AppTheme(
+                    ),
+                    AppTheme(
+                        group = "device_default",
+                        id = "device_default_light_dark_action_bar",
+                        style = android.R.style.Theme_DeviceDefault_Light_DarkActionBar,
+                        overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Light_DarkActionBar,
+                        displayNames = intArrayOf(
+                            R.string.settings_theme_device_default,
+                            R.string.settings_theme_light,
+                            R.string.settings_theme_dark_action_bar
+                        )
+                    ),
+                    AppTheme(
                         group = "device_default",
                         id = "device_default_dark",
                         style = android.R.style.Theme_DeviceDefault,
