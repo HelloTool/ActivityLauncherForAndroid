@@ -18,11 +18,12 @@
     <string name="tab_user_apps">User apps</string>
     <string name="tab_system_apps">System apps</string>
     <string name="label_empty_content">No content available</string>
-    <string name="toast_permission_denied">Permission denied</string>
+    <string name="error_permission_denied">Permission denied</string>
     <string name="menu_title_launch_uri">Launch URI</string>
     <string name="title_launch_uri">Launch URI</string>
-    <string name="toast_no_activity_found">No Activity found</string>
-    <string name="toast_file_uri_not_allowed">File URI not allowed</string>
+    <string name="error_no_activity_found">No Activity found</string>
+    <string name="error_file_uri_not_allowed">File URI not allowed</string>
+    <string name="error_unknown">Unknown error</string>
     <string name="hint_launch_uri">Enter a URL or other URI</string>
     <string name="menu_app_details">App details</string>
     <string name="label_class_name">Class name</string>

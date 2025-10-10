@@ -1,18 +1,14 @@
 package io.gitee.jesse205.activitylauncher.features.applist
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.FileUriExposedException
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
@@ -35,15 +31,15 @@ import io.gitee.jesse205.activitylauncher.features.settings.SettingsActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
-import io.gitee.jesse205.activitylauncher.utils.IntentCompat
 import io.gitee.jesse205.activitylauncher.utils.copyText
+import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.getBoolean
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
+import io.gitee.jesse205.activitylauncher.utils.launchUri
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
-import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
@@ -191,7 +187,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val app = adapter.getItem(position)
-        openActivityListForApp(app.packageName)
+        ActivityListActivity.launch(this, app.packageName)
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -229,16 +225,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             .create()
     }
 
-    @SuppressLint("InflateParams")
     private fun createLaunchUriDialog(): AlertDialog {
         val content = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
         val input = content.findViewById<EditText>(android.R.id.input)
         return AlertDialog.Builder(this)
             .setTitle(R.string.menu_title_launch_uri)
             .setView(content)
-            .setPositiveButton(android.R.string.ok) { _, _ ->
-                launchUri(input.text.toString())
-            }
+            .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel, null)
             .create().apply {
                 window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
@@ -256,6 +249,16 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                     input.requestFocus()
                     positiveButton = getButton(AlertDialog.BUTTON_POSITIVE).apply {
                         isEnabled = false
+                        setOnClickListener {
+                            runCatching {
+                                launchUri(input.text.toString())
+                            }.onSuccess {
+                                dismiss()
+                            }.onFailure {
+                                isEnabled = false
+                                input.error = getString(it.errorMessageResId ?: R.string.error_unknown)
+                            }
+                        }
                     }
                 }
             }
@@ -330,24 +333,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
     }
 
-    private fun openActivityListForApp(packageName: String?) {
-        val intent = Intent(this, ActivityListActivity::class.java)
-        intent.putExtra(IntentCompat.EXTRA_PACKAGE_NAME, packageName)
-        startActivity(intent)
-    }
-
-    private fun launchUri(uri: String) {
-        runCatching {
-            startActivity(Intent.parseUri(uri, Intent.URI_INTENT_SCHEME))
-        }.onFailure {
-            Log.w(TAG, "launchUri: launch URI failed", it)
-            if (it is ActivityNotFoundException) {
-                showToast(R.string.toast_no_activity_found)
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && it is FileUriExposedException) {
-                showToast(R.string.toast_file_uri_not_allowed)
-            }
-        }
-    }
 
     private fun openAppDetails(packageName: String) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

@@ -1,6 +1,6 @@
 package io.gitee.jesse205.activitylauncher.features.activitylist
 
-import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -18,19 +18,19 @@ import android.widget.EditText
 import android.widget.GridView
 import android.widget.SearchView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
+import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
-import io.gitee.jesse205.activitylauncher.utils.isPermissionDenial
 import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
 import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuItemPatch
+import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
@@ -70,14 +70,14 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         adapter = ActivityListAdapter(this)
 
         if (state.packageName.isBlank()) {
-            showAppNotInstalledToast()
+            showToast(R.string.toast_app_not_installed)
             finish()
             return
         }
         runCatching {
             packageManager.getApplicationInfo(state.packageName, 0)
         }.onFailure {
-            showAppNotInstalledToast()
+            showToast(R.string.toast_app_not_installed)
             finish()
             return
         }.onSuccess {
@@ -225,18 +225,6 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         state.loadActivities(application)
     }
 
-    private fun showAppNotInstalledToast() {
-        Toast.makeText(this, R.string.toast_app_not_installed, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showNoActivityFoundToast() {
-        Toast.makeText(this, R.string.toast_no_activity_found, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showPermissionDeniedToast() {
-        Toast.makeText(this, R.string.toast_permission_denied, Toast.LENGTH_SHORT).show()
-    }
-
     private fun launchActivity(activityInfo: ActivityInfo) {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.setClassName(activityInfo.packageName, activityInfo.name)
@@ -245,14 +233,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             startActivity(intent)
         }.onFailure {
             Log.w(TAG, "launchActivity failed: ", it)
-            when (it) {
-                is ActivityNotFoundException -> showNoActivityFoundToast()
-                is SecurityException -> {
-                    if (it.isPermissionDenial()) {
-                        showPermissionDeniedToast()
-                    }
-                }
-            }
+            showToast(it.errorMessageResId ?: R.string.error_unknown)
         }
     }
 
@@ -272,5 +253,10 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
 
     companion object {
         private const val TAG = "ActivityListActivity"
+        fun launch(context: Context, packageName: String) {
+            val intent = Intent(context, ActivityListActivity::class.java)
+            intent.putExtra(IntentCompat.EXTRA_PACKAGE_NAME, packageName)
+            context.startActivity(intent)
+        }
     }
 }
