@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.preference.ListPreference
 import android.preference.Preference
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BasePreferenceActivity
@@ -31,6 +32,15 @@ class SettingsActivity : BasePreferenceActivity() {
         getActionBar()?.apply {
             setDisplayHomeAsUpEnabled(true)
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // 老版本中默认不调用 onBackPressed
+        when (item.itemId) {
+            item.itemId -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     private fun setupThemePreference() {
