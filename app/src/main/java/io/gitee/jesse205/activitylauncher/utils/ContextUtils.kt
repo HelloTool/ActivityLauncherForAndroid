@@ -2,20 +2,20 @@ package io.gitee.jesse205.activitylauncher.utils
 
 import android.content.ActivityNotFoundException
 import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.FileUriExposedException
-import android.text.ClipboardManager
 import android.widget.Toast
 import androidx.annotation.StringRes
 import io.gitee.jesse205.activitylauncher.R
 
 @Suppress("DEPRECATION")
-val Context.clipboard get() = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+val Context.clipboard get() = getSystemService(Context.CLIPBOARD_SERVICE) as android.text.ClipboardManager
 
 fun Context.copyText(label: CharSequence?, text: CharSequence?) {
     val clipboard = clipboard
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && clipboard is android.content.ClipboardManager) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && clipboard is ClipboardManager) {
         clipboard.setPrimaryClip(ClipData.newPlainText(label, text))
     } else {
         @Suppress("DEPRECATION")

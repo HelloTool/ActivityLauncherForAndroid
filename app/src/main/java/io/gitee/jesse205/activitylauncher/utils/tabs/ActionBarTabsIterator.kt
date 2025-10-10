@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package io.gitee.jesse205.activitylauncher.utils.tabs
 
 import android.app.ActionBar

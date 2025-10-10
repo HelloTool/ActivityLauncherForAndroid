@@ -103,6 +103,7 @@ object ThemeManager {
                 )
             )
         }
+        @Suppress("DEPRECATION")
         if (isHoloThemeSupported) {
             add(
                 AppTheme(
