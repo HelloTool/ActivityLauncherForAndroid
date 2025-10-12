@@ -17,6 +17,7 @@
           }
         ],
         "transActivities": [
+          "io.gitee.jesse205.activitylauncher.features.settings.SettingsActivityExternal"
         ],
         "UX": {
           "isDraggable": "false",
