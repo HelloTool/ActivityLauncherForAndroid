@@ -21,6 +21,10 @@
             android:name="android.supports_size_changes"
             android:value="true" />
 
+        <meta-data
+            android:name="android.allow_multiple_resumed_activities"
+            android:value="true" />
+
         <!-- BUG: 平行视界模式下转屏后、调整后、进入小窗后不会重启Activity，会导致布局错误。 -->
         <meta-data
             android:name="EasyGoClient"
@@ -39,7 +43,6 @@
         <activity
             android:name=".features.applist.MainActivity"
             android:exported="true"
-            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -55,13 +55,6 @@ class SettingsActivity : BasePreferenceActivity() {
                 newValue as String
                 summary == ThemeManager.getThemeById(newValue)?.getDisplayName(this@SettingsActivity)
                 ThemeManager.setTheme(newValue)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    recreate()
-                } else {
-                    // 对于API 11以下的设备，需要重启Activity
-                    finish()
-                    startActivity(Intent(this@SettingsActivity, SettingsActivity::class.java))
-                }
                 true
             }
         }

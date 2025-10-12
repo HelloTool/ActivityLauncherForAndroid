@@ -42,3 +42,6 @@ val isLightNavigationBarSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES
 
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O_MR1)
 val isLightNavigationBarResSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1
+
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
+val isHighPerformanceDeviceByOSVersion = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q

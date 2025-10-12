@@ -57,6 +57,11 @@ open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityLis
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        helper.onActivityStart()
+    }
+
     override fun onResume() {
         super.onResume()
         helper.onActivityResume()
@@ -65,6 +70,11 @@ open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityLis
     override fun onPause() {
         super.onPause()
         helper.onActivityPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        helper.onActivityStop()
     }
 
     override fun onDestroy() {

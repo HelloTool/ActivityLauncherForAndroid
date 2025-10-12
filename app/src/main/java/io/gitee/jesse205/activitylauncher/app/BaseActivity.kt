@@ -14,6 +14,9 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
     protected val state: S get() = _state!!
     private val helper = BaseActivityHelper(this)
 
+
+    var resumed = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         helper.onActivityPreCreate(savedInstanceState)
         super.onCreate(savedInstanceState)
@@ -50,14 +53,25 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
         helper.onActivityConfigurationChanged(newConfig)
     }
 
+    override fun onStart() {
+        super.onStart()
+        helper.onActivityStart()
+    }
+
     override fun onResume() {
         super.onResume()
         helper.onActivityResume()
+        resumed = true
     }
 
     override fun onPause() {
         super.onPause()
         helper.onActivityPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        helper.onActivityStop()
     }
 
     override fun onDestroy() {

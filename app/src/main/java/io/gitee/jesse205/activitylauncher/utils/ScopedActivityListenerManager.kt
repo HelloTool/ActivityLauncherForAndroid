@@ -48,12 +48,20 @@ abstract class ScopedActivityListenerManager<T : ActivityListener> : ActivityLis
         getActivityScopeListener(activity).onActivityPostCreate(activity, savedInstanceState)
     }
 
+    final override fun onActivityStart(activity: Activity) {
+        getActivityScopeListener(activity).onActivityStart(activity)
+    }
+
     final override fun onActivityResume(activity: Activity) {
         getActivityScopeListener(activity).onActivityResume(activity)
     }
 
     final override fun onActivityPause(activity: Activity) {
         getActivityScopeListener(activity).onActivityPause(activity)
+    }
+
+    final override fun onActivityStop(activity: Activity) {
+        getActivityScopeListener(activity).onActivityStop(activity)
     }
 
     final override fun onActivityDestroy(activity: Activity) {
