@@ -10,6 +10,7 @@ import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.ScopedActivityListenerManager
 import io.gitee.jesse205.activitylauncher.utils.WindowCompat
 import io.gitee.jesse205.activitylauncher.utils.isHighPerformanceDeviceByOSVersion
+import io.gitee.jesse205.activitylauncher.utils.recreateCompat
 
 object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeSupportActivityListener>() {
     private const val TAG = "AppThemeSupport"
@@ -31,7 +32,7 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
     fun Activity.recreateIfThemeChanged() {
         val appTheme = getActivityScopeListener(this).appTheme
         if (appTheme.id != ThemeManager.getCurrentTheme().id) {
-            recreate()
+            recreateCompat()
         }
     }
 

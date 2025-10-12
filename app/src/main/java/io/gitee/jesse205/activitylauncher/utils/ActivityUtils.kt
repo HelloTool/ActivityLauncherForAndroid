@@ -1,14 +1,14 @@
 package io.gitee.jesse205.activitylauncher.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.preference.Preference
-import android.preference.PreferenceActivity
+import android.os.Build
+import android.os.IBinder
+import android.util.Log
+import java.lang.reflect.Field
 
-@Suppress("DEPRECATION")
-inline fun <reified T : Preference> PreferenceActivity.findPreferenceCompat(key: String): T? {
-    return findPreference(key) as? T?
-}
+private const val TAG = "ActivityUtils"
 
 object ActivityCompat {
     const val WINDOW_HIERARCHY_TAG: String = "android:viewHierarchyState"
@@ -16,4 +16,50 @@ object ActivityCompat {
 
 fun Activity.launchUri(uri: String) {
     startActivity(Intent.parseUri(uri, Intent.URI_INTENT_SCHEME))
+}
+
+@delegate:SuppressLint("DiscouragedPrivateApi")
+val mTokenField: Field by lazy {
+    Activity::class.java.getDeclaredField("mToken").apply {
+        isAccessible = true
+    }
+}
+
+@delegate:SuppressLint("DiscouragedPrivateApi")
+val mMainThreadField: Field by lazy {
+    Activity::class.java.getDeclaredField("mMainThread").apply {
+        isAccessible = true
+    }
+}
+
+fun Activity.reflectivelyGetActivityToken() = mTokenField.get(this) as? IBinder
+
+fun Activity.reflectivelyGetActivityThread(): Any? = mMainThreadField.get(this)
+
+fun Activity.recreateGingerbread() {
+    val token = reflectivelyGetActivityToken() ?: return
+    val activityThread = reflectivelyGetActivityThread() ?: return
+    ActivityThreadReflector(activityThread).let {
+        val activityClientRecord = ActivityThreadReflector.ActivityClientRecordReflector(it.mActivities[token]!!)
+        ActivityThreadReflector.ApplicationThreadReflector(it.mAppThread).scheduleRelaunchActivity(
+            token,
+            activityClientRecord.pendingResults,
+            activityClientRecord.pendingIntents,
+            0,
+            activityClientRecord.startsNotResumed,
+            activityClientRecord.createdConfig
+        )
+    }
+}
+
+fun Activity.recreateCompat() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        recreate()
+        return
+    }
+    runCatching {
+        recreateGingerbread()
+    }.onFailure {
+        Log.e(TAG, "recreateCompat: Failed to recreate activity", it)
+    }
 }
