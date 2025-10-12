@@ -1,22 +1,10 @@
 package io.gitee.jesse205.activitylauncher.utils
 
-import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
 import androidx.annotation.RequiresApi
-
-@RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
-fun Window.enableEdgeToEdge() {
-    setDecorFitsSystemWindowsCompat(false)
-    // 安卓 10 才引入手势导航，之前的版本没必要启用半透明
-    if (isNavigationGestureSupported) {
-        isNavigationBarContrastEnforced = true
-        @Suppress("DEPRECATION")
-        navigationBarColor = Color.TRANSPARENT
-    }
-}
 
 
 @Suppress("DEPRECATION")
@@ -25,7 +13,6 @@ fun Window.setDecorFitsSystemWindowsCompat(fitsSystemWindows: Boolean) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
         return
     }
-    // TODO: 修复PreferenceActivity在通过该方法后顶部inset处理异常
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         setDecorFitsSystemWindows(fitsSystemWindows)
     } else {
