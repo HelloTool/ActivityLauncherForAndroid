@@ -53,7 +53,7 @@ class SettingsActivity : BasePreferenceActivity() {
             summary = currentTheme.getDisplayName(this@SettingsActivity)
             onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, newValue ->
                 newValue as String
-                summary == ThemeManager.getThemeById(newValue)?.getDisplayName(this@SettingsActivity)
+                summary = ThemeManager.getThemeById(newValue)?.getDisplayName(this@SettingsActivity)
                 ThemeManager.setTheme(newValue)
                 true
             }
