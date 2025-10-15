@@ -228,6 +228,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     private fun createLaunchUriDialog(): AlertDialog {
         val content = layoutInflater.inflate(R.layout.dialog_launch_uri, null)
         val input = content.findViewById<EditText>(android.R.id.input)
+        var positiveButton: Button? = null
         return AlertDialog.Builder(this)
             .setTitle(R.string.menu_title_launch_uri)
             .setView(content)
@@ -235,7 +236,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             .setNegativeButton(android.R.string.cancel, null)
             .create().apply {
                 window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-                var positiveButton: Button? = getButton(AlertDialog.BUTTON_POSITIVE)
                 input.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {}
 
@@ -248,7 +248,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 setOnShowListener {
                     input.requestFocus()
                     positiveButton = getButton(AlertDialog.BUTTON_POSITIVE).apply {
-                        isEnabled = false
+                        isEnabled = !input.text.isNullOrBlank() && input.error.isNullOrBlank()
                         setOnClickListener {
                             runCatching {
                                 launchUri(input.text.toString())
