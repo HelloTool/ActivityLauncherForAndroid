@@ -22,7 +22,7 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
         super.onCreate(savedInstanceState)
         _state =
             stateClass.cast(lastNonConfigurationInstance)
-                ?: savedInstanceState?.getParcelableCompat(KEY_ACTIVITY_STATE, stateClass)
+                ?: savedInstanceState?.getParcelableCompat(ACTIVITY_STATE_TAG, stateClass)
                         ?: onCreateState()
 
         helper.onActivityCreate(savedInstanceState)
@@ -38,7 +38,7 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         helper.onActivitySaveInstanceState(outState)
-        outState.putParcelable(KEY_ACTIVITY_STATE, state)
+        outState.putParcelable(ACTIVITY_STATE_TAG, state)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -94,6 +94,6 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
     }
 
     companion object {
-        private const val KEY_ACTIVITY_STATE = "activity_state"
+        private const val ACTIVITY_STATE_TAG = "activityState"
     }
 }
