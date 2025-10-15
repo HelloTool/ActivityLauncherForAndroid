@@ -11,7 +11,9 @@ plugins {
 
 android {
     namespace = "io.gitee.jesse205.activitylauncher"
-    compileSdk = 36
+    compileSdk {
+        version = release(36)
+    }
 
     defaultConfig {
         applicationId = "io.gitee.jesse205.activitylauncher"
