@@ -12,6 +12,10 @@ private const val TAG = "ActivityUtils"
 
 object ActivityCompat {
     const val WINDOW_HIERARCHY_TAG: String = "android:viewHierarchyState"
+    const val SAVED_DIALOG_IDS_KEY: String = "android:savedDialogIds"
+    const val SAVED_DIALOGS_TAG: String = "android:savedDialogs"
+    const val SAVED_DIALOG_KEY_PREFIX: String = "android:dialog_"
+    const val SAVED_DIALOG_ARGS_KEY_PREFIX: String = "android:dialog_args_"
 }
 
 fun Activity.launchUri(uri: String) {

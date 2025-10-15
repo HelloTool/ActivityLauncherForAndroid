@@ -10,5 +10,8 @@ object AndroidInternalR {
         val ACTION_BAR by lazy {
             ActivityLauncherApp.INSTANCE.resources.getIdentifier("action_bar", "id", "android")
         }
+        val BUTTON_PANEL by lazy {
+            ActivityLauncherApp.INSTANCE.resources.getIdentifier("buttonPanel", "id", "android")
+        }
     }
 }
