@@ -67,13 +67,14 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
         }
     }
 
+    val Activity.appTheme get() = getActivityScopeListener(this).appTheme
 
     class AppThemeSupportActivityListener(val activity: Activity) : ActivityListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
         val appTheme: AppTheme = ThemeManager.getCurrentTheme()
         var atLeastOnceResume = false
 
-        val isThemeOutdated: Boolean get() = getActivityScopeListener(activity).appTheme.id != AppPreferences.themeId
+        val isThemeOutdated: Boolean get() = appTheme.id != AppPreferences.themeId
 
         fun recreateIfThemeOutdated() {
             if (isThemeOutdated) {
