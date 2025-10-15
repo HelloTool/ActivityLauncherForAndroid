@@ -79,5 +79,5 @@ fun Window.setSystemBarsAppearance(isLightStatusBar: Boolean? = null, isLightNav
 }
 
 object WindowCompat {
-    const val VIEWS_TAG: String = "android:views"
+    const val ACTION_BAR_TAG: String = "android:ActionBar"
 }

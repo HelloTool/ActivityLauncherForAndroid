@@ -41,6 +41,12 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
         outState.putParcelable(KEY_ACTIVITY_STATE, state)
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        helper.onActivityPreRestoreInstanceState(savedInstanceState)
+        super.onRestoreInstanceState(savedInstanceState)
+        helper.onActivityRestoreInstanceState(savedInstanceState)
+    }
+
     abstract fun onCreateState(): S?
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {

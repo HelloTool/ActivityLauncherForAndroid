@@ -17,4 +17,6 @@ interface ActivityListener {
     fun onActivityConfigurationChanged(activity: Activity, newConfig: Configuration) {}
 
     fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+    fun onActivityPreRestoreInstanceState(activity: Activity, savedInstanceState: Bundle) {}
+    fun onActivityRestoreInstanceState(activity: Activity, savedInstanceState: Bundle) {}
 }

@@ -84,4 +84,12 @@ abstract class ScopedActivityListenerManager<T : ActivityListener> : ActivityLis
     final override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
         getActivityScopeListener(activity).onActivitySaveInstanceState(activity, outState)
     }
+
+    final override fun onActivityPreRestoreInstanceState(activity: Activity, savedInstanceState: Bundle) {
+        getActivityScopeListener(activity).onActivityPreRestoreInstanceState(activity, savedInstanceState)
+    }
+
+    final override fun onActivityRestoreInstanceState(activity: Activity, savedInstanceState: Bundle) {
+        getActivityScopeListener(activity).onActivityRestoreInstanceState(activity, savedInstanceState)
+    }
 }

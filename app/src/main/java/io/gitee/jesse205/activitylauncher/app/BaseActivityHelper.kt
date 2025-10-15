@@ -95,6 +95,14 @@ class BaseActivityHelper(val activity: Activity) : Listenable<ActivityListener> 
         listeners.forEach { it.onActivitySaveInstanceState(activity, outState) }
     }
 
+    fun onActivityPreRestoreInstanceState(savedInstanceState: Bundle) {
+        listeners.forEach { it.onActivityPreRestoreInstanceState(activity, savedInstanceState) }
+    }
+
+    fun onActivityRestoreInstanceState(savedInstanceState: Bundle) {
+        listeners.forEach { it.onActivityRestoreInstanceState(activity, savedInstanceState) }
+    }
+
     override fun addListener(listener: ActivityListener) {
         listeners.add(listener)
     }

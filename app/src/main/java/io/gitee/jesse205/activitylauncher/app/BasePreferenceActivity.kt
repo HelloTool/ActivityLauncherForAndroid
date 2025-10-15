@@ -34,6 +34,12 @@ open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityLis
         helper.onActivitySaveInstanceState(outState)
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        helper.onActivityPreRestoreInstanceState(savedInstanceState)
+        super.onRestoreInstanceState(savedInstanceState)
+        helper.onActivityRestoreInstanceState(savedInstanceState)
+    }
+
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
         helper.onActivityMultiWindowModeChanged(isInMultiWindowMode, newConfig)
