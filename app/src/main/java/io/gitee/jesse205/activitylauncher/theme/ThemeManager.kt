@@ -1,30 +1,33 @@
 package io.gitee.jesse205.activitylauncher.theme
 
 import android.app.Activity
-import android.os.Build
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.preferences.AppPreferences
 import io.gitee.jesse205.activitylauncher.utils.isDeviceSettingsThemeSupported
 import io.gitee.jesse205.activitylauncher.utils.isDeviceThemeSupported
 import io.gitee.jesse205.activitylauncher.utils.isGingerbreadThemeNoBugs
+import io.gitee.jesse205.activitylauncher.utils.isHoloDarkActionBarThemeSupported
 import io.gitee.jesse205.activitylauncher.utils.isHoloThemeSupported
 import io.gitee.jesse205.activitylauncher.utils.isMaterialThemeSupported
+import io.gitee.jesse205.activitylauncher.utils.isNightModeCompat
 
 object ThemeManager {
-    const val THEME_GROUP_DEVICE_DEFAULT = "device_default"
-    const val THEME_GROUP_MATERIAL = "material"
-    const val THEME_GROUP_HOLO = "holo"
-    const val THEME_GROUP_GINGERBREAD = "gingerbread"
-
+    const val THEME_DEVICE_DEFAULT_SETTINGS = "device_default_settings"
+    const val THEME_DEVICE_DEFAULT = "device_default"
+    const val THEME_MATERIAL = "material"
+    const val THEME_HOLO = "holo"
+    const val THEME_GINGERBREAD = "gingerbread"
+    const val THEME_VARIANT_LIGHT = "light"
+    const val THEME_VARIANT_DARK = "dark"
+    const val THEME_VARIANT_DARK_ACTION_BAR = "dark_action_bar"
     val themes: List<AppTheme> = mutableListOf<AppTheme>().apply {
         if (isDeviceSettingsThemeSupported) {
             add(
-                AppTheme(
-                    group = THEME_GROUP_DEVICE_DEFAULT,
-                    id = "device_settings_light",
+                NormalTheme(
+                    id = THEME_DEVICE_DEFAULT_SETTINGS,
                     style = android.R.style.Theme_DeviceDefault_Settings,
                     overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Settings,
-                    displayNames = intArrayOf(
+                    displayNames = listOf(
                         R.string.settings_theme_device_default,
                         R.string.settings_theme_settings,
                     )
@@ -32,147 +35,94 @@ object ThemeManager {
             )
         }
         if (isDeviceThemeSupported) {
-            addAll(
-                arrayListOf(
-                    AppTheme(
-                        group = THEME_GROUP_DEVICE_DEFAULT,
-                        id = "device_default_light",
+            add(
+                DayNightTheme(
+                    id = THEME_DEVICE_DEFAULT,
+                    light = NormalThemeVariant(
+                        id = THEME_VARIANT_LIGHT,
                         style = android.R.style.Theme_DeviceDefault_Light,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Light,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_device_default,
-                            R.string.settings_theme_light
-                        )
                     ),
-                    AppTheme(
-                        group = THEME_GROUP_DEVICE_DEFAULT,
-                        id = "device_default_light_dark_action_bar",
+                    lightDarkActionBar = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK_ACTION_BAR,
                         style = android.R.style.Theme_DeviceDefault_Light_DarkActionBar,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Light_DarkActionBar,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_device_default,
-                            R.string.settings_theme_light,
-                            R.string.settings_theme_dark_action_bar
-                        )
                     ),
-                    AppTheme(
-                        group = THEME_GROUP_DEVICE_DEFAULT,
-                        id = "device_default_dark",
+                    dark = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK,
                         style = android.R.style.Theme_DeviceDefault,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_DeviceDefault_Dark,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_device_default,
-                            R.string.settings_theme_dark
-                        )
-                    )
+                    ),
+                    displayNames = listOf(R.string.settings_theme_device_default)
                 )
             )
-
         }
-
         if (isMaterialThemeSupported) {
-            addAll(
-                arrayListOf(
-                    AppTheme(
-                        group = THEME_GROUP_MATERIAL,
-                        id = "material_light",
+            add(
+                DayNightTheme(
+                    id = THEME_MATERIAL,
+                    light = NormalThemeVariant(
+                        id = THEME_VARIANT_LIGHT,
                         style = android.R.style.Theme_Material_Light,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Material_Light,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_material,
-                            R.string.settings_theme_light
-                        )
                     ),
-                    AppTheme(
-                        group = THEME_GROUP_MATERIAL,
-                        id = "material_light_dark_action_bar",
+                    lightDarkActionBar = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK_ACTION_BAR,
                         style = android.R.style.Theme_Material_Light_DarkActionBar,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Material_Light_DarkActionBar,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_material,
-                            R.string.settings_theme_light,
-                            R.string.settings_theme_dark_action_bar
-                        )
                     ),
-                    AppTheme(
-                        group = THEME_GROUP_MATERIAL,
-                        id = "material_dark",
+                    dark = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK,
                         style = android.R.style.Theme_Material,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Material_Dark,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_material,
-                            R.string.settings_theme_dark
-                        )
-                    )
+                    ),
+                    displayNames = listOf(R.string.settings_theme_material)
                 )
             )
         }
         @Suppress("DEPRECATION")
         if (isHoloThemeSupported) {
             add(
-                AppTheme(
-                    group = THEME_GROUP_HOLO,
-                    id = "holo_light",
-                    style = android.R.style.Theme_Holo_Light,
-                    overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Light,
-                    displayNames = intArrayOf(
-                        R.string.settings_theme_holo,
-                        R.string.settings_theme_light
-                    )
-                )
-            )
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                add(
-                    AppTheme(
-                        group = THEME_GROUP_HOLO,
-                        id = "holo_light_dark_action_bar",
-                        style = android.R.style.Theme_Holo_Light_DarkActionBar,
-                        overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Light_DarkActionBar,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_holo,
-                            R.string.settings_theme_light,
-                            R.string.settings_theme_dark_action_bar
+                DayNightTheme(
+                    id = THEME_HOLO,
+                    light = NormalThemeVariant(
+                        id = THEME_VARIANT_LIGHT,
+                        style = android.R.style.Theme_Holo_Light,
+                        overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Light,
+                    ),
+                    lightDarkActionBar = when {
+                        isHoloDarkActionBarThemeSupported -> NormalThemeVariant(
+                            id = THEME_VARIANT_DARK_ACTION_BAR,
+                            style = android.R.style.Theme_Holo_Light_DarkActionBar,
+                            overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Light_DarkActionBar,
                         )
-                    )
-                )
-            }
-            add(
-                AppTheme(
-                    group = THEME_GROUP_HOLO,
-                    id = "holo_dark",
-                    style = android.R.style.Theme_Holo,
-                    overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Dark,
-                    displayNames = intArrayOf(
-                        R.string.settings_theme_holo,
-                        R.string.settings_theme_dark
-                    )
+
+                        else -> null
+                    },
+                    dark = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK,
+                        style = android.R.style.Theme_Holo,
+                        overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Holo_Dark,
+                    ),
+                    displayNames = listOf(R.string.settings_theme_holo)
                 )
             )
-
         }
         if (isGingerbreadThemeNoBugs) {
-            addAll(
-                arrayListOf(
-                    AppTheme(
-                        group = THEME_GROUP_GINGERBREAD,
-                        id = "gingerbread_light",
+            add(
+                DayNightTheme(
+                    id = THEME_GINGERBREAD,
+                    light = NormalThemeVariant(
+                        id = THEME_VARIANT_LIGHT,
                         style = android.R.style.Theme_Light,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Gingerbread_Light,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_gingerbread,
-                            R.string.settings_theme_light
-                        )
                     ),
-                    AppTheme(
-                        group = THEME_GROUP_GINGERBREAD,
-                        id = "gingerbread_dark",
+                    dark = NormalThemeVariant(
+                        id = THEME_VARIANT_DARK,
                         style = android.R.style.Theme,
                         overlayStyle = R.style.ThemeOverlay_ActivityLauncher_Gingerbread_Dark,
-                        displayNames = intArrayOf(
-                            R.string.settings_theme_gingerbread,
-                            R.string.settings_theme_dark
-                        )
-                    )
+                    ),
+                    displayNames = listOf(R.string.settings_theme_gingerbread)
                 )
             )
         }
@@ -194,15 +144,56 @@ object ThemeManager {
             ?: defaultTheme
     }
 
+    fun getCurrentVariantId(activity: Activity, appTheme: AppTheme): String? {
+        if (appTheme is DayNightTheme) {
+            return when {
+                activity.resources.configuration.isNightModeCompat && AppPreferences.darkMode == AppPreferences.THEME_DARK_MODE_SYSTEM -> THEME_VARIANT_DARK
+                AppPreferences.darkMode == AppPreferences.THEME_DARK_MODE_ON -> THEME_VARIANT_DARK
+                appTheme.lightDarkActionBar != null && AppPreferences.isDarkActionBar -> THEME_VARIANT_DARK_ACTION_BAR
+                else -> THEME_VARIANT_LIGHT
+            }
+        }
+        return null
+    }
+
     fun setTheme(themeId: String) {
         if (isThemeCompatible(themeId)) {
             AppPreferences.themeId = themeId
         }
     }
 
-    fun applyTheme(activity: Activity, appTheme: AppTheme = getCurrentTheme()) {
+    fun applyTheme(
+        activity: Activity,
+        appTheme: AppTheme = getCurrentTheme(),
+        variantId: String? = getCurrentVariantId(activity, appTheme)
+    ) {
         activity.apply {
             theme.applyStyle(R.style.ThemeReset_ActivityLauncher, true)
+            when (appTheme) {
+                is DayNightTheme -> applyDayNightThemeInternal(activity, appTheme, variantId)
+                is NormalTheme -> applyNormalThemeInternal(activity, appTheme)
+            }
+        }
+    }
+
+    private fun applyDayNightThemeInternal(
+        activity: Activity,
+        appTheme: DayNightTheme,
+        variantId: String? = getCurrentVariantId(activity, appTheme)
+    ) {
+        val themeVariant = when (variantId) {
+            THEME_VARIANT_DARK -> appTheme.dark
+            THEME_VARIANT_DARK_ACTION_BAR -> appTheme.lightDarkActionBar ?: appTheme.light
+            else -> appTheme.light
+        }
+        activity.apply {
+            activity.setTheme(themeVariant.style)
+            activity.theme.applyStyle(themeVariant.overlayStyle, true)
+        }
+    }
+
+    private fun applyNormalThemeInternal(activity: Activity, appTheme: NormalTheme) {
+        activity.apply {
             setTheme(appTheme.style)
             theme.applyStyle(appTheme.overlayStyle, true)
         }

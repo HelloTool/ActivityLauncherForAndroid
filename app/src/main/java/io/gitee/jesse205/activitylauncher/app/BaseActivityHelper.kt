@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import io.gitee.jesse205.activitylauncher.BuildConfig
-import io.gitee.jesse205.activitylauncher.theme.AppThemeSupport
+import io.gitee.jesse205.activitylauncher.theme.ThemeSupport
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
@@ -18,7 +18,7 @@ import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
 
 class BaseActivityHelper(val activity: Activity) : Listenable<ActivityListener> {
     private val listeners: MutableList<ActivityListener> = mutableListOf<ActivityListener>().apply {
-        add(AppThemeSupport)
+        add(ThemeSupport)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             add(ScreenSizeChangePatch)
         }

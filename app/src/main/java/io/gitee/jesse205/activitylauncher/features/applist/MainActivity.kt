@@ -29,8 +29,8 @@ import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
 import io.gitee.jesse205.activitylauncher.features.settings.SettingsActivity
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
-import io.gitee.jesse205.activitylauncher.theme.AppThemeSupport.appTheme
 import io.gitee.jesse205.activitylauncher.theme.ThemeManager
+import io.gitee.jesse205.activitylauncher.theme.ThemeSupport.appTheme
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.copyText
@@ -70,7 +70,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (appTheme.group == ThemeManager.THEME_GROUP_GINGERBREAD) {
+        if (appTheme.id == ThemeManager.THEME_GINGERBREAD) {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
         }
         super.onCreate(savedInstanceState)

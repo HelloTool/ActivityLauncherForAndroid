@@ -16,10 +16,11 @@ import io.gitee.jesse205.activitylauncher.utils.copyFieldsTo
 import io.gitee.jesse205.activitylauncher.utils.isHighPerformanceDeviceByOSVersion
 import io.gitee.jesse205.activitylauncher.utils.recreateCompat
 
-object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeSupportActivityListener>() {
-    private const val TAG = "AppThemeSupport"
-    private const val APP_THEME_SUPPORT_TAG = "appThemeSupport"
+object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupportActivityListener>() {
+    private const val TAG = "ThemeSupport"
+    private const val THEME_SUPPORT_TAG = "themeSupport"
     private const val THEME_ID_TAG = "themeId"
+    private const val THEME_VARIANT_ID_TAG = "themeVariantId"
 
 
     override fun createActivityScopeListener(activity: Activity) = AppThemeSupportActivityListener(activity)
@@ -72,9 +73,12 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
     class AppThemeSupportActivityListener(val activity: Activity) : ActivityListener,
         SharedPreferences.OnSharedPreferenceChangeListener {
         val appTheme: AppTheme = ThemeManager.getCurrentTheme()
+        val themeVariantId: String? = ThemeManager.getCurrentVariantId(activity, appTheme)
         var atLeastOnceResume = false
 
-        val isThemeOutdated: Boolean get() = appTheme.id != AppPreferences.themeId
+        val isThemeOutdated: Boolean
+            get() = appTheme.id != ThemeManager.getCurrentTheme().id ||
+                    themeVariantId != ThemeManager.getCurrentVariantId(activity, appTheme)
 
         fun recreateIfThemeOutdated() {
             if (isThemeOutdated) {
@@ -82,10 +86,14 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
             }
         }
 
+        /**
+         * 判断当前 Activity 是否正在切换主题，**不包括主题变体的切换**。
+         */
         fun isThemeChanging(savedInstanceState: Bundle): Boolean {
-            return savedInstanceState.getBundle(APP_THEME_SUPPORT_TAG)?.getString(THEME_ID_TAG)?.let {
-                it != appTheme.id
-            } ?: false
+            return savedInstanceState.getBundle(THEME_SUPPORT_TAG)
+                ?.getString(THEME_ID_TAG)
+                ?.let { it != appTheme.id }
+                ?: return false
         }
 
         override fun onActivityPreCreate(activity: Activity, savedInstanceState: Bundle?) {
@@ -104,7 +112,9 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
             if (!isHighPerformanceDeviceByOSVersion) {
                 AppPreferences.registerChangeListener(this)
             }
-            recreateIfThemeOutdated()
+            if (atLeastOnceResume) {
+                recreateIfThemeOutdated()
+            }
             atLeastOnceResume = true
         }
 
@@ -123,8 +133,9 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
         override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
             val appThemeSupportState = Bundle().apply {
                 putString(THEME_ID_TAG, appTheme.id)
+                putString(THEME_VARIANT_ID_TAG, themeVariantId)
             }
-            outState.putBundle(APP_THEME_SUPPORT_TAG, appThemeSupportState)
+            outState.putBundle(THEME_SUPPORT_TAG, appThemeSupportState)
         }
 
         override fun onActivityPreRestoreInstanceState(activity: Activity, savedInstanceState: Bundle) {
@@ -136,7 +147,10 @@ object AppThemeSupport : ScopedActivityListenerManager<AppThemeSupport.AppThemeS
         }
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
-            if (key == AppPreferences.PREFERENCE_KEY_THEME) {
+            if (key == AppPreferences.PREFERENCE_THEME
+                || key == AppPreferences.PREFERENCE_THEME_DARK_MODE
+                || key == AppPreferences.PREFERENCE_THEME_DARK_ACTION_BAR
+            ) {
                 // 为解决平行视界下 recreate 时窗口不附加到窗口管理器的问题，仅在至少一次恢复时 recreate
                 if (atLeastOnceResume) {
                     recreateIfThemeOutdated()

@@ -35,14 +35,20 @@
     <string name="label_app_name">应用名</string>
     <string name="label_package_name">包名</string>
     <string name="menu_settings">设置</string>
+
+    <string name="settings_category_appearance">外观</string>
     <string name="settings_theme_title">主题</string>
-    <string name="settings_theme_restart_tip">* 重启后生效</string>
     <string name="settings_theme_gingerbread">姜饼</string>
     <string name="settings_theme_holo">Holo</string>
     <string name="settings_theme_material">Material</string>
     <string name="settings_theme_device_default">设备默认</string>
     <string name="settings_theme_settings">系统设置</string>
-    <string name="settings_theme_light">亮色</string>
-    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_dark_mode">深色模式</string>
     <string name="settings_theme_dark_action_bar">深色操作栏</string>
+
+    <string-array name="settings_theme_dark_mode_entries">
+        <item>跟随系统</item>
+        <item>始终开启</item>
+        <item>始终关闭</item>
+    </string-array>
 </resources>

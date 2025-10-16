@@ -11,4 +11,6 @@
 
     <style name="Base.ThemeOverlay.ActivityLauncher.Holo" parent="Base.ThemeOverlay.V14.ActivityLauncher.Holo" />
 
+    <style name="ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+
 </resources>
