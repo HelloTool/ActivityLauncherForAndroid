@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceActivity
+import android.view.MenuItem
 import android.view.ViewGroup
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
@@ -48,6 +49,15 @@ open class BasePreferenceActivity : PreferenceActivity(), Listenable<ActivityLis
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         helper.onActivityConfigurationChanged(newConfig)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // 老版本中默认不调用 onBackPressed
+        when (item.itemId) {
+            item.itemId -> onBackPressed()
+            else -> return super.onOptionsItemSelected(item)
+        }
+        return true
     }
 
     override fun onContentChanged() {
