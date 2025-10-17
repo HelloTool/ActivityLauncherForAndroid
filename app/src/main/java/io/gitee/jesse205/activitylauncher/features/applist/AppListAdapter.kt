@@ -158,8 +158,6 @@ class AppListAdapter(context: Context) :
 
     inner class AppFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
-
-
             val filteredList: List<LoadedAppInfo?> = if (constraint.isNullOrEmpty()) {
                 originalApps
             } else {

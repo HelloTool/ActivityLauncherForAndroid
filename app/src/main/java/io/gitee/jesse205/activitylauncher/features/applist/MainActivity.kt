@@ -49,11 +49,16 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     MainActivityState.MainActivityStateListener {
 
     override val stateClass = MainActivityState::class.java
-    private lateinit var adapter: AppListAdapter
-    private val gridView: GridView by lazy { findViewById(R.id.grid) }
-    private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
-    private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
-    private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
+    private val adapter: AppListAdapter by lazy { AppListAdapter(this@MainActivity) }
+
+    private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
+    private val gridContainer: ViewGroup by lazy { rootLayout.findViewById(R.id.grid_container) }
+    private val gridView: GridView by lazy { gridContainer.findViewById(R.id.grid) }
+    private val emptyLayout: ViewGroup by lazy { gridContainer.findViewById(android.R.id.empty) }
+    private val emptyText: TextView by lazy { emptyLayout.findViewById(R.id.empty_text) }
+    private val loadingLayout: ViewGroup by lazy { rootLayout.findViewById(R.id.loading_layout) }
+    private val loadingText: TextView by lazy { loadingLayout.findViewById(R.id.loading_text) }
+
     private var searchView: SearchView? = null
     private var freshMenuItem: MenuItem? = null
     private var sortInstallTimeMenuItem: MenuItem? = null
@@ -81,13 +86,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         } else {
             false
         }
+
         setupTabs()
+
         if (!isActionBarSupported || !isActionBarInitialized) {
             setupSearchLayout()
         }
 
-        adapter = AppListAdapter(this@MainActivity)
-        val rootLayout = findViewById<ViewGroup>(R.id.root_layout)
         gridView.apply {
             emptyView = emptyLayout
             adapter = this@MainActivity.adapter
@@ -98,8 +103,12 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             }
         }
 
-        findViewById<TextView>(R.id.loading_text).apply {
+        loadingText.apply {
             text = getString(R.string.label_getting_apps)
+        }
+
+        emptyText.apply {
+            text = getString(R.string.label_empty_apps)
         }
 
         state.bind(this, this)
@@ -232,7 +241,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         val input = content.findViewById<EditText>(android.R.id.input)
         var positiveButton: Button? = null
         return AlertDialog.Builder(this)
-            .setTitle(R.string.menu_title_launch_uri)
+            .setTitle(R.string.menu_launch_uri)
             .setView(content)
             .setPositiveButton(android.R.string.ok, null)
             .setNegativeButton(android.R.string.cancel, null)
@@ -364,7 +373,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         val visibleWhenLoading = if (isAppsLoading) View.VISIBLE else View.GONE
         val visibleWhenNotLoading = if (isAppsLoading) View.GONE else View.VISIBLE
         loadingLayout.visibility = visibleWhenLoading
-        emptyTipLayout.visibility = visibleWhenNotLoading
+        gridContainer.visibility = visibleWhenNotLoading
         freshMenuItem?.isEnabled = !isAppsLoading
     }
 

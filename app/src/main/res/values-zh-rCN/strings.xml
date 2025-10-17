@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Activity 启动器</string>
-    <string name="menu_title_about">关于</string>
-    <string name="menu_title_sort">排序…</string>
-    <string name="menu_title_sort_name">名称</string>
-    <string name="menu_title_sort_update_time">更新时间</string>
-    <string name="menu_title_refresh">刷新</string>
-    <string name="menu_title_search">搜索</string>
+
+    <string name="menu_about">关于</string>
+    <string name="menu_sort">排序…</string>
+    <string name="menu_sort_name">名称</string>
+    <string name="menu_sort_install_time">安装时间</string>
+    <string name="menu_sort_update_time">更新时间</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="menu_search">搜索</string>
+    <string name="menu_copy_class_name">复制类名</string>
+    <string name="menu_copy_label">复制标签</string>
+    <string name="menu_copy_package_name">复制包名</string>
+    <string name="menu_copy_app_name">复制应用名</string>
+    <string name="menu_copy_intent_uri">复制 Intent URI</string>
+    <string name="menu_settings">设置</string>
+    <string name="menu_app_details">应用详情</string>
+    <string name="menu_launch_uri">启动 URI</string>
+
     <string name="title_app_list">Activity 列表</string>
     <string name="title_settings">设置</string>
     <string name="label_getting_apps">正在获取应用</string>
@@ -15,26 +26,19 @@
     <string name="toast_app_not_installed">未安装该应用。</string>
     <string name="tab_user_apps">用户应用</string>
     <string name="tab_system_apps">系统应用</string>
-    <string name="label_empty_content">暂无内容</string>
+    <string name="label_empty_apps">没有应用</string>
+    <string name="label_empty_activities">没有 Activity</string>
     <string name="error_permission_denied">权限不足</string>
     <string name="label_getting_activities">正在获取 Activity</string>
-    <string name="menu_title_sort_install_time">安装时间</string>
-    <string name="menu_title_launch_uri">启动 URI</string>
     <string name="title_launch_uri">启动 URI</string>
     <string name="error_no_activity_found">未找到 Activity</string>
     <string name="error_file_uri_not_allowed">文件 URI 不被允许</string>
     <string name="error_unknown">未知错误</string>
     <string name="hint_launch_uri">输入网址或其他 URI</string>
-    <string name="menu_app_details">应用详情</string>
     <string name="label_class_name">类名</string>
     <string name="label_display_name">显示名</string>
-    <string name="menu_copy_class_name">复制类名</string>
-    <string name="menu_copy_label">复制标签</string>
-    <string name="menu_copy_package_name">复制包名</string>
-    <string name="menu_copy_app_name">复制应用名</string>
     <string name="label_app_name">应用名</string>
     <string name="label_package_name">包名</string>
-    <string name="menu_settings">设置</string>
 
     <string name="settings_category_appearance">外观</string>
     <string name="settings_theme_title">主题</string>

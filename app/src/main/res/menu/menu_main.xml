@@ -6,29 +6,29 @@
         android:actionViewClass="android.widget.SearchView"
         android:icon="?menuSearchIcon"
         android:showAsAction="collapseActionView|ifRoom"
-        android:title="@string/menu_title_search"
+        android:title="@string/menu_search"
         android:visible="false"
         tools:ignore="UnusedAttribute" />
     <item
         android:id="@+id/menu_refresh"
         android:icon="?menuRefreshIcon"
-        android:title="@string/menu_title_refresh" />
+        android:title="@string/menu_refresh" />
     <item
         android:icon="?menuSortIcon"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_title_sort"
+        android:title="@string/menu_sort"
         tools:ignore="UnusedAttribute">
         <menu>
             <group android:checkableBehavior="single">
                 <item
                     android:id="@+id/menu_sort_name"
-                    android:title="@string/menu_title_sort_name" />
+                    android:title="@string/menu_sort_name" />
                 <item
                     android:id="@+id/menu_sort_install_time"
-                    android:title="@string/menu_title_sort_install_time" />
+                    android:title="@string/menu_sort_install_time" />
                 <item
                     android:id="@+id/menu_sort_update_time"
-                    android:title="@string/menu_title_sort_update_time" />
+                    android:title="@string/menu_sort_update_time" />
             </group>
         </menu>
     </item>
@@ -36,7 +36,7 @@
         android:id="@+id/menu_launch_uri"
         android:icon="?menuLaunchUriIcon"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_title_launch_uri"
+        android:title="@string/menu_launch_uri"
         tools:ignore="UnusedAttribute" />
 
     <item
@@ -46,5 +46,5 @@
     <item
         android:id="@+id/menu_about"
         android:icon="?menuAboutIcon"
-        android:title="@string/menu_title_about" />
+        android:title="@string/menu_about" />
 </menu>

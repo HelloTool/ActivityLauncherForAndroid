@@ -36,11 +36,16 @@ import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
     ActivityListActivityState.ActivityListActivityStateListener {
     override val stateClass = ActivityListActivityState::class.java
-    private lateinit var adapter: ActivityListAdapter
-    private val gridView: GridView by lazy { findViewById(R.id.grid) }
-    private val loadingLayout: ViewGroup by lazy { findViewById(R.id.loading_layout) }
-    private val emptyTipLayout: ViewGroup by lazy { findViewById(R.id.empty_tip_layout) }
-    private val emptyLayout: ViewGroup by lazy { findViewById(android.R.id.empty) }
+    private val adapter: ActivityListAdapter by lazy { ActivityListAdapter(this) }
+
+    private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
+    private val gridContainer: ViewGroup by lazy { rootLayout.findViewById(R.id.grid_container) }
+    private val gridView: GridView by lazy { gridContainer.findViewById(R.id.grid) }
+    private val emptyLayout: ViewGroup by lazy { gridContainer.findViewById(android.R.id.empty) }
+    private val emptyText: TextView by lazy { emptyLayout.findViewById(R.id.empty_text) }
+    private val loadingLayout: ViewGroup by lazy { rootLayout.findViewById(R.id.loading_layout) }
+    private val loadingText: TextView by lazy { loadingLayout.findViewById(R.id.loading_text) }
+
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
 
@@ -67,13 +72,12 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             setupSearchLayout()
         }
 
-        adapter = ActivityListAdapter(this)
-
         if (state.packageName.isBlank()) {
             showToast(R.string.toast_app_not_installed)
             finish()
             return
         }
+
         runCatching {
             packageManager.getApplicationInfo(state.packageName, 0)
         }.onFailure {
@@ -84,7 +88,6 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             setTitle(it.loadLabel(packageManager))
         }
 
-        val rootLayout = findViewById<ViewGroup>(R.id.root_layout)
         gridView.apply {
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
@@ -94,8 +97,12 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             }
         }
 
-        findViewById<TextView>(R.id.loading_text).apply {
+        loadingText.apply {
             text = getString(R.string.label_getting_activities)
+        }
+
+        emptyText.apply {
+            text = getString(R.string.label_empty_activities)
         }
 
         state.bind(this, this)
@@ -214,10 +221,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val activityInfo: LoadedActivityInfo? = adapter.getItem(position)
-        if (activityInfo == null) {
-            return
-        }
+        val activityInfo: LoadedActivityInfo = adapter.getItem(position)
         launchActivity(activityInfo.activityInfo)
     }
 
@@ -245,7 +249,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         val visibleWhenLoading = if (isActivitiesLoading) View.VISIBLE else View.GONE
         val visibleWhenNotLoading = if (isActivitiesLoading) View.GONE else View.VISIBLE
         loadingLayout.visibility = visibleWhenLoading
-        emptyTipLayout.visibility = visibleWhenNotLoading
+        gridContainer.visibility = visibleWhenNotLoading
         freshMenuItem?.isEnabled = !isActivitiesLoading
     }
 
