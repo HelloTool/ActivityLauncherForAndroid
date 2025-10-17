@@ -5,13 +5,13 @@ import android.os.Parcelable
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
 
-abstract class BaseActivityState<Listener> : Parcelable, Listenable<Listener> {
-    protected var listeners: MutableList<Listener> = mutableListOf()
-    override fun addListener(listener: Listener) {
+abstract class BaseActivityState<StateListener> : Parcelable, Listenable<StateListener> {
+    protected var listeners: MutableList<StateListener> = mutableListOf()
+    override fun addListener(listener: StateListener) {
         listeners.add(listener)
     }
 
-    override fun removeListener(listener: Listener) {
+    override fun removeListener(listener: StateListener) {
         listeners.remove(listener)
     }
 
@@ -19,14 +19,14 @@ abstract class BaseActivityState<Listener> : Parcelable, Listenable<Listener> {
         listeners.clear()
     }
 
-    fun bind(listenableActivity: Listenable<ActivityListener>, listener: Listener) {
-        this@BaseActivityState.addListener(listener)
+    open fun bind(listenableActivity: Listenable<ActivityListener>, listener: StateListener) {
+        addListener(listener)
         listenableActivity.addListener(object : ActivityListener {
             override fun onActivityDestroy(activity: Activity) {
                 if (activity.isFinishing) {
-                    this@BaseActivityState.destroy()
+                    destroy()
                 } else {
-                    this@BaseActivityState.removeListener(listener)
+                    removeListener(listener)
                 }
             }
         })
