@@ -11,6 +11,7 @@
         <item name="menuSortIcon">@drawable/ic_menu_sort_material</item>
         <item name="menuAboutIcon">@drawable/ic_menu_about_material</item>
         <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_material</item>
+        <item name="menuSettingsIcon">@drawable/ic_menu_settings_material</item>
         <item name="dialogPreferredPadding">16dp</item>
         <item name="gridViewStyle">?android:gridViewStyle</item>
     </style>

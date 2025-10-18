@@ -13,6 +13,7 @@
         <item name="menuSortIcon">@drawable/ic_menu_sort_holo</item>
         <item name="menuAboutIcon">@drawable/ic_menu_about_holo</item>
         <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_holo</item>
+        <item name="menuSettingsIcon">@drawable/ic_menu_settings_holo</item>
         <item name="dialogPreferredPadding">8dp</item>
         <!-- 修复GridView的项目的背景存在重叠导致意外的间距 -->
         <item name="gridViewStyle">?android:listViewStyle</item>
