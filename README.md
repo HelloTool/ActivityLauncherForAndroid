@@ -2,6 +2,8 @@
 
 一个 Android 活动 (Activity) 启动器应用，允许用户浏览并启动设备上安装的应用程序及其活动。
 
+本应用只是一个活动启动器。如需其他功能，请使用 [Anywhere-](https://github.com/zhaobozhen/Anywhere-) 等产品。
+
 ## 特性
 
 - **兼容 Android 2.3**
@@ -9,13 +11,25 @@
 - 浏览设备上安装的所有应用程序。
 - 支持大屏设备，适配了平行视界、多窗口。
 
-## 安装
+## 计划（不一定能实现，不一定将实现）
 
-确保你已经安装了 [Android Studio](https://developer.android.com/studio) 和必要的 SDK 工具。然后克隆此仓库并在 Android Studio 中打开项目进行构建和部署。
+- [ ] 支持使用 Root、Shizuku 打开活动
+- [ ] 添加高级启动，允许自定义意图参数
+- [ ] 支持 Android 2.3 的图标缓存
+- [ ] 抛弃 AsyncTask
+- [ ] 允许只显示已导出的活动
+- [ ] 允许只显示有活动的应用
+- [ ] 标注需要权限的活动
+- [ ] 标注并置顶入口活动
+- [ ] 复制意图 URI
+- [ ] 启动应用
 
-```bash
-git clone https://gitee.com/HelloTool/ActivityLauncherForAndroid.git
-```
+## 此应用不会
+
+- 抛弃 Android 2.3 的兼容
+- 使用 AppCompat、Material Components、Compose、Kotlin 协程等不支持 Android 2.3 的工具
+- 添加启动服务、发送广播功能
+- 添加历史记录、收藏功能
 
 ## 使用
 
