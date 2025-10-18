@@ -20,8 +20,9 @@ android {
         minSdk = 9
         targetSdk = 36
         versionCode = 1
-        versionName = "0.1.0(内部体验版)"
+        versionName = "0.1.0"
     }
+
     val localSigningConfig = if (rootProject.file("keystore.properties").exists()) {
         val keystoreProperties = Properties().apply { load(rootProject.file("keystore.properties").inputStream()) }
         signingConfigs.create("local") {
@@ -33,12 +34,35 @@ android {
     } else {
         signingConfigs.getByName("debug")
     }
+
+    signingConfigs {
+        create("release") {
+            if (rootProject.file("keystore.properties").exists()) {
+                Properties().apply {
+                    load(rootProject.file("keystore.properties").inputStream())
+                }.let {
+                    storeFile = file(it["storeFile"] as String)
+                    storePassword = it["storePassword"] as String
+                    keyAlias = it["keyAlias"] as String
+                    keyPassword = it["keyPassword"] as String
+                }
+            } else {
+                signingConfigs.getByName("debug").let {
+                    storeFile = it.storeFile
+                    storePassword = it.storePassword
+                    keyAlias = it.keyAlias
+                    keyPassword = it.keyPassword
+                }
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = localSigningConfig
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"
