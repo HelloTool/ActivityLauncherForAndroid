@@ -42,8 +42,8 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     private val gridView: GridView by lazy { gridContainer.findViewById(R.id.grid) }
     private val emptyLayout: ViewGroup by lazy { gridContainer.findViewById(android.R.id.empty) }
     private val emptyText: TextView by lazy { emptyLayout.findViewById(R.id.empty_text) }
-    private val loadingLayout: ViewGroup by lazy { rootLayout.findViewById(R.id.loading_layout) }
-    private val loadingText: TextView by lazy { loadingLayout.findViewById(R.id.loading_text) }
+    private val progressLayout: ViewGroup by lazy { rootLayout.findViewById(R.id.progress_layout) }
+    private val progressText: TextView by lazy { progressLayout.findViewById(R.id.progress_text) }
 
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -96,7 +96,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             }
         }
 
-        loadingText.apply {
+        progressText.apply {
             text = getString(R.string.label_getting_activities)
         }
 
@@ -247,7 +247,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     override fun onActivitiesLoadingUpdate(isActivitiesLoading: Boolean) {
         val visibleWhenLoading = if (isActivitiesLoading) View.VISIBLE else View.GONE
         val visibleWhenNotLoading = if (isActivitiesLoading) View.GONE else View.VISIBLE
-        loadingLayout.visibility = visibleWhenLoading
+        progressLayout.visibility = visibleWhenLoading
         gridContainer.visibility = visibleWhenNotLoading
         freshMenuItem?.isEnabled = !isActivitiesLoading
     }
