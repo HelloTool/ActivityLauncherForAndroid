@@ -43,6 +43,7 @@ import io.gitee.jesse205.activitylauncher.utils.launchUri
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
+import io.gitee.jesse205.activitylauncher.utils.toViewVisibility
 
 class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickListener,
     MainActivityState.MainActivityStateListener {
@@ -369,11 +370,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onAppsLoadingUpdate(isAppsLoading: Boolean) {
-        val visibleWhenLoading = if (isAppsLoading) View.VISIBLE else View.GONE
-        val visibleWhenNotLoading = if (isAppsLoading) View.GONE else View.VISIBLE
-        progressLayout.visibility = visibleWhenLoading
-        gridContainer.visibility = visibleWhenNotLoading
+        updateProgressBar(isAppsLoading = isAppsLoading)
+        gridContainer.visibility = (!isAppsLoading).toViewVisibility()
         freshMenuItem?.isEnabled = !isAppsLoading
+    }
+
+    override fun onAppNamesLoadingUpdate(isAppNamesLoading: Boolean) {
+        updateProgressBar(isAppNamesLoading = isAppNamesLoading)
     }
 
     override fun onSortedAppsUpdate(apps: List<AppModel>?) {
@@ -382,6 +385,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private fun loadApps() {
         state.loadApps(application)
+    }
+
+    private fun updateProgressBar(
+        isAppsLoading: Boolean = state.isAppsLoading,
+        isAppNamesLoading: Boolean = state.isAppNamesLoading
+    ) {
+        progressLayout.visibility = (isAppsLoading || isAppNamesLoading).toViewVisibility()
     }
 
     private fun changeAppSortCategory(sortCategory: AppSortCategory) {

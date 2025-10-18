@@ -11,16 +11,22 @@ class AppModel(
 ) {
     val packageName: String get() = applicationInfo.packageName
 
+    @Volatile
     var label: CharSequence? = null
         private set
+
     val isLabelLoaded get() = label != null
 
+    val labelLock = Any()
+
     fun getOrLoadLabel(packageManager: PackageManager): CharSequence {
-        return label ?: loadLabel(packageManager)
+        return label ?: synchronized(labelLock) {
+            label ?: loadLabel(packageManager)
+        }
     }
 
     fun loadLabel(packageManager: PackageManager): CharSequence {
-        return label ?: applicationInfo.loadLabel(packageManager).also {
+        return applicationInfo.loadLabel(packageManager).also {
             label = it
         }
     }

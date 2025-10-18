@@ -42,3 +42,5 @@ fun View.parentsDoNotClipChildrenAndPadding(rootLayout: ViewGroup) {
         }
     }
 }
+
+fun Boolean.toViewVisibility() = if (this) View.VISIBLE else View.GONE

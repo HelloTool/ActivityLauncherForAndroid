@@ -1,12 +1,15 @@
 package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.app.Application
+import android.os.Build
 import android.os.Parcelable
+import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.app.BaseActivityState
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
+import java.util.concurrent.Executors
 
 
 @Parcelize
@@ -20,6 +23,9 @@ class MainActivityState(
 
     @IgnoredOnParcel
     private var sortAppsTask: SortAppsTask? = null
+
+    @IgnoredOnParcel
+    private var loadAppNamesTask: LoadAppNamesTask? = null
 
     var sortCategory: AppSortCategory
         get() = _sortCategory
@@ -55,20 +61,36 @@ class MainActivityState(
 
     val isAppsLoadingOrLoaded get() = isAppsLoading || sortedApps != null
 
+    @IgnoredOnParcel
+    var isAppNamesLoading = false
+        private set(value) {
+            field = value
+            listeners.forEach { it.onAppNamesLoadingUpdate(value) }
+        }
+
+    private fun ignoreAndCancelTasks() {
+        @Suppress("DEPRECATION")
+        run {
+            loadAppsTask?.apply {
+                ignore()
+                cancel(true)
+            }
+            sortAppsTask?.apply {
+                ignore()
+                cancel(true)
+            }
+            loadAppNamesTask?.apply {
+                ignore()
+                cancel(true)
+            }
+        }
+    }
+
     fun loadApps(application: Application) {
-        loadAppsTask?.apply {
-            ignore()
-            @Suppress("DEPRECATION")
-            cancel(true)
-        }
-        sortAppsTask?.apply {
-            ignore()
-            @Suppress("DEPRECATION")
-            cancel(true)
-        }
+        ignoreAndCancelTasks()
+
         loadAppsTask = LoadAppsTask(
             application = application,
-            sortCategory = sortCategory,
             provisionType = provisionType,
             onBeforeLoad = {
                 isAppsLoading = true
@@ -76,6 +98,9 @@ class MainActivityState(
             },
             onLoad = {
                 apps = it
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    loadAppNames(application)
+                }
                 sortApps(application)
             },
             onCancel = {
@@ -89,9 +114,9 @@ class MainActivityState(
 
     private fun sortApps(application: Application) {
         val currentApps = apps ?: return
+        @Suppress("DEPRECATION")
         sortAppsTask?.apply {
             ignore()
-            @Suppress("DEPRECATION")
             cancel(true)
         }
         sortAppsTask = SortAppsTask(
@@ -115,6 +140,32 @@ class MainActivityState(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+    private fun loadAppNames(application: Application) {
+        val currentApps = apps ?: return
+        @Suppress("DEPRECATION")
+        loadAppNamesTask?.apply {
+            ignore()
+            cancel(true)
+        }
+        loadAppNamesTask = LoadAppNamesTask(
+            application = application,
+            apps = currentApps,
+            onBeforeLoad = {
+                isAppNamesLoading = true
+            },
+            onLoad = {
+                isAppNamesLoading = false
+            },
+            onCancel = {
+                isAppNamesLoading = false
+            }
+        ).apply {
+            @Suppress("DEPRECATION")
+            executeOnExecutor(Executors.newSingleThreadExecutor())
+        }
+    }
+
     fun changeAppSortCategory(application: Application, sortCategory: AppSortCategory) {
         this.sortCategory = sortCategory
         sortApps(application)
@@ -127,17 +178,14 @@ class MainActivityState(
 
     override fun destroy() {
         super.destroy()
-        loadAppsTask?.apply {
-            ignore()
-            @Suppress("DEPRECATION")
-            cancel(true)
-        }
+        ignoreAndCancelTasks()
     }
 
     interface MainActivityStateListener {
         fun onAppSortCategoryUpdate(sortCategory: AppSortCategory)
         fun onAppProvisionTypeUpdate(provisionType: AppProvisionType)
         fun onAppsLoadingUpdate(isAppsLoading: Boolean)
+        fun onAppNamesLoadingUpdate(isAppNamesLoading: Boolean)
         fun onSortedAppsUpdate(apps: List<AppModel>?)
     }
 }

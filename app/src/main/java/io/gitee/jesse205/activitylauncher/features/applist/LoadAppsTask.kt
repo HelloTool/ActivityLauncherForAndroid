@@ -6,12 +6,10 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
-import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.appProvisionType
 
 class LoadAppsTask(
     application: Application,
-    private val sortCategory: AppSortCategory,
     private val provisionType: AppProvisionType,
     private val onBeforeLoad: () -> Unit,
     private val onLoad: (List<AppModel>) -> Unit,
@@ -29,7 +27,6 @@ class LoadAppsTask(
                     lastUpdateTime = it.lastUpdateTime,
                 )
             }
-
     }
 
     override fun onPreExecute() {
