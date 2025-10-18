@@ -3,7 +3,6 @@ package io.gitee.jesse205.activitylauncher.features.applist
 import android.app.Application
 import android.os.Parcelable
 import io.gitee.jesse205.activitylauncher.app.BaseActivityState
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import kotlinx.parcelize.IgnoredOnParcel
@@ -37,10 +36,10 @@ class MainActivityState(
         }
 
     @IgnoredOnParcel
-    var apps: List<LoadedAppInfo>? = null
+    var apps: List<AppModel>? = null
 
     @IgnoredOnParcel
-    var sortedApps: List<LoadedAppInfo>? = null
+    var sortedApps: List<AppModel>? = null
         private set(value) {
             field = value
             listeners.forEach { it.onSortedAppsUpdate(value) }
@@ -139,6 +138,6 @@ class MainActivityState(
         fun onAppSortCategoryUpdate(sortCategory: AppSortCategory)
         fun onAppProvisionTypeUpdate(provisionType: AppProvisionType)
         fun onAppsLoadingUpdate(isAppsLoading: Boolean)
-        fun onSortedAppsUpdate(apps: List<LoadedAppInfo>?)
+        fun onSortedAppsUpdate(apps: List<AppModel>?)
     }
 }

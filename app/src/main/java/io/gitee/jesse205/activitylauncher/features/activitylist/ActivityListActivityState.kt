@@ -3,7 +3,6 @@ package io.gitee.jesse205.activitylauncher.features.activitylist
 import android.app.Application
 import android.os.Parcelable
 import io.gitee.jesse205.activitylauncher.app.BaseActivityState
-import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -23,7 +22,7 @@ class ActivityListActivityState(
         }
 
     @IgnoredOnParcel
-    var activities: List<LoadedActivityInfo>? = null
+    var activities: List<AppActivityModel>? = null
         private set(value) {
             field = value
             listeners.forEach { it.onActivitiesUpdate(value) }
@@ -75,7 +74,7 @@ class ActivityListActivityState(
     }
 
     interface ActivityListActivityStateListener {
-        fun onActivitiesUpdate(activities: List<LoadedActivityInfo>?)
+        fun onActivitiesUpdate(activities: List<AppActivityModel>?)
         fun onActivitiesLoadingUpdate(isActivitiesLoading: Boolean)
         fun onPackageNameUpdate(packageName: String)
     }

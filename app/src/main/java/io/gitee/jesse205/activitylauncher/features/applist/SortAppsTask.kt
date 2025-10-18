@@ -5,21 +5,20 @@ package io.gitee.jesse205.activitylauncher.features.applist
 import android.app.Application
 import android.content.pm.PackageManager
 import android.os.AsyncTask
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 
 class SortAppsTask(
     application: Application,
-    private val apps: List<LoadedAppInfo>,
+    private val apps: List<AppModel>,
     private val sortCategory: AppSortCategory,
     private val onBeforeSort: () -> Unit,
-    private val onSort: (List<LoadedAppInfo>) -> Unit,
+    private val onSort: (List<AppModel>) -> Unit,
     private val onCancel: () -> Unit,
-) : AsyncTask<Void, Void, List<LoadedAppInfo>>() {
+) : AsyncTask<Void, Void, List<AppModel>>() {
     private val packageManager: PackageManager = application.packageManager
     private var isTaskIgnored = false
 
-    override fun doInBackground(vararg params: Void): List<LoadedAppInfo>? {
+    override fun doInBackground(vararg params: Void): List<AppModel>? {
         return when (sortCategory) {
             AppSortCategory.NAME -> apps.sortedWith { a, b ->
                 a.loadLabel(packageManager).toString()
@@ -37,7 +36,7 @@ class SortAppsTask(
         }
     }
 
-    override fun onPostExecute(result: List<LoadedAppInfo>) {
+    override fun onPostExecute(result: List<AppModel>) {
         if (!isTaskIgnored) {
             onSort(result)
         }

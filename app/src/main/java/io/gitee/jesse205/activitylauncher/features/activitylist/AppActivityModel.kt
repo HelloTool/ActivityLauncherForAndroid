@@ -1,10 +1,10 @@
-package io.gitee.jesse205.activitylauncher.model
+package io.gitee.jesse205.activitylauncher.features.activitylist
 
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-class LoadedActivityInfo(
+class AppActivityModel(
     val activityInfo: ActivityInfo,
 ) {
     val name: String get() = activityInfo.name

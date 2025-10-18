@@ -21,7 +21,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
-import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
 import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
@@ -221,7 +220,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val activityInfo: LoadedActivityInfo = adapter.getItem(position)
+        val activityInfo: AppActivityModel = adapter.getItem(position)
         launchActivity(activityInfo.activityInfo)
     }
 
@@ -241,7 +240,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
     }
 
-    override fun onActivitiesUpdate(activities: List<LoadedActivityInfo>?) {
+    override fun onActivitiesUpdate(activities: List<AppActivityModel>?) {
         adapter.setActivities(activities ?: listOf())
     }
 

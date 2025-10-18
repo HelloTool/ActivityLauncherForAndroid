@@ -28,7 +28,6 @@ import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity
 import io.gitee.jesse205.activitylauncher.features.settings.SettingsActivity
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.theme.ThemeManager
 import io.gitee.jesse205.activitylauncher.theme.ThemeSupport.appTheme
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
@@ -182,11 +181,11 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         return true
     }
 
-    private fun copyPackageName(item: LoadedAppInfo) {
+    private fun copyPackageName(item: AppModel) {
         copyText(getString(R.string.label_package_name), item.packageName)
     }
 
-    private fun copyAppName(item: LoadedAppInfo) {
+    private fun copyAppName(item: AppModel) {
         copyText(getString(R.string.label_app_name), item.loadLabel(packageManager))
     }
 
@@ -377,7 +376,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         freshMenuItem?.isEnabled = !isAppsLoading
     }
 
-    override fun onSortedAppsUpdate(apps: List<LoadedAppInfo>?) {
+    override fun onSortedAppsUpdate(apps: List<AppModel>?) {
         adapter.setApps(apps ?: listOf())
     }
 

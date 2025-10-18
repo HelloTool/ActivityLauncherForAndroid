@@ -16,7 +16,6 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
-import io.gitee.jesse205.activitylauncher.model.LoadedActivityInfo
 import io.gitee.jesse205.activitylauncher.utils.getDimensionPixelSize
 import io.gitee.jesse205.activitylauncher.utils.scaleToFit
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
@@ -30,8 +29,8 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var originalActivities: List<LoadedActivityInfo> = listOf()
-    private var filteredActivities: List<LoadedActivityInfo> = originalActivities
+    private var originalActivities: List<AppActivityModel> = listOf()
+    private var filteredActivities: List<AppActivityModel> = originalActivities
 
     private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val activityFilter by lazy { ActivityFilter() }
@@ -70,7 +69,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         return view
     }
 
-    fun setActivities(activities: List<LoadedActivityInfo>) {
+    fun setActivities(activities: List<AppActivityModel>) {
         originalActivities = activities
         filteredActivities = if (lastFilterConstraint.isNullOrBlank()) activities else listOf()
         notifyDataSetChanged()
@@ -93,10 +92,10 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         private val summary: TextView = root.findViewById(android.R.id.summary)
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
-        private var boundActivityInfo: LoadedActivityInfo? = null
+        private var boundActivityInfo: AppActivityModel? = null
 
 
-        fun bind(activityInfo: LoadedActivityInfo?) {
+        fun bind(activityInfo: AppActivityModel?) {
             if (boundActivityInfo == activityInfo) {
                 return
             }
@@ -117,7 +116,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
 
         fun loadLabel() {
             val info = boundActivityInfo ?: return
-            if (info.label != null) {
+            if (info.isLabelLoaded) {
                 title.setTextOrGone(info.label)
                 return
             }
@@ -157,7 +156,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
             val results = FilterResults()
 
-            val filteredList: List<LoadedActivityInfo> = if (constraint.isNullOrEmpty()) {
+            val filteredList: List<AppActivityModel> = if (constraint.isNullOrEmpty()) {
                 originalActivities
             } else {
                 originalActivities.filter {
@@ -173,7 +172,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
 
         protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {
             @Suppress("UNCHECKED_CAST")
-            filteredActivities = results.values as List<LoadedActivityInfo>
+            filteredActivities = results.values as List<AppActivityModel>
             lastFilterConstraint = constraint
             notifyDataSetChanged()
         }

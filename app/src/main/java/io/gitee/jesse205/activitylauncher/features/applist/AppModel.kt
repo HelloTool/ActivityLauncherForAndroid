@@ -1,10 +1,10 @@
-package io.gitee.jesse205.activitylauncher.model
+package io.gitee.jesse205.activitylauncher.features.applist
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-class LoadedAppInfo(
+class AppModel(
     val applicationInfo: ApplicationInfo,
     val firstInstallTime: Long,
     val lastUpdateTime: Long
@@ -25,5 +25,3 @@ class LoadedAppInfo(
         return applicationInfo.loadIcon(packageManager)
     }
 }
-
-

@@ -16,7 +16,6 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.getDimensionPixelSize
 import io.gitee.jesse205.activitylauncher.utils.scaleToFit
 import io.gitee.jesse205.activitylauncher.utils.setTextOrGone
@@ -32,8 +31,8 @@ class AppListAdapter(context: Context) :
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var originalApps: List<LoadedAppInfo> = listOf()
-    private var filteredApps: List<LoadedAppInfo> = originalApps
+    private var originalApps: List<AppModel> = listOf()
+    private var filteredApps: List<AppModel> = originalApps
 
     private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val appFilter by lazy { AppFilter() }
@@ -73,7 +72,7 @@ class AppListAdapter(context: Context) :
         return view
     }
 
-    fun setApps(apps: List<LoadedAppInfo>) {
+    fun setApps(apps: List<AppModel>) {
         originalApps = apps
         filteredApps = if (lastFilterConstraint.isNullOrBlank()) apps else listOf()
         notifyDataSetChanged()
@@ -87,11 +86,11 @@ class AppListAdapter(context: Context) :
         private val icon: ImageView = root.findViewById(android.R.id.icon)
         private val title: TextView = root.findViewById(android.R.id.title)
         private val summary: TextView = root.findViewById(android.R.id.summary)
-        private var boundAppInfo: LoadedAppInfo? = null
+        private var boundAppInfo: AppModel? = null
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
 
-        fun bind(app: LoadedAppInfo?) {
+        fun bind(app: AppModel?) {
             if (boundAppInfo == app) {
                 return
             }
@@ -132,8 +131,6 @@ class AppListAdapter(context: Context) :
                 }
             }
 
-
-
             iconFuture = executor.submitWithCheckAndCallback(
                 handler = handler,
                 check = { boundAppInfo == info },
@@ -158,7 +155,7 @@ class AppListAdapter(context: Context) :
 
     inner class AppFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filteredList: List<LoadedAppInfo?> = if (constraint.isNullOrEmpty()) {
+            val filteredList: List<AppModel?> = if (constraint.isNullOrEmpty()) {
                 originalApps
             } else {
                 originalApps.filter {
@@ -174,7 +171,7 @@ class AppListAdapter(context: Context) :
 
         protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {
             @Suppress("UNCHECKED_CAST")
-            filteredApps = results.values as List<LoadedAppInfo>
+            filteredApps = results.values as List<AppModel>
             lastFilterConstraint = constraint
             notifyDataSetChanged()
         }

@@ -5,7 +5,6 @@ package io.gitee.jesse205.activitylauncher.features.applist
 import android.app.Application
 import android.content.pm.PackageManager
 import android.os.AsyncTask
-import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.appProvisionType
@@ -15,16 +14,16 @@ class LoadAppsTask(
     private val sortCategory: AppSortCategory,
     private val provisionType: AppProvisionType,
     private val onBeforeLoad: () -> Unit,
-    private val onLoad: (List<LoadedAppInfo>) -> Unit,
+    private val onLoad: (List<AppModel>) -> Unit,
     private val onCancel: () -> Unit,
-) : AsyncTask<Void, Void, List<LoadedAppInfo>>() {
+) : AsyncTask<Void, Void, List<AppModel>>() {
     private val packageManager: PackageManager = application.packageManager
     private var isTaskIgnored = false
-    override fun doInBackground(vararg params: Void): List<LoadedAppInfo>? {
+    override fun doInBackground(vararg params: Void): List<AppModel>? {
         return packageManager.getInstalledPackages(0)
             .filter { it.applicationInfo != null && it.appProvisionType == provisionType }
             .map {
-                LoadedAppInfo(
+                AppModel(
                     applicationInfo = it.applicationInfo!!,
                     firstInstallTime = it.firstInstallTime,
                     lastUpdateTime = it.lastUpdateTime,
@@ -39,7 +38,7 @@ class LoadAppsTask(
         }
     }
 
-    override fun onPostExecute(result: List<LoadedAppInfo>) {
+    override fun onPostExecute(result: List<AppModel>) {
         if (!isTaskIgnored) {
             onLoad(result)
         }
