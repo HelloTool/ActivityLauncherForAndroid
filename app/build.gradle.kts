@@ -37,23 +37,26 @@ android {
 
     signingConfigs {
         create("release") {
-            if (rootProject.file("keystore.properties").exists()) {
-                Properties().apply {
-                    load(rootProject.file("keystore.properties").inputStream())
-                }.let {
-                    storeFile = file(it["storeFile"] as String)
-                    storePassword = it["storePassword"] as String
-                    keyAlias = it["keyAlias"] as String
-                    keyPassword = it["keyPassword"] as String
-                }
-            } else {
-                signingConfigs.getByName("debug").let {
-                    storeFile = it.storeFile
-                    storePassword = it.storePassword
-                    keyAlias = it.keyAlias
-                    keyPassword = it.keyPassword
-                }
-            }
+            val keystoreProperties = if (rootProject.file("keystore.properties").exists())
+                Properties().apply { load(rootProject.file("keystore.properties").inputStream()) }
+            else null
+
+            val debugSigningConfig = signingConfigs.getByName("debug")
+            storeFile = file(
+                System.getenv("KEYSTORE_FILE")
+                    ?: keystoreProperties?.get("storeFile")
+                    ?: debugSigningConfig.storeFile!!.path
+            )
+            storePassword = System.getenv("KEYSTORE_PASSWORD")
+                ?: (keystoreProperties?.get("storePassword") as String?)
+                        ?: debugSigningConfig.storePassword
+
+            keyAlias = System.getenv("KEY_ALIAS")
+                ?: (keystoreProperties?.get("keyAlias") as String?)
+                        ?: debugSigningConfig.keyAlias
+            keyPassword = System.getenv("KEY_PASSWORD")
+                ?: (keystoreProperties?.get("keyPassword") as String?)
+                        ?: debugSigningConfig.keyPassword
         }
     }
 
