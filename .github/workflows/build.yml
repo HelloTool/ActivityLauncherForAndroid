@@ -30,7 +30,7 @@ jobs:
       - name: Decode Keystore
         run: |
           mkdir -p app/keystores
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > app/keystores/keystore.jks
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 -d > ${{ github.workspace }}/app/keystores/keystore.jks
           chmod 600 app/keystores/keystore.jks
 
       - name: Grant execute permission for gradlew
@@ -39,7 +39,7 @@ jobs:
       - name: Build APK
         run: ./gradlew assembleRelease --stacktrace
         env:
-          KEYSTORE_FILE: app/keystores/keystore.jks
+          KEYSTORE_FILE: ${{ github.workspace }}/app/keystores/keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
