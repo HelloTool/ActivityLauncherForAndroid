@@ -21,8 +21,8 @@ class SortAppsTask(
     override fun doInBackground(vararg params: Void): List<AppModel>? {
         return when (sortCategory) {
             AppSortCategory.NAME -> apps.sortedWith { a, b ->
-                a.loadLabel(packageManager).toString()
-                    .compareTo(b.loadLabel(packageManager).toString(), true)
+                a.getOrLoadLabel(packageManager).toString()
+                    .compareTo(b.getOrLoadLabel(packageManager).toString(), true)
             }
 
             AppSortCategory.INSTALL_TIME -> apps.sortedByDescending { it.firstInstallTime }

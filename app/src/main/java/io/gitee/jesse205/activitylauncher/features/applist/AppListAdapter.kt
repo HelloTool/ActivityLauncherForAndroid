@@ -116,7 +116,7 @@ class AppListAdapter(context: Context) :
             labelFuture = executor.submitWithCheckAndCallback(
                 handler = handler,
                 check = { boundAppInfo == info },
-                task = { info.loadLabel(packageManager) },
+                task = { info.getOrLoadLabel(packageManager) },
                 callback = { title.setTextOrGone(it) },
             )
         }
@@ -159,7 +159,7 @@ class AppListAdapter(context: Context) :
                 originalApps
             } else {
                 originalApps.filter {
-                    it.loadLabel(packageManager).contains(constraint, true) ||
+                    it.getOrLoadLabel(packageManager).contains(constraint, true) ||
                             it.packageName.contains(constraint, true)
                 }
             }

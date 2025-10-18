@@ -123,7 +123,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
             labelFuture = executor.submitWithCheckAndCallback(
                 handler = handler,
                 check = { boundActivityInfo == info },
-                task = { info.loadLabel(packageManager) },
+                task = { info.getOrLoadLabel(packageManager) },
                 callback = { title.setTextOrGone(it) },
             )
         }
@@ -160,7 +160,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
                 originalActivities
             } else {
                 originalActivities.filter {
-                    it.loadLabel(packageManager).contains(constraint, true) ||
+                    it.getOrLoadLabel(packageManager).contains(constraint, true) ||
                             it.name.contains(constraint, true)
                 }
             }

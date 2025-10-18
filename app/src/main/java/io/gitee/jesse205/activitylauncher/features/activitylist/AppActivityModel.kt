@@ -16,6 +16,9 @@ class AppActivityModel(
     val isLabelLoaded get() = label != null
 
 
+    fun getOrLoadLabel(packageManager: PackageManager): CharSequence {
+        return label ?: loadLabel(packageManager)
+    }
     fun loadLabel(packageManager: PackageManager): CharSequence {
         return label ?: activityInfo.loadLabel(packageManager).also {
             label = it

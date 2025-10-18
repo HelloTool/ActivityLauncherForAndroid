@@ -124,7 +124,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             return
         }
         val appInfo = adapter.getItem(menuInfo.position)
-        menu.setHeaderTitle(appInfo.loadLabel(packageManager))
+        menu.setHeaderTitle(appInfo.getOrLoadLabel(packageManager))
         menuInflater.inflate(R.menu.menu_main_list_item, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             menu.setGroupDividerEnabled(true)
@@ -186,7 +186,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     private fun copyAppName(item: AppModel) {
-        copyText(getString(R.string.label_app_name), item.loadLabel(packageManager))
+        copyText(getString(R.string.label_app_name), item.getOrLoadLabel(packageManager))
     }
 
 
