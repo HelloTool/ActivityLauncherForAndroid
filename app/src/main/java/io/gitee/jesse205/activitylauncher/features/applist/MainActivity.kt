@@ -112,7 +112,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
 
         state.bind(this, this)
-        onAppsUpdate(state.apps)
+        onSortedAppsUpdate(state.sortedApps)
         onAppsLoadingUpdate(state.isAppsLoading)
         if (!state.isAppsLoadingOrLoaded) {
             loadApps()
@@ -377,7 +377,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         freshMenuItem?.isEnabled = !isAppsLoading
     }
 
-    override fun onAppsUpdate(apps: List<LoadedAppInfo>?) {
+    override fun onSortedAppsUpdate(apps: List<LoadedAppInfo>?) {
         adapter.setApps(apps ?: listOf())
     }
 

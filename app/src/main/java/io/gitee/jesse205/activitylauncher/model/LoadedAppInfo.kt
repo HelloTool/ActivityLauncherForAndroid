@@ -4,7 +4,11 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-class LoadedAppInfo(val applicationInfo: ApplicationInfo) {
+class LoadedAppInfo(
+    val applicationInfo: ApplicationInfo,
+    val firstInstallTime: Long,
+    val lastUpdateTime: Long
+) {
     val packageName: String get() = applicationInfo.packageName
 
     var label: CharSequence? = null

@@ -19,6 +19,9 @@ class MainActivityState(
     @IgnoredOnParcel
     private var loadAppsTask: LoadAppsTask? = null
 
+    @IgnoredOnParcel
+    private var sortAppsTask: SortAppsTask? = null
+
     var sortCategory: AppSortCategory
         get() = _sortCategory
         private set(value) {
@@ -35,10 +38,14 @@ class MainActivityState(
 
     @IgnoredOnParcel
     var apps: List<LoadedAppInfo>? = null
+
+    @IgnoredOnParcel
+    var sortedApps: List<LoadedAppInfo>? = null
         private set(value) {
             field = value
-            listeners.forEach { it.onAppsUpdate(value) }
+            listeners.forEach { it.onSortedAppsUpdate(value) }
         }
+
 
     @IgnoredOnParcel
     var isAppsLoading = false
@@ -47,10 +54,15 @@ class MainActivityState(
             listeners.forEach { it.onAppsLoadingUpdate(value) }
         }
 
-    val isAppsLoadingOrLoaded get() = isAppsLoading || apps != null
+    val isAppsLoadingOrLoaded get() = isAppsLoading || sortedApps != null
 
     fun loadApps(application: Application) {
         loadAppsTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+        sortAppsTask?.apply {
             ignore()
             @Suppress("DEPRECATION")
             cancel(true)
@@ -61,11 +73,39 @@ class MainActivityState(
             provisionType = provisionType,
             onBeforeLoad = {
                 isAppsLoading = true
-                apps = listOf()
+                apps = null
             },
             onLoad = {
-                isAppsLoading = false
                 apps = it
+                sortApps(application)
+            },
+            onCancel = {
+                isAppsLoading = false
+            }
+        ).apply {
+            @Suppress("DEPRECATION")
+            execute()
+        }
+    }
+
+    private fun sortApps(application: Application) {
+        val currentApps = apps ?: return
+        sortAppsTask?.apply {
+            ignore()
+            @Suppress("DEPRECATION")
+            cancel(true)
+        }
+        sortAppsTask = SortAppsTask(
+            application = application,
+            apps = currentApps,
+            sortCategory = sortCategory,
+            onBeforeSort = {
+                isAppsLoading = true
+                sortedApps = null
+            },
+            onSort = {
+                isAppsLoading = false
+                sortedApps = it
             },
             onCancel = {
                 isAppsLoading = false
@@ -78,7 +118,7 @@ class MainActivityState(
 
     fun changeAppSortCategory(application: Application, sortCategory: AppSortCategory) {
         this.sortCategory = sortCategory
-        loadApps(application)
+        sortApps(application)
     }
 
     fun changeAppProvisionType(application: Application, provisionType: AppProvisionType) {
@@ -99,6 +139,6 @@ class MainActivityState(
         fun onAppSortCategoryUpdate(sortCategory: AppSortCategory)
         fun onAppProvisionTypeUpdate(provisionType: AppProvisionType)
         fun onAppsLoadingUpdate(isAppsLoading: Boolean)
-        fun onAppsUpdate(apps: List<LoadedAppInfo>?)
+        fun onSortedAppsUpdate(apps: List<LoadedAppInfo>?)
     }
 }

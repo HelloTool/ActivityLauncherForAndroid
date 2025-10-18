@@ -6,42 +6,40 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.os.AsyncTask
 import io.gitee.jesse205.activitylauncher.model.LoadedAppInfo
-import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
-import io.gitee.jesse205.activitylauncher.utils.appProvisionType
 
-class LoadAppsTask(
+class SortAppsTask(
     application: Application,
+    private val apps: List<LoadedAppInfo>,
     private val sortCategory: AppSortCategory,
-    private val provisionType: AppProvisionType,
-    private val onBeforeLoad: () -> Unit,
-    private val onLoad: (List<LoadedAppInfo>) -> Unit,
+    private val onBeforeSort: () -> Unit,
+    private val onSort: (List<LoadedAppInfo>) -> Unit,
     private val onCancel: () -> Unit,
 ) : AsyncTask<Void, Void, List<LoadedAppInfo>>() {
     private val packageManager: PackageManager = application.packageManager
     private var isTaskIgnored = false
+
     override fun doInBackground(vararg params: Void): List<LoadedAppInfo>? {
-        return packageManager.getInstalledPackages(0)
-            .filter { it.applicationInfo != null && it.appProvisionType == provisionType }
-            .map {
-                LoadedAppInfo(
-                    applicationInfo = it.applicationInfo!!,
-                    firstInstallTime = it.firstInstallTime,
-                    lastUpdateTime = it.lastUpdateTime,
-                )
+        return when (sortCategory) {
+            AppSortCategory.NAME -> apps.sortedWith { a, b ->
+                a.loadLabel(packageManager).toString()
+                    .compareTo(b.loadLabel(packageManager).toString(), true)
             }
 
+            AppSortCategory.INSTALL_TIME -> apps.sortedByDescending { it.firstInstallTime }
+            AppSortCategory.UPDATE_TIME -> apps.sortedByDescending { it.lastUpdateTime }
+        }
     }
 
     override fun onPreExecute() {
         if (!isTaskIgnored) {
-            onBeforeLoad()
+            onBeforeSort()
         }
     }
 
     override fun onPostExecute(result: List<LoadedAppInfo>) {
         if (!isTaskIgnored) {
-            onLoad(result)
+            onSort(result)
         }
     }
 
@@ -56,6 +54,6 @@ class LoadAppsTask(
     }
 
     companion object {
-        const val TAG = "LoadAppsTask"
+        const val TAG = "SortAppsTask"
     }
 }
