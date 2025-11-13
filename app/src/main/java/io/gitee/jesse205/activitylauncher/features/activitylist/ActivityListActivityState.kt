@@ -22,7 +22,7 @@ class ActivityListActivityState(
         }
 
     @IgnoredOnParcel
-    var activities: List<AppActivityModel>? = null
+    var activities: List<AppActivityItem>? = null
         private set(value) {
             field = value
             listeners.forEach { it.onActivitiesUpdate(value) }
@@ -74,7 +74,7 @@ class ActivityListActivityState(
     }
 
     interface ActivityListActivityStateListener {
-        fun onActivitiesUpdate(activities: List<AppActivityModel>?)
+        fun onActivitiesUpdate(activities: List<AppActivityItem>?)
         fun onActivitiesLoadingUpdate(isActivitiesLoading: Boolean)
         fun onPackageNameUpdate(packageName: String)
     }

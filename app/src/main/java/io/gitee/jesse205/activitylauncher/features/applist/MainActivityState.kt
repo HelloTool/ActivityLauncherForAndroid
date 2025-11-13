@@ -42,10 +42,10 @@ class MainActivityState(
         }
 
     @IgnoredOnParcel
-    var apps: List<AppModel>? = null
+    var apps: List<AppItem>? = null
 
     @IgnoredOnParcel
-    var sortedApps: List<AppModel>? = null
+    var sortedApps: List<AppItem>? = null
         private set(value) {
             field = value
             listeners.forEach { it.onSortedAppsUpdate(value) }
@@ -186,6 +186,6 @@ class MainActivityState(
         fun onAppProvisionTypeUpdate(provisionType: AppProvisionType)
         fun onAppsLoadingUpdate(isAppsLoading: Boolean)
         fun onAppNamesLoadingUpdate(isAppNamesLoading: Boolean)
-        fun onSortedAppsUpdate(apps: List<AppModel>?)
+        fun onSortedAppsUpdate(apps: List<AppItem>?)
     }
 }

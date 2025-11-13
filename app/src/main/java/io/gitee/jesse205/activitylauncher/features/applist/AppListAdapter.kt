@@ -31,8 +31,8 @@ class AppListAdapter(context: Context) :
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var originalApps: List<AppModel> = listOf()
-    private var filteredApps: List<AppModel> = originalApps
+    private var originalApps: List<AppItem> = listOf()
+    private var filteredApps: List<AppItem> = originalApps
 
     private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val appFilter by lazy { AppFilter() }
@@ -72,7 +72,7 @@ class AppListAdapter(context: Context) :
         return view
     }
 
-    fun setApps(apps: List<AppModel>) {
+    fun setApps(apps: List<AppItem>) {
         originalApps = apps
         filteredApps = if (lastFilterConstraint.isNullOrBlank()) apps else listOf()
         notifyDataSetChanged()
@@ -86,11 +86,11 @@ class AppListAdapter(context: Context) :
         private val icon: ImageView = root.findViewById(android.R.id.icon)
         private val title: TextView = root.findViewById(android.R.id.title)
         private val summary: TextView = root.findViewById(android.R.id.summary)
-        private var boundAppInfo: AppModel? = null
+        private var boundAppInfo: AppItem? = null
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
 
-        fun bind(app: AppModel?) {
+        fun bind(app: AppItem?) {
             if (boundAppInfo == app) {
                 return
             }
@@ -155,7 +155,7 @@ class AppListAdapter(context: Context) :
 
     inner class AppFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
-            val filteredList: List<AppModel?> = if (constraint.isNullOrEmpty()) {
+            val filteredList: List<AppItem?> = if (constraint.isNullOrEmpty()) {
                 originalApps
             } else {
                 originalApps.filter {
@@ -171,7 +171,7 @@ class AppListAdapter(context: Context) :
 
         protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {
             @Suppress("UNCHECKED_CAST")
-            filteredApps = results.values as List<AppModel>
+            filteredApps = results.values as List<AppItem>
             lastFilterConstraint = constraint
             notifyDataSetChanged()
         }

@@ -4,7 +4,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-class AppModel(
+class AppItem(
     val applicationInfo: ApplicationInfo,
     val firstInstallTime: Long,
     val lastUpdateTime: Long

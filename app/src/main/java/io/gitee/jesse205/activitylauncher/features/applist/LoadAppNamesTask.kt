@@ -8,7 +8,7 @@ import android.os.AsyncTask
 
 class LoadAppNamesTask(
     application: Application,
-    private val apps: List<AppModel>,
+    private val apps: List<AppItem>,
     private val onBeforeLoad: () -> Unit,
     private val onLoad: () -> Unit,
     private val onCancel: () -> Unit,

@@ -220,7 +220,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        val activityInfo: AppActivityModel = adapter.getItem(position)
+        val activityInfo: AppActivityItem = adapter.getItem(position)
         launchActivity(activityInfo.activityInfo)
     }
 
@@ -240,7 +240,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
         }
     }
 
-    override fun onActivitiesUpdate(activities: List<AppActivityModel>?) {
+    override fun onActivitiesUpdate(activities: List<AppActivityItem>?) {
         adapter.setActivities(activities ?: listOf())
     }
 

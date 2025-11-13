@@ -12,16 +12,16 @@ class LoadAppsTask(
     application: Application,
     private val provisionType: AppProvisionType,
     private val onBeforeLoad: () -> Unit,
-    private val onLoad: (List<AppModel>) -> Unit,
+    private val onLoad: (List<AppItem>) -> Unit,
     private val onCancel: () -> Unit,
-) : AsyncTask<Void, Void, List<AppModel>>() {
+) : AsyncTask<Void, Void, List<AppItem>>() {
     private val packageManager: PackageManager = application.packageManager
     private var isTaskIgnored = false
-    override fun doInBackground(vararg params: Void): List<AppModel>? {
+    override fun doInBackground(vararg params: Void): List<AppItem>? {
         return packageManager.getInstalledPackages(0)
             .filter { it.applicationInfo != null && it.appProvisionType == provisionType }
             .map {
-                AppModel(
+                AppItem(
                     applicationInfo = it.applicationInfo!!,
                     firstInstallTime = it.firstInstallTime,
                     lastUpdateTime = it.lastUpdateTime,
@@ -35,7 +35,7 @@ class LoadAppsTask(
         }
     }
 
-    override fun onPostExecute(result: List<AppModel>) {
+    override fun onPostExecute(result: List<AppItem>) {
         if (!isTaskIgnored) {
             onLoad(result)
         }

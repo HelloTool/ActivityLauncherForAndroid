@@ -4,7 +4,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 
-class AppActivityModel(
+class AppActivityItem(
     val activityInfo: ActivityInfo,
 ) {
     val name: String get() = activityInfo.name

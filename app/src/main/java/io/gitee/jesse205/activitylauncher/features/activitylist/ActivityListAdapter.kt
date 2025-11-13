@@ -29,8 +29,8 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
-    private var originalActivities: List<AppActivityModel> = listOf()
-    private var filteredActivities: List<AppActivityModel> = originalActivities
+    private var originalActivities: List<AppActivityItem> = listOf()
+    private var filteredActivities: List<AppActivityItem> = originalActivities
 
     private val iconSize = context.theme.getDimensionPixelSize(R.attr.listIconLarge)
     private val activityFilter by lazy { ActivityFilter() }
@@ -69,7 +69,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         return view
     }
 
-    fun setActivities(activities: List<AppActivityModel>) {
+    fun setActivities(activities: List<AppActivityItem>) {
         originalActivities = activities
         filteredActivities = if (lastFilterConstraint.isNullOrBlank()) activities else listOf()
         notifyDataSetChanged()
@@ -92,10 +92,10 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         private val summary: TextView = root.findViewById(android.R.id.summary)
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
-        private var boundActivityInfo: AppActivityModel? = null
+        private var boundActivityInfo: AppActivityItem? = null
 
 
-        fun bind(activityInfo: AppActivityModel?) {
+        fun bind(activityInfo: AppActivityItem?) {
             if (boundActivityInfo == activityInfo) {
                 return
             }
@@ -156,7 +156,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {
             val results = FilterResults()
 
-            val filteredList: List<AppActivityModel> = if (constraint.isNullOrEmpty()) {
+            val filteredList: List<AppActivityItem> = if (constraint.isNullOrEmpty()) {
                 originalActivities
             } else {
                 originalActivities.filter {
@@ -172,7 +172,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
 
         protected override fun publishResults(constraint: CharSequence?, results: FilterResults) {
             @Suppress("UNCHECKED_CAST")
-            filteredActivities = results.values as List<AppActivityModel>
+            filteredActivities = results.values as List<AppActivityItem>
             lastFilterConstraint = constraint
             notifyDataSetChanged()
         }

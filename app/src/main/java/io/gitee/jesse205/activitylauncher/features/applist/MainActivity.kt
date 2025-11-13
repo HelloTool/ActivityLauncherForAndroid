@@ -184,11 +184,11 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         return true
     }
 
-    private fun copyPackageName(item: AppModel) {
+    private fun copyPackageName(item: AppItem) {
         copyText(getString(R.string.label_package_name), item.packageName)
     }
 
-    private fun copyAppName(item: AppModel) {
+    private fun copyAppName(item: AppItem) {
         copyText(getString(R.string.label_app_name), item.getOrLoadLabel(packageManager))
     }
 
@@ -382,7 +382,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         updateProgressBar(isAppNamesLoading = isAppNamesLoading)
     }
 
-    override fun onSortedAppsUpdate(apps: List<AppModel>?) {
+    override fun onSortedAppsUpdate(apps: List<AppItem>?) {
         adapter.setApps(apps ?: listOf())
     }
 
