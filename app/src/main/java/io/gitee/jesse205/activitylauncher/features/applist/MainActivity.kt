@@ -70,7 +70,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     override fun onCreateState(): MainActivityState {
         return MainActivityState(
             _provisionType = preferences.provisionType ?: AppProvisionType.USER,
-            _sortCategory = preferences.sortCategory ?: AppSortCategory.INSTALL_TIME
+            _sortCategory = preferences.sortCategory ?: AppSortCategory.UPDATE_TIME
         )
     }
 
