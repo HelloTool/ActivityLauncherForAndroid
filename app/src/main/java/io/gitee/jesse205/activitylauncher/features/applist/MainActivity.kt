@@ -67,6 +67,8 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private val preferences: MainActivityPreferences by lazy { MainActivityPreferences(this) }
 
+    private var isUsingSearchLayout = false
+
     override fun onCreateState(): MainActivityState {
         return MainActivityState(
             _provisionType = preferences.provisionType ?: AppProvisionType.USER,
@@ -90,7 +92,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         setupTabs()
 
         if (!isActionBarSupported || !isActionBarInitialized) {
-            setupSearchLayout()
+            isUsingSearchLayout = setupSearchLayout()
         }
 
         gridView.apply {
@@ -152,7 +154,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         getMenuInflater().inflate(R.menu.menu_main, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
         freshMenuItem!!.isEnabled = !state.isAppsLoading
-        if (isMenuSearchBarSupported) {
+        if (isMenuSearchBarSupported && !isUsingSearchLayout) {
             menu.findItem(R.id.menu_search).apply {
                 isVisible = true
             }.also {
@@ -275,7 +277,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             }
     }
 
-    private fun setupSearchLayout() {
+    private fun setupSearchLayout(): Boolean {
         // HONEYCOMB 以上采用 ActionBar 中的 SearchView
         val searchLayout = findViewById<ViewStub>(R.id.search_layout).inflate()
         val searchInput = searchLayout.findViewById<EditText>(R.id.search_input)
@@ -286,6 +288,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                 adapter.filter.filter(s)
             }
         })
+        return true
     }
 
 
