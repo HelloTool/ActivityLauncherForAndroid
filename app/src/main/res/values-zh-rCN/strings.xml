@@ -17,6 +17,7 @@
     <string name="menu_settings">设置</string>
     <string name="menu_app_details">应用详情</string>
     <string name="menu_launch_uri">启动 URI</string>
+    <string name="menu_open_app">打开应用</string>
 
     <string name="title_app_list">活动列表</string>
     <string name="title_settings">设置</string>

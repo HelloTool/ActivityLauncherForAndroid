@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
@@ -35,12 +36,16 @@ import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.copyText
 import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.getBoolean
+import io.gitee.jesse205.activitylauncher.utils.getUserFriendlyMessage
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.utils.isOpenable
 import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
 import io.gitee.jesse205.activitylauncher.utils.launchUri
+import io.gitee.jesse205.activitylauncher.utils.openApp
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
+import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 import io.gitee.jesse205.activitylauncher.utils.toViewVisibility
@@ -128,9 +133,13 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
         val appInfo = adapter.getItem(menuInfo.position)
         menu.setHeaderTitle(appInfo.getOrLoadLabel(packageManager))
-        menuInflater.inflate(R.menu.menu_main_list_item, menu)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             menu.setGroupDividerEnabled(true)
+        }
+        menuInflater.inflate(R.menu.menu_main_list_item, menu)
+
+        menu.findItem(R.id.menu_open_app).apply {
+            isVisible = appInfo.applicationInfo.isOpenable(this@MainActivity)
         }
     }
 
@@ -142,6 +151,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
         }
         val appInfo = adapter.getItem(menuInfo.position)
         when (item.itemId) {
+            R.id.menu_open_app -> openAppOrShowException(appInfo.packageName)
             R.id.menu_app_details -> openAppDetails(appInfo.packageName)
             R.id.menu_copy_app_name -> copyAppName(appInfo)
             R.id.menu_copy_package_name -> copyPackageName(appInfo)
@@ -151,7 +161,6 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-
         getMenuInflater().inflate(R.menu.menu_main, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
         freshMenuItem!!.isEnabled = !state.isAppsLoading
@@ -358,6 +367,15 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
+    }
+
+    private fun openAppOrShowException(packageName: String) {
+        runCatching {
+            openApp(packageName)
+        }.onFailure {
+            Log.w(TAG, "openAppOrShowToast: failed to open app $packageName", it)
+            showToast(it.getUserFriendlyMessage(this))
+        }
     }
 
     override fun onAppSortCategoryUpdate(sortCategory: AppSortCategory) {

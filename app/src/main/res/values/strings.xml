@@ -11,11 +11,12 @@
     <string name="menu_copy_class_name">Copy class name</string>
     <string name="menu_copy_label">Copy label</string>
     <string name="menu_copy_package_name">Copy package name</string>
-    <string name="menu_copy_app_name">Copy app name</string>
+    <string name="menu_copy_app_name">Copy APP name</string>
     <string name="menu_copy_intent_uri">Copy intent URI</string>
     <string name="menu_settings">Settings</string>
-    <string name="menu_app_details">App details</string>
+    <string name="menu_app_details">APP details</string>
     <string name="menu_launch_uri">Launch URI</string>
+    <string name="menu_open_app">Open APP</string>
 
     <string name="title_app_list">Activity List</string>
     <string name="title_settings">Settings</string>

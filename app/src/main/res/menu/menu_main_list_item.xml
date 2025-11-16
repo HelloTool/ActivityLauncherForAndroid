@@ -8,7 +8,10 @@
             android:id="@+id/menu_copy_package_name"
             android:title="@string/menu_copy_package_name" />
     </group>
-    <group android:id="@+id/menu_group_details">
+    <group android:id="@+id/menu_group_more">
+        <item
+            android:id="@+id/menu_open_app"
+            android:title="@string/menu_open_app" />
         <item
             android:id="@+id/menu_app_details"
             android:title="@string/menu_app_details" />
