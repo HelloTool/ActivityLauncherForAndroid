@@ -187,8 +187,8 @@ object ThemeManager {
             else -> appTheme.light
         }
         activity.apply {
-            activity.setTheme(themeVariant.style)
-            activity.theme.applyStyle(themeVariant.overlayStyle, true)
+            setTheme(themeVariant.style)
+            theme.applyStyle(themeVariant.overlayStyle, true)
         }
     }
 

@@ -151,6 +151,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+
         getMenuInflater().inflate(R.menu.menu_main, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
         freshMenuItem!!.isEnabled = !state.isAppsLoading

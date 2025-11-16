@@ -11,6 +11,14 @@
 
     <style name="Base.ThemeOverlay.ActivityLauncher.Holo" parent="Base.ThemeOverlay.V14.ActivityLauncher.Holo" />
 
-    <style name="ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo" />
+    <style name="Base.ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar">
+        <item name="menuSearchIcon">@drawable/ic_menu_search_holo_dark</item>
+        <item name="menuRefreshIcon">@drawable/ic_menu_refresh_holo_dark</item>
+        <item name="menuSortIcon">@drawable/ic_menu_sort_holo_dark</item>
+        <item name="menuAboutIcon">@drawable/ic_menu_about_holo_dark</item>
+        <item name="menuLaunchUriIcon">@drawable/ic_menu_launch_uri_holo_dark</item>
+        <item name="menuSettingsIcon">@drawable/ic_menu_settings_holo_dark</item>
+    </style>
 
+    <style name="ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar" parent="Base.ThemeOverlay.ActivityLauncher.Holo.Light.DarkActionBar" />
 </resources>
