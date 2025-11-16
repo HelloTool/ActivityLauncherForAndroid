@@ -23,23 +23,13 @@ android {
         versionName = "0.1.0"
     }
 
-    val localSigningConfig = if (rootProject.file("keystore.properties").exists()) {
-        val keystoreProperties = Properties().apply { load(rootProject.file("keystore.properties").inputStream()) }
-        signingConfigs.create("local") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-        }
-    } else {
-        signingConfigs.getByName("debug")
-    }
-
     signingConfigs {
         create("release") {
-            val keystoreProperties = if (rootProject.file("keystore.properties").exists())
-                Properties().apply { load(rootProject.file("keystore.properties").inputStream()) }
-            else null
+            val keystoreProperties = if (rootProject.file("keystore.properties").exists()) {
+                Properties().apply {
+                    load(rootProject.file("keystore.properties").inputStream())
+                }
+            } else null
 
             val debugSigningConfig = signingConfigs.getByName("debug")
             storeFile = file(
@@ -48,14 +38,14 @@ android {
                     ?: debugSigningConfig.storeFile!!.path
             )
             storePassword = System.getenv("KEYSTORE_PASSWORD")
-                ?: (keystoreProperties?.get("storePassword") as String?)
+                ?: keystoreProperties?.getProperty("storePassword")
                         ?: debugSigningConfig.storePassword
 
             keyAlias = System.getenv("KEY_ALIAS")
-                ?: (keystoreProperties?.get("keyAlias") as String?)
+                ?: keystoreProperties?.getProperty("keyAlias")
                         ?: debugSigningConfig.keyAlias
             keyPassword = System.getenv("KEY_PASSWORD")
-                ?: (keystoreProperties?.get("keyPassword") as String?)
+                ?: keystoreProperties?.getProperty("keyPassword")
                         ?: debugSigningConfig.keyPassword
         }
     }
