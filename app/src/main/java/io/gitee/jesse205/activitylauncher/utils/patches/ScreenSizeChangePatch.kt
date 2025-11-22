@@ -6,8 +6,8 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.ScopedActivityListenerManager
-import io.gitee.jesse205.activitylauncher.utils.recreateCompat
 import io.gitee.jesse205.activitylauncher.utils.screenLayoutSize
+import io.gitee.jesse205.activitylauncher.utils.tryRecreateCompat
 
 /**
  * 屏幕尺寸变化修复补丁
@@ -31,7 +31,7 @@ object ScreenSizeChangePatch :
         override fun onActivityResume(activity: Activity) {
             isResumed = true
             if (activity.resources.configuration.screenLayoutSize != screenLayoutSizeWhenCreated) {
-                activity.recreateCompat()
+                activity.tryRecreateCompat()
             }
         }
 
@@ -41,7 +41,7 @@ object ScreenSizeChangePatch :
 
         override fun onActivityConfigurationChanged(activity: Activity, newConfig: Configuration) {
             if (isResumed && newConfig.screenLayoutSize != screenLayoutSizeWhenCreated) {
-                activity.recreateCompat()
+                activity.tryRecreateCompat()
             }
         }
     }

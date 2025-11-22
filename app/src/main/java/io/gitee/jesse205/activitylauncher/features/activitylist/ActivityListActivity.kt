@@ -22,11 +22,11 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.utils.IntentCompat
-import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
 import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
+import io.gitee.jesse205.activitylauncher.utils.messageResId
 import io.gitee.jesse205.activitylauncher.utils.parentsDoNotClipChildrenAndPadding
 import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.utils.showToast
@@ -236,7 +236,7 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
             startActivity(intent)
         }.onFailure {
             Log.w(TAG, "launchActivity failed: ", it)
-            showToast(it.errorMessageResId ?: R.string.error_unknown)
+            showToast(it.messageResId ?: R.string.error_unknown)
         }
     }
 

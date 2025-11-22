@@ -34,7 +34,6 @@ import io.gitee.jesse205.activitylauncher.theme.ThemeSupport.appTheme
 import io.gitee.jesse205.activitylauncher.utils.AppProvisionType
 import io.gitee.jesse205.activitylauncher.utils.AppSortCategory
 import io.gitee.jesse205.activitylauncher.utils.copyText
-import io.gitee.jesse205.activitylauncher.utils.errorMessageResId
 import io.gitee.jesse205.activitylauncher.utils.getBoolean
 import io.gitee.jesse205.activitylauncher.utils.getUserFriendlyMessage
 import io.gitee.jesse205.activitylauncher.utils.isActionBarSupported
@@ -279,7 +278,7 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
                                 dismiss()
                             }.onFailure {
                                 isEnabled = false
-                                input.error = getString(it.errorMessageResId ?: R.string.error_unknown)
+                                input.error = it.getUserFriendlyMessage(this@MainActivity)
                             }
                         }
                     }

@@ -14,7 +14,7 @@ import io.gitee.jesse205.activitylauncher.utils.ScopedActivityListenerManager
 import io.gitee.jesse205.activitylauncher.utils.WindowCompat
 import io.gitee.jesse205.activitylauncher.utils.copyFieldsTo
 import io.gitee.jesse205.activitylauncher.utils.isHighPerformanceDeviceByOSVersion
-import io.gitee.jesse205.activitylauncher.utils.recreateCompat
+import io.gitee.jesse205.activitylauncher.utils.tryRecreateCompat
 
 object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupportActivityListener>() {
     private const val TAG = "ThemeSupport"
@@ -82,7 +82,7 @@ object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupport
 
         fun recreateIfThemeOutdated() {
             if (isThemeOutdated) {
-                activity.recreateCompat()
+                activity.tryRecreateCompat()
             }
         }
 

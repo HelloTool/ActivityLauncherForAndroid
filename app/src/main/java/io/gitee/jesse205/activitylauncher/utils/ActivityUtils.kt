@@ -56,7 +56,7 @@ fun Activity.recreateGingerbread() {
     }
 }
 
-fun Activity.recreateCompat() {
+fun Activity.tryRecreateCompat() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
         recreate()
         return
