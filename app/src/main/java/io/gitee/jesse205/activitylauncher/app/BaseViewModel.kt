@@ -1,11 +1,11 @@
 package io.gitee.jesse205.activitylauncher.app
 
 import android.app.Activity
-import android.os.Parcelable
+import android.os.Bundle
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
 
-abstract class BaseActivityState<StateListener> : Parcelable, Listenable<StateListener> {
+abstract class BaseViewModel<StateListener> : Listenable<StateListener> {
     protected var listeners: MutableList<StateListener> = mutableListOf()
     override fun addListener(listener: StateListener) {
         listeners.add(listener)
@@ -18,6 +18,10 @@ abstract class BaseActivityState<StateListener> : Parcelable, Listenable<StateLi
     open fun destroy() {
         listeners.clear()
     }
+
+    open fun saveHierarchyState(): Bundle? = null
+
+    open fun restoreHierarchyState(state: Bundle?) {}
 
     open fun bind(listenableActivity: Listenable<ActivityListener>, listener: StateListener) {
         addListener(listener)

@@ -49,10 +49,10 @@ import io.gitee.jesse205.activitylauncher.utils.tabs.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 import io.gitee.jesse205.activitylauncher.utils.toViewVisibility
 
-class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickListener,
-    MainActivityState.MainActivityStateListener {
+class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListener,
+    MainViewModel.MainActivityStateListener {
 
-    override val stateClass = MainActivityState::class.java
+    override val stateClass = MainViewModel::class.java
     private val adapter: AppListAdapter by lazy { AppListAdapter(this@MainActivity) }
 
     private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
@@ -73,10 +73,10 @@ class MainActivity : BaseActivity<MainActivityState>(), AdapterView.OnItemClickL
 
     private var isUsingSearchLayout = false
 
-    override fun onCreateState(): MainActivityState {
-        return MainActivityState(
-            _provisionType = preferences.provisionType ?: AppProvisionType.USER,
-            _sortCategory = preferences.sortCategory ?: AppSortCategory.UPDATE_TIME
+    override fun onCreateState(): MainViewModel {
+        return MainViewModel(
+            provisionType = preferences.provisionType ?: AppProvisionType.USER,
+            sortCategory = preferences.sortCategory ?: AppSortCategory.UPDATE_TIME
         )
     }
 

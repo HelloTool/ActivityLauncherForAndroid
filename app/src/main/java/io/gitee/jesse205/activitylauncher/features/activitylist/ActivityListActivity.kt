@@ -32,9 +32,9 @@ import io.gitee.jesse205.activitylauncher.utils.patches.CollapseActionViewMenuIt
 import io.gitee.jesse205.activitylauncher.utils.showToast
 import io.gitee.jesse205.activitylauncher.utils.temporarilyClearFocus
 
-class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterView.OnItemClickListener,
-    ActivityListActivityState.ActivityListActivityStateListener {
-    override val stateClass = ActivityListActivityState::class.java
+class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.OnItemClickListener,
+    ActivityListViewModel.ActivityListActivityStateListener {
+    override val stateClass = ActivityListViewModel::class.java
     private val adapter: ActivityListAdapter by lazy { ActivityListAdapter(this) }
 
     private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
@@ -48,12 +48,9 @@ class ActivityListActivity : BaseActivity<ActivityListActivityState>(), AdapterV
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
 
-    override fun onCreateState(): ActivityListActivityState {
-        return ActivityListActivityState(
-            _packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME) ?: run {
-                Log.e(TAG, "packageName is null")
-                ""
-            }
+    override fun onCreateState(): ActivityListViewModel {
+        return ActivityListViewModel(
+            packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME)
         )
     }
 

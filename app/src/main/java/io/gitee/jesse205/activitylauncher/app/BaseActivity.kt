@@ -5,10 +5,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import io.gitee.jesse205.activitylauncher.utils.ActivityListener
 import io.gitee.jesse205.activitylauncher.utils.Listenable
-import io.gitee.jesse205.activitylauncher.utils.getParcelableCompat
 
 
-abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<ActivityListener> {
+abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<ActivityListener> {
     protected abstract val stateClass: Class<S>
     private var _state: S? = null
     protected val state: S get() = _state!!
@@ -22,9 +21,7 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
         super.onCreate(savedInstanceState)
         _state =
             stateClass.cast(lastNonConfigurationInstance)
-                ?: savedInstanceState?.getParcelableCompat(ACTIVITY_STATE_TAG, stateClass)
-                        ?: onCreateState()
-
+                ?: onCreateState()
         helper.onActivityCreate(savedInstanceState)
     }
 
@@ -37,13 +34,16 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        outState.putBundle(VIEW_MODEL_STATE_TAG, _state?.saveHierarchyState())
         helper.onActivitySaveInstanceState(outState)
-        outState.putParcelable(ACTIVITY_STATE_TAG, state)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         helper.onActivityPreRestoreInstanceState(savedInstanceState)
         super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState.getBundle(VIEW_MODEL_STATE_TAG)?.let {
+            _state?.restoreHierarchyState(it)
+        }
         helper.onActivityRestoreInstanceState(savedInstanceState)
     }
 
@@ -94,6 +94,6 @@ abstract class BaseActivity<S : BaseActivityState<*>> : Activity(), Listenable<A
     }
 
     companion object {
-        private const val ACTIVITY_STATE_TAG = "activityState"
+        private const val VIEW_MODEL_STATE_TAG = "viewModelState"
     }
 }
