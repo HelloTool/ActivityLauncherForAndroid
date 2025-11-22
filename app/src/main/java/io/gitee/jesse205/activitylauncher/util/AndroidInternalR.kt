@@ -7,10 +7,10 @@ object AndroidInternalR {
     object id {
         @JvmStatic()
         @get:JvmName("ACTION_BAR_ID")
-        val ACTION_BAR by lazy {
+        val action_bar by lazy {
             ActivityLauncherApp.INSTANCE.resources.getIdentifier("action_bar", "id", "android")
         }
-        val BUTTON_PANEL by lazy {
+        val buttonPanel by lazy {
             ActivityLauncherApp.INSTANCE.resources.getIdentifier("buttonPanel", "id", "android")
         }
     }

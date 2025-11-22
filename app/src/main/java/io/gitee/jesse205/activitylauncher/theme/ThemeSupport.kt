@@ -39,13 +39,13 @@ object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupport
         val refToolbarState = refWindowState
             .getSparseParcelableArray<Parcelable>(WindowCompat.ACTION_BAR_TAG) ?: return
 
-        val actionBarState = toolbarStates.get(AndroidInternalR.id.ACTION_BAR) ?: return
-        val refActionBarState = refToolbarState.get(AndroidInternalR.id.ACTION_BAR) ?: return
+        val actionBarState = toolbarStates.get(AndroidInternalR.id.action_bar) ?: return
+        val refActionBarState = refToolbarState.get(AndroidInternalR.id.action_bar) ?: return
         if (actionBarState.javaClass != refActionBarState.javaClass) {
             runCatching {
                 // TODO: 使用 LSPosed/AndroidHiddenApiBypass 访问隐藏 API
                 actionBarState.copyFieldsTo(refActionBarState, arrayOf("expandedMenuItemId", "isOverflowOpen"))
-                toolbarStates.set(AndroidInternalR.id.ACTION_BAR, refActionBarState)
+                toolbarStates.set(AndroidInternalR.id.action_bar, refActionBarState)
             }.onFailure {
                 Log.w(TAG, "onActivityPreCreate: Failed to transform action bar state", it)
                 windowState.remove(WindowCompat.ACTION_BAR_TAG)
@@ -63,7 +63,7 @@ object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupport
                 @Suppress("DEPRECATION")
                 val savedStates =
                     windowState.getSparseParcelableArray<Parcelable>(WindowCompat.VIEWS_TAG) ?: return@forEach
-                savedStates.remove(AndroidInternalR.id.BUTTON_PANEL)
+                savedStates.remove(AndroidInternalR.id.buttonPanel)
             }
         }
     }
