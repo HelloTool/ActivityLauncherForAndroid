@@ -2,14 +2,14 @@ package io.gitee.jesse205.activitylauncher.theme
 
 import android.app.Activity
 import io.gitee.jesse205.activitylauncher.R
-import io.gitee.jesse205.activitylauncher.preferences.AppPreferences
-import io.gitee.jesse205.activitylauncher.utils.isDeviceSettingsThemeSupported
-import io.gitee.jesse205.activitylauncher.utils.isDeviceThemeSupported
-import io.gitee.jesse205.activitylauncher.utils.isGingerbreadThemeNoBugs
-import io.gitee.jesse205.activitylauncher.utils.isHoloDarkActionBarThemeSupported
-import io.gitee.jesse205.activitylauncher.utils.isHoloThemeSupported
-import io.gitee.jesse205.activitylauncher.utils.isMaterialThemeSupported
-import io.gitee.jesse205.activitylauncher.utils.isNightModeCompat
+import io.gitee.jesse205.activitylauncher.preference.AppPreferences
+import io.gitee.jesse205.activitylauncher.util.isDeviceSettingsThemeSupported
+import io.gitee.jesse205.activitylauncher.util.isDeviceThemeSupported
+import io.gitee.jesse205.activitylauncher.util.isGingerbreadThemeNoBugs
+import io.gitee.jesse205.activitylauncher.util.isHoloDarkActionBarThemeSupported
+import io.gitee.jesse205.activitylauncher.util.isHoloThemeSupported
+import io.gitee.jesse205.activitylauncher.util.isMaterialThemeSupported
+import io.gitee.jesse205.activitylauncher.util.isNightModeCompat
 
 object ThemeManager {
     const val THEME_DEVICE_DEFAULT_SETTINGS = "device_default_settings"

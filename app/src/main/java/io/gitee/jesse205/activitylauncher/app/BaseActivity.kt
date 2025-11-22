@@ -3,8 +3,8 @@ package io.gitee.jesse205.activitylauncher.app
 import android.app.Activity
 import android.content.res.Configuration
 import android.os.Bundle
-import io.gitee.jesse205.activitylauncher.utils.ActivityListener
-import io.gitee.jesse205.activitylauncher.utils.Listenable
+import io.gitee.jesse205.activitylauncher.util.ActivityListener
+import io.gitee.jesse205.activitylauncher.util.Listenable
 
 
 abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<ActivityListener> {

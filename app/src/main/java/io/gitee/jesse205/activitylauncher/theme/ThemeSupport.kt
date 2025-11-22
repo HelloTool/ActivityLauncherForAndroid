@@ -5,16 +5,16 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
-import io.gitee.jesse205.activitylauncher.preferences.AppPreferences
-import io.gitee.jesse205.activitylauncher.utils.ActivityCompat
-import io.gitee.jesse205.activitylauncher.utils.ActivityListener
-import io.gitee.jesse205.activitylauncher.utils.AndroidInternalR
-import io.gitee.jesse205.activitylauncher.utils.DialogCompat
-import io.gitee.jesse205.activitylauncher.utils.ScopedActivityListenerManager
-import io.gitee.jesse205.activitylauncher.utils.WindowCompat
-import io.gitee.jesse205.activitylauncher.utils.copyFieldsTo
-import io.gitee.jesse205.activitylauncher.utils.isHighPerformanceDeviceByOSVersion
-import io.gitee.jesse205.activitylauncher.utils.tryRecreateCompat
+import io.gitee.jesse205.activitylauncher.preference.AppPreferences
+import io.gitee.jesse205.activitylauncher.util.ActivityCompat
+import io.gitee.jesse205.activitylauncher.util.ActivityListener
+import io.gitee.jesse205.activitylauncher.util.AndroidInternalR
+import io.gitee.jesse205.activitylauncher.util.DialogCompat
+import io.gitee.jesse205.activitylauncher.util.ScopedActivityListenerManager
+import io.gitee.jesse205.activitylauncher.util.WindowCompat
+import io.gitee.jesse205.activitylauncher.util.copyFieldsTo
+import io.gitee.jesse205.activitylauncher.util.isHighPerformanceDeviceByOSVersion
+import io.gitee.jesse205.activitylauncher.util.tryRecreateCompat
 
 object ThemeSupport : ScopedActivityListenerManager<ThemeSupport.AppThemeSupportActivityListener>() {
     private const val TAG = "ThemeSupport"

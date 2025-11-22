@@ -8,13 +8,13 @@ import android.util.Log
 import android.view.Window
 import io.gitee.jesse205.activitylauncher.BuildConfig
 import io.gitee.jesse205.activitylauncher.theme.ThemeSupport
-import io.gitee.jesse205.activitylauncher.utils.ActivityListener
-import io.gitee.jesse205.activitylauncher.utils.Listenable
-import io.gitee.jesse205.activitylauncher.utils.isNavigationGestureSupported
-import io.gitee.jesse205.activitylauncher.utils.isSupportEdgeToEdge
-import io.gitee.jesse205.activitylauncher.utils.patches.ScreenSizeChangePatch
-import io.gitee.jesse205.activitylauncher.utils.patches.SystemBarAppearancePatch
-import io.gitee.jesse205.activitylauncher.utils.setDecorFitsSystemWindowsCompat
+import io.gitee.jesse205.activitylauncher.util.ActivityListener
+import io.gitee.jesse205.activitylauncher.util.Listenable
+import io.gitee.jesse205.activitylauncher.util.isNavigationGestureSupported
+import io.gitee.jesse205.activitylauncher.util.isSupportEdgeToEdge
+import io.gitee.jesse205.activitylauncher.util.patch.ScreenSizeChangePatch
+import io.gitee.jesse205.activitylauncher.util.patch.SystemBarAppearancePatch
+import io.gitee.jesse205.activitylauncher.util.setDecorFitsSystemWindowsCompat
 
 class BaseActivityHelper(val activity: Activity) : Listenable<ActivityListener> {
     private val listeners: MutableList<ActivityListener> = mutableListOf<ActivityListener>().apply {

@@ -4,7 +4,7 @@ import android.app.Application
 import android.os.Build
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
-import io.gitee.jesse205.activitylauncher.utils.disableDeathOnFileUriExposure
+import io.gitee.jesse205.activitylauncher.util.disableDeathOnFileUriExposure
 
 
 class ActivityLauncherApp : Application() {

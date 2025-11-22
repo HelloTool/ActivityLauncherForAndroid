@@ -43,7 +43,7 @@
             android:value="androidhnext:style/Theme.Magic"/> -->
 
         <activity
-            android:name=".features.applist.MainActivity"
+            android:name=".feature.applist.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
@@ -52,16 +52,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="io.gitee.jesse205.activitylauncher.features.activitylist.ActivityListActivity"
+            android:name="io.gitee.jesse205.activitylauncher.feature.activitylist.ActivityListActivity"
             android:exported="true"
             android:label="@string/title_app_list"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
-            android:name="io.gitee.jesse205.activitylauncher.features.settings.SettingsActivity"
+            android:name="io.gitee.jesse205.activitylauncher.feature.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/title_settings" />
         <activity
-            android:name="io.gitee.jesse205.activitylauncher.features.settings.SettingsActivityExternal"
+            android:name="io.gitee.jesse205.activitylauncher.feature.settings.SettingsActivityExternal"
             android:exported="true"
             android:label="@string/title_settings">
             <intent-filter>

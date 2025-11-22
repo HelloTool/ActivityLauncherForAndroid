@@ -2,8 +2,8 @@ package io.gitee.jesse205.activitylauncher.app
 
 import android.app.Activity
 import android.os.Bundle
-import io.gitee.jesse205.activitylauncher.utils.ActivityListener
-import io.gitee.jesse205.activitylauncher.utils.Listenable
+import io.gitee.jesse205.activitylauncher.util.ActivityListener
+import io.gitee.jesse205.activitylauncher.util.Listenable
 
 abstract class BaseViewModel<StateListener> : Listenable<StateListener> {
     protected var listeners: MutableList<StateListener> = mutableListOf()
