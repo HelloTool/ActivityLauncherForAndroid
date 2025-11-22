@@ -40,6 +40,7 @@
     <string name="label_display_name">显示名</string>
     <string name="label_app_name">应用名</string>
     <string name="label_package_name">包名</string>
+    <string name="label_intent_uri">意图 URI</string>
 
     <string name="settings_category_appearance">外观</string>
     <string name="settings_theme_title">主题</string>

@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.LruCache
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import io.gitee.jesse205.activitylauncher.R
+import io.gitee.jesse205.activitylauncher.util.adapterview.ContextMenuInfoGettable
 import io.gitee.jesse205.activitylauncher.util.getDimensionPixelSize
 import io.gitee.jesse205.activitylauncher.util.scaleToFit
 import io.gitee.jesse205.activitylauncher.util.setTextOrGone
@@ -25,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
+class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable, ContextMenuInfoGettable {
     private val handler = Handler(Looper.getMainLooper())
     private val packageManager: PackageManager = context.packageManager
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -68,6 +70,9 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
         view.holder!!.bind(getItem(position))
         return view
     }
+
+    override fun getContextMenuInfo(position: Int, itemId: Long) =
+        ContextMenuInfo(getItem(position), position)
 
     fun setActivities(activities: List<AppActivityItem>) {
         originalActivities = activities
@@ -151,6 +156,11 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable {
             )
         }
     }
+
+    data class ContextMenuInfo(
+        val activity: AppActivityItem,
+        val position: Int
+    ) : ContextMenu.ContextMenuInfo
 
     inner class ActivityFilter : Filter() {
         protected override fun performFiltering(constraint: CharSequence?): FilterResults {

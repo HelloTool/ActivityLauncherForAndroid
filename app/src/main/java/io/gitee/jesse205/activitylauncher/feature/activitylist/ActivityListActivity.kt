@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,7 @@ import androidx.annotation.RequiresApi
 import io.gitee.jesse205.activitylauncher.R
 import io.gitee.jesse205.activitylauncher.app.BaseActivity
 import io.gitee.jesse205.activitylauncher.util.IntentCompat
+import io.gitee.jesse205.activitylauncher.util.copyText
 import io.gitee.jesse205.activitylauncher.util.isActionBarSupported
 import io.gitee.jesse205.activitylauncher.util.isMenuSearchBarSupported
 import io.gitee.jesse205.activitylauncher.util.isNavigationGestureSupported
@@ -88,6 +90,7 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
             emptyView = emptyLayout
             adapter = this@ActivityListActivity.adapter
             onItemClickListener = this@ActivityListActivity
+            registerForContextMenu(this)
             if (isNavigationGestureSupported && theme.isSupportEdgeToEdge) {
                 parentsDoNotClipChildrenAndPadding(rootLayout)
             }
@@ -172,6 +175,40 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
         return actionBar != null
     }
 
+    override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        when (menuInfo) {
+            is ActivityListAdapter.ContextMenuInfo -> onCreateActivityListContextMenu(menu, menuInfo)
+        }
+    }
+
+    fun onCreateActivityListContextMenu(menu: ContextMenu, menuInfo: ActivityListAdapter.ContextMenuInfo) {
+        menu.setHeaderTitle(menuInfo.activity.getOrLoadLabel(packageManager))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            menu.setGroupDividerEnabled(true)
+        }
+        menuInflater.inflate(R.menu.menu_activity_list_item, menu)
+
+    }
+
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        when (val menuInfo = item.menuInfo) {
+            is ActivityListAdapter.ContextMenuInfo -> onActivityListContextItemSelected(item, menuInfo)
+            else -> return super.onContextItemSelected(item)
+        }
+        return true
+    }
+
+    fun onActivityListContextItemSelected(item: MenuItem, menuInfo: ActivityListAdapter.ContextMenuInfo) {
+        when (item.itemId) {
+            R.id.menu_copy_display_name -> copyDisplayName(menuInfo.activity)
+            R.id.menu_copy_class_name -> copyClassName(menuInfo.activity)
+            R.id.menu_copy_intent_uri -> copyIntentUri(menuInfo.activity.activityInfo)
+
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_activity_list, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
@@ -219,6 +256,21 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val activityInfo: AppActivityItem = adapter.getItem(position)
         launchActivity(activityInfo.activityInfo)
+    }
+
+    private fun copyDisplayName(item: AppActivityItem) {
+        copyText(getString(R.string.label_display_name), item.getOrLoadLabel(packageManager))
+    }
+
+    private fun copyClassName(item: AppActivityItem) {
+        copyText(getString(R.string.label_class_name), item.name)
+    }
+
+    private fun copyIntentUri(activityInfo: ActivityInfo) {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.setClassName(activityInfo.packageName, activityInfo.name)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        copyText(getString(R.string.label_intent_uri), intent.toUri(Intent.URI_INTENT_SCHEME))
     }
 
     private fun loadActivities() {
