@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <GridView
+            <io.gitee.jesse205.activitylauncher.widget.AdvancedGridView
                 android:id="@+id/grid"
                 style="?gridViewStyle"
                 android:layout_width="match_parent"

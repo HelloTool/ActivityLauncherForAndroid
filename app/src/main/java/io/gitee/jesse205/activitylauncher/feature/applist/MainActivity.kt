@@ -127,36 +127,39 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
 
     override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        if (v != gridView || menuInfo !is AdapterView.AdapterContextMenuInfo) {
-            return
+        when (menuInfo) {
+            is AppListAdapter.ContextMenuInfo -> onCreateAppListContextMenu(menu, menuInfo)
         }
-        val appInfo = adapter.getItem(menuInfo.position)
-        menu.setHeaderTitle(appInfo.getOrLoadLabel(packageManager))
+    }
+
+    fun onCreateAppListContextMenu(menu: ContextMenu, menuInfo: AppListAdapter.ContextMenuInfo) {
+        menu.setHeaderTitle(menuInfo.app.getOrLoadLabel(packageManager))
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             menu.setGroupDividerEnabled(true)
         }
         menuInflater.inflate(R.menu.menu_main_list_item, menu)
 
         menu.findItem(R.id.menu_open_app).apply {
-            isVisible = appInfo.applicationInfo.isOpenable(this@MainActivity)
+            isVisible = menuInfo.app.applicationInfo.isOpenable(this@MainActivity)
         }
     }
 
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        val menuInfo = item.menuInfo
-        if (menuInfo !is AdapterView.AdapterContextMenuInfo) {
-            return super.onContextItemSelected(item)
-        }
-        val appInfo = adapter.getItem(menuInfo.position)
-        when (item.itemId) {
-            R.id.menu_open_app -> openAppOrShowException(appInfo.packageName)
-            R.id.menu_app_details -> openAppDetails(appInfo.packageName)
-            R.id.menu_copy_app_name -> copyAppName(appInfo)
-            R.id.menu_copy_package_name -> copyPackageName(appInfo)
+        when (val menuInfo = item.menuInfo) {
+            is AppListAdapter.ContextMenuInfo -> onAppListContextItemSelected(item, menuInfo)
             else -> return super.onContextItemSelected(item)
         }
         return true
+    }
+
+    fun onAppListContextItemSelected(item: MenuItem, menuInfo: AppListAdapter.ContextMenuInfo) {
+        when (item.itemId) {
+            R.id.menu_open_app -> openAppOrShowException(menuInfo.app.packageName)
+            R.id.menu_app_details -> openAppDetails(menuInfo.app.packageName)
+            R.id.menu_copy_app_name -> copyAppName(menuInfo.app)
+            R.id.menu_copy_package_name -> copyPackageName(menuInfo.app)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
