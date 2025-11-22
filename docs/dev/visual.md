@@ -1,6 +1,6 @@
 # 视觉设计
 
-本应用以 [Holo 设计][adchs]为主，[Material Design 1][mdui design] 作为补充。
+本应用以 [Holo 设计][adchs]为主，[Material Design 1][mdui-design] 作为补充。
 
 ## 应用主题
 
@@ -12,8 +12,7 @@
 
 Holo 主题使用 Holo 图标，Material 主题使用 Material 图标。
 
-姜饼主题复用 Holo 图标。
+姜饼主题的标签栏使用 Material 图标，其他复用 Holo 图标。
 
 [adchs]: http://adchs.github.io/index.html
-
-[mdui design]: https://www.mdui.org/zh-cn/design/1/
+[mdui-design]: https://www.mdui.org/zh-cn/design/1/
