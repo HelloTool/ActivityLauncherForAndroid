@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="../app/src/main/ic_launcher-playstore.png" width="192" alt="icon" />
+
 # 活动启动器
+
+</div>
 
 一个 Android 活动 (Activity) 启动器应用，允许用户浏览并启动设备上安装的应用程序及其活动。
 
@@ -27,7 +33,7 @@
 ## 此应用绝对不会
 
 - 抛弃 Android 2.3 的兼容
-- 使用 AppCompat、Material Components、Compose、Kotlin 协程等不支持 Android 2.3 的工具
+- 使用 AppCompat、Material Components、Compose、~~Kotlin 协程~~等不支持 Android 2.3 的工具
 - 支持使用 Root、Shizuku 打开活动
 - 添加启动服务、发送广播功能
 - 添加历史记录、收藏功能
@@ -46,7 +52,7 @@
 
 ## 许可证
 
-本应用的代码采用 Apache 2.0 许可证，详情请查看 [LICENSE](./LICENSE) 文件。
+本应用的代码采用 Apache 2.0 许可证，详情请查看 [LICENSE](../LICENSE) 文件。
 
 ```txt
 Copyright 2025 Jesse205
