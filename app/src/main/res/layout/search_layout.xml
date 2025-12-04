@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autofillHints=""
-        android:drawableStart="?menuSearchIcon"
-        android:drawableLeft="?menuSearchIcon"
+        android:drawableStart="?inputSearchIcon"
+        android:drawableLeft="?inputSearchIcon"
         android:hint="@string/hint_search_apps"
         android:imeOptions="actionSearch"
         android:inputType="textFilter" />

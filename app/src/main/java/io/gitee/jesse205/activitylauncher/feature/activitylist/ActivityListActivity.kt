@@ -47,6 +47,7 @@ class ActivityListActivity : BaseActivity(), AdapterView.OnItemClickListener,
     private val emptyText: TextView by lazy { emptyLayout.findViewById(R.id.empty_text) }
     private val progressLayout: ViewGroup by lazy { rootLayout.findViewById(R.id.progress_layout) }
     private val progressText: TextView by lazy { progressLayout.findViewById(R.id.progress_text) }
+    private val searchInput: EditText? by lazy { rootLayout.findViewById(R.id.search_input) }
 
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -102,6 +103,10 @@ class ActivityListActivity : BaseActivity(), AdapterView.OnItemClickListener,
 
         emptyText.apply {
             text = getString(R.string.label_empty_activities)
+        }
+
+        searchInput?.apply {
+            setHint(R.string.hint_search_activities)
         }
 
         onActivitiesUpdate(viewModel.activities)
