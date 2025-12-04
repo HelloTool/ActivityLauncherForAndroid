@@ -73,7 +73,7 @@ class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
 
     private var isUsingSearchLayout = false
 
-    val viewModel by viewModel(this) {
+    private val viewModel by viewModel(this) {
         MainViewModel(
             provisionType = preferences.provisionType ?: AppProvisionType.USER,
             sortCategory = preferences.sortCategory ?: AppSortCategory.UPDATE_TIME
