@@ -57,9 +57,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="start"
-            android:singleLine="true"
+            android:maxLines="2"
             android:textAppearance="?textAppearanceListItemSecondary"
             android:textColor="?android:textColorSecondary"
+            tools:text="@tools:sample/lorem/random" />
+
+        <TextView
+            android:id="@+id/permission_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textAppearance="?textAppearanceListItemSecondary"
+            android:textColor="@color/color_permission_text_material"
+            android:visibility="gone"
             tools:text="@tools:sample/lorem/random" />
 
     </LinearLayout>

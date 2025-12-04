@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="color_primary_material">#009688</color>
-    <color name="color_primary_dark_material">#00796B</color>
-    <color name="color_accent_material">#FF4081</color>
+    <color name="color_primary_material">#009688</color> <!-- Teal 500 -->
+    <color name="color_primary_dark_material">#00796B</color> <!-- Teal 700 -->
+    <color name="color_accent_material">#FF4081</color> <!-- Pink A200 -->
+    <color name="color_permission_text_material">#ff9800</color> <!-- Orange 500 -->
 </resources>

@@ -95,6 +95,7 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable, Context
         private val icon: ImageView = root.findViewById(android.R.id.icon)
         private val title: TextView = root.findViewById(android.R.id.title)
         private val summary: TextView = root.findViewById(android.R.id.summary)
+        private val permissionText: TextView = root.findViewById(R.id.permission_text)
         private var labelFuture: Future<*>? = null
         private var iconFuture: Future<*>? = null
         private var boundActivityInfo: AppActivityItem? = null
@@ -109,11 +110,13 @@ class ActivityListAdapter(context: Context) : BaseAdapter(), Filterable, Context
             title.setTextOrGone(null)
             summary.text = null
             summary.paint.isStrikeThruText = false
+            permissionText.setTextOrGone(null)
             labelFuture?.cancel(true)
             iconFuture?.cancel(true)
             if (activityInfo != null) {
                 summary.text = activityInfo.name
                 summary.paint.isStrikeThruText = !activityInfo.exported
+                permissionText.setTextOrGone(activityInfo.activityInfo.permission)
                 loadLabel()
                 loadIcon()
             }
