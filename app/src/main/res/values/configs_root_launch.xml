@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="config_root_launch">false</bool>
+    <array name="config_root_launch_activities">
+        <item>io.gitee.jesse205.activitylauncher/**</item>
+    </array>
+</resources>

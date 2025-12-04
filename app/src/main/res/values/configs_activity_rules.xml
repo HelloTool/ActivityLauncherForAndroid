@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="config_useless_activities">
+        <item>**/android.app.Activity</item>
+        <item>**/androidx.activity.ComponentActivity</item>
+    </array>
+</resources>
