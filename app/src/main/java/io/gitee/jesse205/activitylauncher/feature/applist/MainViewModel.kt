@@ -179,8 +179,8 @@ class MainViewModel(
         )
     }
 
-    override fun restoreHierarchyState(state: Bundle?) {
-        state?.getParcelableCompat(SAVED_STATE_TAG, SavedState::class.java)?.let {
+    override fun restoreHierarchyState(state: Bundle) {
+        state.getParcelableCompat(SAVED_STATE_TAG, SavedState::class.java)?.let {
             sortCategory = it.sortCategory
             provisionType = it.provisionType
         }

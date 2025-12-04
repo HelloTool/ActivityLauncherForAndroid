@@ -20,6 +20,6 @@ abstract class BaseViewModel<StateListener> : Listenable<StateListener>, ViewMod
 
     override fun saveHierarchyState(): Bundle? = null
 
-    override fun restoreHierarchyState(state: Bundle?) {}
+    override fun restoreHierarchyState(state: Bundle) {}
 
 }

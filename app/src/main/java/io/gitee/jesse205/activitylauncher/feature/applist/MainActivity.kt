@@ -341,7 +341,7 @@ class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
 
     private fun setupTabs() {
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
-            viewModel.changeAppProvisionType(application, AppProvisionType.valueOf(it))
+            changeProvisionType(AppProvisionType.valueOf(it))
         }.apply {
             val isShowTabIcons = theme.getBoolean(R.attr.showTabIcons, false)
             setup()
@@ -381,7 +381,6 @@ class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
     }
 
     override fun onAppSortCategoryUpdate(sortCategory: AppSortCategory) {
-        preferences.sortCategory = sortCategory
         when (sortCategory) {
             AppSortCategory.NAME -> sortNameMenuItem?.isChecked = true
             AppSortCategory.INSTALL_TIME -> sortInstallTimeMenuItem?.isChecked = true
@@ -389,9 +388,7 @@ class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
         }
     }
 
-    override fun onAppProvisionTypeUpdate(provisionType: AppProvisionType) {
-        preferences.provisionType = provisionType
-    }
+    override fun onAppProvisionTypeUpdate(provisionType: AppProvisionType) {}
 
     override fun onAppsLoadingUpdate(isAppsLoading: Boolean) {
         updateProgressBar(isAppsLoading = isAppsLoading)
@@ -418,7 +415,13 @@ class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
         progressLayout.visibility = (isAppsLoading || isAppNamesLoading).toViewVisibility()
     }
 
+    private fun changeProvisionType(provisionType: AppProvisionType) {
+        preferences.provisionType = provisionType
+        viewModel.changeAppProvisionType(application, provisionType)
+    }
+
     private fun changeAppSortCategory(sortCategory: AppSortCategory) {
+        preferences.sortCategory = sortCategory
         viewModel.changeAppSortCategory(application, sortCategory)
     }
 

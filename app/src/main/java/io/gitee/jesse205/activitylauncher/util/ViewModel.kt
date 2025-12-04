@@ -24,7 +24,7 @@ inline fun <L, reified T : ViewModel<L>> BaseActivity.viewModel(
 interface ViewModel<StateListener> : Listenable<StateListener> {
     fun destroy()
     fun saveHierarchyState(): Bundle? = null
-    fun restoreHierarchyState(state: Bundle?) {}
+    fun restoreHierarchyState(state: Bundle) {}
 }
 
 class ViewModelDelegate<L, T : ViewModel<L>>(
@@ -41,7 +41,9 @@ class ViewModelDelegate<L, T : ViewModel<L>>(
             return it
         }
 
-        val viewModel = store.getViewModel(clazz) ?: initializer()
+        val viewModel = store.getViewModel(clazz) ?: initializer().also {
+            store.setViewModel(clazz, it)
+        }
         return viewModel.also {
             viewModel.addListener(listener)
             activityListenable.addListener(object : ActivityListener {

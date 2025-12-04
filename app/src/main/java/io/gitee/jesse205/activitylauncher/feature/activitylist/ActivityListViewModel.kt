@@ -74,8 +74,8 @@ class ActivityListViewModel(
         putParcelable(SAVED_STATE_TAG, SavedState(packageName))
     }
 
-    override fun restoreHierarchyState(state: Bundle?) {
-        state?.getParcelableCompat(SAVED_STATE_TAG, SavedState::class.java)?.let {
+    override fun restoreHierarchyState(state: Bundle) {
+        state.getParcelableCompat(SAVED_STATE_TAG, SavedState::class.java)?.let {
             packageName = it.packageName
         }
     }

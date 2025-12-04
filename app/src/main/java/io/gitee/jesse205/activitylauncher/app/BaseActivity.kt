@@ -46,7 +46,7 @@ abstract class BaseActivity : Activity(), Listenable<ActivityListener>, ViewMode
         helper.onActivityPreRestoreInstanceState(savedInstanceState)
         super.onRestoreInstanceState(savedInstanceState)
         viewModels.forEach { (key, value) ->
-            savedInstanceState.getBundle(VIEW_MODEL_STATE_TAG_PREFIX + key).let {
+            savedInstanceState.getBundle(VIEW_MODEL_STATE_TAG_PREFIX + key)?.let {
                 value.restoreHierarchyState(it)
             }
         }
@@ -86,12 +86,12 @@ abstract class BaseActivity : Activity(), Listenable<ActivityListener>, ViewMode
 
     override fun onDestroy() {
         super.onDestroy()
-        helper.onActivityDestroy()
         if (isFinishing) {
             viewModels.values.forEach {
                 it.destroy()
             }
         }
+        helper.onActivityDestroy()
     }
 
     override fun addListener(listener: ActivityListener) {
