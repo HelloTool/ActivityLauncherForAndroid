@@ -5,23 +5,25 @@ import android.content.res.Configuration
 import android.os.Bundle
 import io.gitee.jesse205.activitylauncher.util.ActivityListener
 import io.gitee.jesse205.activitylauncher.util.Listenable
+import io.gitee.jesse205.activitylauncher.util.ViewModel
+import io.gitee.jesse205.activitylauncher.util.ViewModelStore
 
 
-abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<ActivityListener> {
-    protected abstract val stateClass: Class<S>
-    private var _state: S? = null
-    protected val state: S get() = _state!!
+abstract class BaseActivity : Activity(), Listenable<ActivityListener>, ViewModelStore {
+
+    private lateinit var viewModels: MutableMap<String, ViewModel<*>>
+
     private val helper = BaseActivityHelper(this)
-
 
     var resumed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         helper.onActivityPreCreate(savedInstanceState)
         super.onCreate(savedInstanceState)
-        _state =
-            stateClass.cast(lastNonConfigurationInstance)
-                ?: onCreateState()
+
+        @Suppress("UNCHECKED_CAST")
+        viewModels = lastNonConfigurationInstance as? MutableMap<String, ViewModel<*>> ?: mutableMapOf()
+
         helper.onActivityCreate(savedInstanceState)
     }
 
@@ -30,24 +32,26 @@ abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<Activ
         helper.onActivityPostCreate(savedInstanceState)
     }
 
-    override fun onRetainNonConfigurationInstance() = state
+    override fun onRetainNonConfigurationInstance() = viewModels
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBundle(VIEW_MODEL_STATE_TAG, _state?.saveHierarchyState())
+        viewModels.forEach { (key, value) ->
+            outState.putBundle(VIEW_MODEL_STATE_TAG_PREFIX + key, value.saveHierarchyState())
+        }
         helper.onActivitySaveInstanceState(outState)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         helper.onActivityPreRestoreInstanceState(savedInstanceState)
         super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState.getBundle(VIEW_MODEL_STATE_TAG)?.let {
-            _state?.restoreHierarchyState(it)
+        viewModels.forEach { (key, value) ->
+            savedInstanceState.getBundle(VIEW_MODEL_STATE_TAG_PREFIX + key).let {
+                value.restoreHierarchyState(it)
+            }
         }
         helper.onActivityRestoreInstanceState(savedInstanceState)
     }
-
-    abstract fun onCreateState(): S?
 
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration) {
         super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
@@ -83,6 +87,11 @@ abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<Activ
     override fun onDestroy() {
         super.onDestroy()
         helper.onActivityDestroy()
+        if (isFinishing) {
+            viewModels.values.forEach {
+                it.destroy()
+            }
+        }
     }
 
     override fun addListener(listener: ActivityListener) {
@@ -93,7 +102,14 @@ abstract class BaseActivity<S : BaseViewModel<*>> : Activity(), Listenable<Activ
         helper.removeListener(listener)
     }
 
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel<*>> getViewModel(clazz: Class<T>): T? = viewModels[clazz.name] as T?
+
+    override fun <T : ViewModel<*>> setViewModel(clazz: Class<T>, value: T) {
+        viewModels[clazz.name] = value
+    }
+
     companion object {
-        private const val VIEW_MODEL_STATE_TAG = "viewModelState"
+        private const val VIEW_MODEL_STATE_TAG_PREFIX = "viewModelState_"
     }
 }

@@ -33,10 +33,11 @@ import io.gitee.jesse205.activitylauncher.util.parentsDoNotClipChildrenAndPaddin
 import io.gitee.jesse205.activitylauncher.util.patch.CollapseActionViewMenuItemPatch
 import io.gitee.jesse205.activitylauncher.util.showToast
 import io.gitee.jesse205.activitylauncher.util.temporarilyClearFocus
+import io.gitee.jesse205.activitylauncher.util.viewModel
 
-class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.OnItemClickListener,
+class ActivityListActivity : BaseActivity(), AdapterView.OnItemClickListener,
     ActivityListViewModel.ActivityListActivityStateListener {
-    override val stateClass = ActivityListViewModel::class.java
+
     private val adapter: ActivityListAdapter by lazy { ActivityListAdapter(this) }
 
     private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
@@ -50,15 +51,14 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
     private var freshMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
 
-    override fun onCreateState(): ActivityListViewModel {
-        return ActivityListViewModel(
+    private val viewModel by viewModel(this) {
+        ActivityListViewModel(
             packageName = intent.extras?.getString(IntentCompat.EXTRA_PACKAGE_NAME)
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_grid)
 
         val isActionBarInitialized = if (isActionBarSupported) {
@@ -70,14 +70,14 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
             setupSearchLayout()
         }
 
-        if (state.packageName.isBlank()) {
+        if (viewModel.packageName.isBlank()) {
             showToast(R.string.toast_app_not_installed)
             finish()
             return
         }
 
         runCatching {
-            packageManager.getApplicationInfo(state.packageName, 0)
+            packageManager.getApplicationInfo(viewModel.packageName, 0)
         }.onFailure {
             showToast(R.string.toast_app_not_installed)
             finish()
@@ -104,10 +104,9 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
             text = getString(R.string.label_empty_activities)
         }
 
-        state.bind(this, this)
-        onActivitiesUpdate(state.activities)
-        onActivitiesLoadingUpdate(state.isActivitiesLoading)
-        if (!state.isActivitiesLoadingOrLoaded) {
+        onActivitiesUpdate(viewModel.activities)
+        onActivitiesLoadingUpdate(viewModel.isActivitiesLoading)
+        if (!viewModel.isActivitiesLoadingOrLoaded) {
             loadActivities()
         }
     }
@@ -212,7 +211,7 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_activity_list, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
-        freshMenuItem!!.isEnabled = !state.isActivitiesLoading
+        freshMenuItem!!.isEnabled = !viewModel.isActivitiesLoading
         if (isMenuSearchBarSupported) {
             menu.findItem(R.id.menu_search).apply {
                 isVisible = true
@@ -274,7 +273,7 @@ class ActivityListActivity : BaseActivity<ActivityListViewModel>(), AdapterView.
     }
 
     private fun loadActivities() {
-        state.loadActivities(application)
+        viewModel.loadActivities(application)
     }
 
     private fun launchActivity(activityInfo: ActivityInfo) {

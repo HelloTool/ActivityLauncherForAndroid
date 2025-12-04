@@ -48,11 +48,11 @@ import io.gitee.jesse205.activitylauncher.util.showToast
 import io.gitee.jesse205.activitylauncher.util.tab.TabControllerFactory
 import io.gitee.jesse205.activitylauncher.util.temporarilyClearFocus
 import io.gitee.jesse205.activitylauncher.util.toViewVisibility
+import io.gitee.jesse205.activitylauncher.util.viewModel
 
-class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListener,
+class MainActivity : BaseActivity(), AdapterView.OnItemClickListener,
     MainViewModel.MainActivityStateListener {
 
-    override val stateClass = MainViewModel::class.java
     private val adapter: AppListAdapter by lazy { AppListAdapter(this@MainActivity) }
 
     private val rootLayout: ViewGroup by lazy { findViewById(R.id.root_layout) }
@@ -73,12 +73,13 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
 
     private var isUsingSearchLayout = false
 
-    override fun onCreateState(): MainViewModel {
-        return MainViewModel(
+    val viewModel by viewModel(this) {
+        MainViewModel(
             provisionType = preferences.provisionType ?: AppProvisionType.USER,
             sortCategory = preferences.sortCategory ?: AppSortCategory.UPDATE_TIME
         )
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (appTheme.id == ThemeManager.THEME_GINGERBREAD) {
@@ -117,10 +118,9 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
             text = getString(R.string.label_empty_apps)
         }
 
-        state.bind(this, this)
-        onSortedAppsUpdate(state.sortedApps)
-        onAppsLoadingUpdate(state.isAppsLoading)
-        if (!state.isAppsLoadingOrLoaded) {
+        onSortedAppsUpdate(viewModel.sortedApps)
+        onAppsLoadingUpdate(viewModel.isAppsLoading)
+        if (!viewModel.isAppsLoadingOrLoaded) {
             loadApps()
         }
     }
@@ -165,7 +165,7 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         getMenuInflater().inflate(R.menu.menu_main, menu)
         freshMenuItem = menu.findItem(R.id.menu_refresh)
-        freshMenuItem!!.isEnabled = !state.isAppsLoading
+        freshMenuItem!!.isEnabled = !viewModel.isAppsLoading
         if (isMenuSearchBarSupported && !isUsingSearchLayout) {
             menu.findItem(R.id.menu_search).apply {
                 isVisible = true
@@ -177,7 +177,7 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
         sortNameMenuItem = menu.findItem(R.id.menu_sort_name)
         sortInstallTimeMenuItem = menu.findItem(R.id.menu_sort_install_time)
         sortUpdateTimeMenuItem = menu.findItem(R.id.menu_sort_update_time)
-        onAppSortCategoryUpdate(state.sortCategory)
+        onAppSortCategoryUpdate(viewModel.sortCategory)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -341,7 +341,7 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
 
     private fun setupTabs() {
         TabControllerFactory.create(activity = this, rootView = findViewById(R.id.root_layout)) {
-            state.changeAppProvisionType(application, AppProvisionType.valueOf(it))
+            viewModel.changeAppProvisionType(application, AppProvisionType.valueOf(it))
         }.apply {
             val isShowTabIcons = theme.getBoolean(R.attr.showTabIcons, false)
             setup()
@@ -355,7 +355,7 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
                 textId = R.string.tab_system_apps,
                 tabIconId = if (isShowTabIcons) R.drawable.ic_tab_system else null
             )
-            setCurrentTab(state.provisionType.name)
+            setCurrentTab(viewModel.provisionType.name)
         }
     }
 
@@ -408,18 +408,18 @@ class MainActivity : BaseActivity<MainViewModel>(), AdapterView.OnItemClickListe
     }
 
     private fun loadApps() {
-        state.loadApps(application)
+        viewModel.loadApps(application)
     }
 
     private fun updateProgressBar(
-        isAppsLoading: Boolean = state.isAppsLoading,
-        isAppNamesLoading: Boolean = state.isAppNamesLoading
+        isAppsLoading: Boolean = viewModel.isAppsLoading,
+        isAppNamesLoading: Boolean = viewModel.isAppNamesLoading
     ) {
         progressLayout.visibility = (isAppsLoading || isAppNamesLoading).toViewVisibility()
     }
 
     private fun changeAppSortCategory(sortCategory: AppSortCategory) {
-        state.changeAppSortCategory(application, sortCategory)
+        viewModel.changeAppSortCategory(application, sortCategory)
     }
 
     companion object {
