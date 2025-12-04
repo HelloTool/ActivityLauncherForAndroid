@@ -12,12 +12,12 @@
         "mode": "1",
         "activityPairs": [
           {
-            "from": "io.gitee.jesse205.activitylauncher.features.applist.MainActivity",
+            "from": "io.gitee.jesse205.activitylauncher.feature.applist.MainActivity",
             "to": "*"
           }
         ],
         "transActivities": [
-          "io.gitee.jesse205.activitylauncher.features.settings.SettingsActivityExternal"
+          "io.gitee.jesse205.activitylauncher.feature.settings.SettingsActivityExternal"
         ],
         "UX": {
           "isDraggable": "false",
